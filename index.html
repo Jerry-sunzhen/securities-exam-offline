@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>证券从业模拟刷题工具</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <noscript>本工具需要启用 JavaScript。</noscript>
+    </div>
+    <input id="profile-file-input" type="file" accept=".sqlite,.db,application/x-sqlite3" hidden />
+    <input id="merge-file-input" type="file" accept=".sqlite,.db,application/x-sqlite3" hidden />
+    <script src="./vendor/sql-wasm-data.js"></script>
+    <script src="./vendor/sql-wasm.js"></script>
+    <script src="./data/outline.js"></script>
+    <script src="./data/questions.js"></script>
+    <script src="./db.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

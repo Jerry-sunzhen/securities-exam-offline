@@ -1,0 +1,17 @@
+{
+  "name": "securities-exam-offline",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:content": "node scripts/build-content.mjs",
+    "build:release": "node scripts/build-release.mjs",
+    "validate": "node scripts/validate-content.mjs",
+    "test": "npm run build:content && npm run validate && npm run build:release && node scripts/browser-smoke.mjs release",
+    "test:browser": "node scripts/browser-smoke.mjs"
+  },
+  "devDependencies": {
+    "puppeteer-core": "24.16.0",
+    "sql.js": "1.13.0"
+  }
+}

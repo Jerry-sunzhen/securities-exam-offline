@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><div id="out">starting</div>
+<script>
+const out = document.getElementById('out');
+window.addEventListener('error', e => out.textContent = 'error ' + e.message);
+window.addEventListener('unhandledrejection', e => out.textContent = 'reject ' + e.reason);
+const req = indexedDB.open('idb-file-test', 1);
+req.onupgradeneeded = () => req.result.createObjectStore('x');
+req.onerror = () => out.textContent = 'idb error ' + req.error;
+req.onsuccess = () => { out.textContent = 'idb ok'; req.result.close(); };
+setTimeout(() => { if (out.textContent === 'starting') out.textContent = 'idb timeout'; }, 3000);
+</script>

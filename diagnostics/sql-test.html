@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><div id="out">starting</div>
+<script>
+  window.addEventListener('error', (e) => document.getElementById('out').textContent = 'error: ' + e.message);
+  window.addEventListener('unhandledrejection', (e) => document.getElementById('out').textContent = 'rejection: ' + (e.reason?.stack || e.reason));
+</script>
+<script src="../vendor/sql-wasm-data.js"></script>
+<script src="../vendor/sql-wasm.js"></script>
+<script>
+  (async () => {
+    document.getElementById('out').textContent = 'decoding';
+    const bytes = Uint8Array.from(atob(window.SQL_WASM_BASE64), c => c.charCodeAt(0));
+    document.getElementById('out').textContent = 'initializing ' + bytes.length;
+    const SQL = await initSqlJs({wasmBinary: bytes});
+    const db = new SQL.Database();
+    db.run('create table t(v text); insert into t values ("ok")');
+    document.getElementById('out').textContent = JSON.stringify(db.exec('select * from t'));
+  })();
+</script>
