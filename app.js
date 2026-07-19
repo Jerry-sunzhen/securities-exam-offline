@@ -199,27 +199,94 @@
     return safe.replace(new RegExp(escaped, "gi"), (match) => `<span class="highlight">${match}</span>`);
   }
 
+  function outlineAnchor(page, title) {
+    let hash = 2166136261;
+    for (const char of `${page}:${title}`) {
+      hash ^= char.charCodeAt(0);
+      hash = Math.imul(hash, 16777619);
+    }
+    return `outline-${page}-${(hash >>> 0).toString(36)}`;
+  }
+
+  function joinOutlineLines(lines) {
+    return lines.reduce((result, line) => {
+      if (!result) return line;
+      const needsSpace = /[A-Za-z0-9)]$/.test(result) && /^[A-Za-z0-9(]/.test(line);
+      return `${result}${needsSpace ? " " : ""}${line}`;
+    }, "");
+  }
+
+  function parseOutlineBlocks(text) {
+    const blocks = [];
+    let paragraph = [];
+    const flushParagraph = () => {
+      if (!paragraph.length) return;
+      blocks.push({ type: "paragraph", text: joinOutlineLines(paragraph) });
+      paragraph = [];
+    };
+    const headingType = (line) => {
+      if (/^(金融市场基础知识|证券市场基本法律法规)$/.test(line)) return "subject";
+      if (/^第[一二三四五六七八九十]+章/.test(line)) return "chapter";
+      if (/^第[一二三四五六七八九十]+节/.test(line)) return "section";
+      if (/^[一二三四五六七八九十]+、/.test(line)) return "subheading";
+      return null;
+    };
+    for (const rawLine of String(text || "").replaceAll("\r", "").split("\n")) {
+      const line = rawLine.trim();
+      if (!line || /^\d+$/.test(line)) { flushParagraph(); continue; }
+      const type = headingType(line);
+      if (type) {
+        flushParagraph();
+        blocks.push({ type, text: line });
+        continue;
+      }
+      paragraph.push(line);
+      if (/[。！？]$/.test(line)) flushParagraph();
+    }
+    flushParagraph();
+    return blocks;
+  }
+
+  function renderOutlinePage(page, query) {
+    const blocks = parseOutlineBlocks(page.text);
+    return `<article class="card outline-page" id="outline-page-${page.page}">
+      <div class="outline-page-label">官方原件 · 第 ${page.page} 页</div>
+      <div class="outline-text">${blocks.map((block) => {
+        if (block.type === "paragraph") return `<p>${highlightText(block.text, query)}</p>`;
+        const tag = block.type === "subject" || block.type === "chapter" ? "h3" : "h4";
+        const anchor = outlineAnchor(page.page, block.text);
+        return `<${tag} class="outline-heading ${block.type}" id="${anchor}">${highlightText(block.text, query)}</${tag}>`;
+      }).join("")}</div>
+    </article>`;
+  }
+
   function renderOutline() {
     const query = state.outlineSearch.trim();
-    const pages = state.outlineSource === "supplement" ? (outlineData.supplements || []) : (outlineData.pages || []);
+    const sourcePages = state.outlineSource === "supplement"
+      ? (outlineData.supplements || [])
+      : (outlineData.pages || []).filter((page) => page.page >= 4 && page.page !== 14);
+    const pages = sourcePages;
     const filtered = query ? pages.filter((page) => page.text.includes(query) || page.title?.includes(query)) : pages;
     const toc = state.outlineSource === "supplement" ? (outlineData.supplementToc || []) : (outlineData.toc || []);
     return `
       <div class="outline-toolbar">
-        <input class="input" style="max-width:520px" id="outline-search" value="${escapeHtml(state.outlineSearch)}" placeholder="搜索股票、内幕交易、适当性、债券估值……" />
-        <select class="select" style="max-width:260px" id="outline-source">
+        <input class="input outline-search" id="outline-search" value="${escapeHtml(state.outlineSearch)}" placeholder="搜索股票、内幕交易、适当性、债券估值……" />
+        <select class="select outline-source" id="outline-source">
           <option value="main" ${state.outlineSource === "main" ? "selected" : ""}>一般业务主大纲（2025）</option>
           <option value="supplement" ${state.outlineSource === "supplement" ? "selected" : ""}>纪法知识增补（2026）</option>
         </select>
         <a class="button secondary" href="${state.outlineSource === "main" ? "./docs/general-business-syllabus-2025.pdf" : "./docs/discipline-and-law-syllabus-2026.doc"}" target="_blank">打开官方原件</a>
+        <span class="outline-result-count">${query ? `找到 ${filtered.length} 个相关页` : `正文 ${pages.length} 页`}</span>
       </div>
       <div class="outline-layout">
-        <aside class="card card-body outline-toc">
-          <h3 class="card-title">目录</h3>
-          ${toc.map((item) => `<button class="toc-button ${item.level === "chapter" ? "chapter" : ""}" data-action="jump-outline" data-page="${item.page}">${escapeHtml(item.title)}</button>`).join("") || '<div class="empty">暂无目录</div>'}
+        <aside class="card outline-toc">
+          <div class="outline-toc-header"><div><span>学习导航</span><strong>目录</strong></div><span>${toc.length} 项</span></div>
+          <div class="outline-toc-list">
+            ${toc.map((item) => `<button class="toc-button ${item.level === "chapter" ? "chapter" : "section"}" data-action="jump-outline" data-page="${item.page}" data-anchor="${outlineAnchor(item.page, item.title)}"><span>${escapeHtml(item.title)}</span><small>${item.page}</small></button>`).join("") || '<div class="empty">暂无目录</div>'}
+          </div>
         </aside>
-        <section>
-          ${filtered.map((page) => `<article class="card outline-page" id="outline-page-${page.page}"><h3>${escapeHtml(page.title || `第 ${page.page} 页`)}</h3><div class="outline-text">${highlightText(page.text, query)}</div></article>`).join("") || '<div class="card empty"><strong>没有匹配内容</strong>请尝试更短的关键词。</div>'}
+        <section class="outline-reader">
+          ${filtered.map((page) => renderOutlinePage(page, query)).join("") || '<div class="card empty"><strong>没有匹配内容</strong>请尝试更短的关键词。</div>'}
         </section>
       </div>`;
   }
@@ -640,7 +707,12 @@
       if (action === "start-practice") startSession({ mode: "practice", questions: selectQuestions({ subjectId: state.practiceSubject, chapterId: state.practiceChapter, count: state.practiceCount, types: state.practiceTypes }), subjectId: state.practiceSubject });
       if (action === "list-tab") { state.listTab = target.dataset.tab; render(); }
       if (action === "practice-list") startSession({ mode: "practice", questions: selectQuestions({ ids: getListQuestions().map((q) => q.id), count: getListQuestions().length }) });
-      if (action === "jump-outline") document.getElementById(`outline-page-${target.dataset.page}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (action === "jump-outline") {
+        document.querySelectorAll(".toc-button.active").forEach((button) => button.classList.remove("active"));
+        target.classList.add("active");
+        const destination = document.getElementById(target.dataset.anchor) || document.getElementById(`outline-page-${target.dataset.page}`);
+        destination?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
       if (action === "choose-option") chooseOption(target.dataset.option);
       if (action === "submit-question") submitPracticeAnswer();
       if (action === "next-question") nextQuestion();
@@ -688,7 +760,11 @@
     if (event.target.id === "outline-search") {
       state.outlineSearch = event.target.value;
       clearTimeout(state.outlineDebounce);
-      state.outlineDebounce = setTimeout(render, 180);
+      state.outlineDebounce = setTimeout(() => {
+        render();
+        const input = document.getElementById("outline-search");
+        if (input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+      }, 180);
     }
   });
 

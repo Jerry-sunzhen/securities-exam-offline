@@ -7,7 +7,8 @@ import { pathToFileURL, fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const appRoot = process.argv[2] ? resolve(root, process.argv[2]) : root;
 const expectedQuestions = JSON.parse(readFileSync(resolve(root, "data/questions.json"), "utf8")).meta.questionCount;
-const expectedOutlinePages = JSON.parse(readFileSync(resolve(root, "data/outline.json"), "utf8")).pages.length;
+const outlinePayload = JSON.parse(readFileSync(resolve(root, "data/outline.json"), "utf8"));
+const expectedOutlinePages = outlinePayload.pages.filter((item) => item.page >= 4 && item.page !== 14).length;
 const browser = await puppeteer.launch({
   executablePath: process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   headless: true,
@@ -29,6 +30,7 @@ await page.click('[data-nav="outline"]');
 await page.waitForSelector(".outline-page");
 const outlinePages = await page.$$eval(".outline-page", (nodes) => nodes.length);
 if (outlinePages !== expectedOutlinePages) throw new Error(`Expected ${expectedOutlinePages} outline pages, got ${outlinePages}`);
+await page.screenshot({ path: resolve(root, "diagnostics/smoke-outline.png"), fullPage: false });
 
 await page.click('[data-nav="practice"]');
 await page.waitForSelector('[data-action="start-practice"]');
