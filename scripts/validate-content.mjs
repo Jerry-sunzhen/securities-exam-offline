@@ -13,6 +13,20 @@ const answerPositions = { A: 0, B: 0, C: 0, D: 0 };
 const multiCombinations = new Map();
 const factCounts = new Map();
 
+if (!Array.isArray(payload.knowledgePoints) || payload.knowledgePoints.length !== payload.meta.factCount) {
+  errors.push(`knowledge point count must equal fact count ${payload.meta.factCount}`);
+} else {
+  const knowledgeIds = new Set();
+  for (const point of payload.knowledgePoints) {
+    if (knowledgeIds.has(point.id)) errors.push(`duplicate knowledge point ${point.id}`);
+    knowledgeIds.add(point.id);
+    if (!chapterIds.has(point.chapterId)) errors.push(`${point.id}: unknown knowledge chapter`);
+    if (!point.topic || !point.statement || !point.explanation) errors.push(`${point.id}: incomplete knowledge content`);
+    if (!point.keyPoints?.length || !point.commonMistakes?.length) errors.push(`${point.id}: missing knowledge lists`);
+    if (!point.citations?.length) errors.push(`${point.id}: missing knowledge citation`);
+  }
+}
+
 for (const question of payload.questions) {
   if (ids.has(question.id)) errors.push(`duplicate id ${question.id}`);
   ids.add(question.id);

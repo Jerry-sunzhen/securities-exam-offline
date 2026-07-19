@@ -6,7 +6,10 @@ import { pathToFileURL, fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const appRoot = process.argv[2] ? resolve(root, process.argv[2]) : root;
-const expectedQuestions = JSON.parse(readFileSync(resolve(root, "data/questions.json"), "utf8")).meta.questionCount;
+const questionPayload = JSON.parse(readFileSync(resolve(root, "data/questions.json"), "utf8"));
+const expectedQuestions = questionPayload.meta.questionCount;
+const expectedFinanceKnowledge = questionPayload.knowledgePoints.filter((item) => item.subjectId === "finance").length;
+const expectedLawKnowledge = questionPayload.knowledgePoints.filter((item) => item.subjectId === "law").length;
 const outlinePayload = JSON.parse(readFileSync(resolve(root, "data/outline.json"), "utf8"));
 const expectedOutlinePages = outlinePayload.pages.filter((item) => item.page >= 4 && item.page !== 14).length;
 const browser = await puppeteer.launch({
@@ -27,6 +30,20 @@ const dashboardText = await page.$eval(".sidebar-footer", (node) => node.textCon
 if (!dashboardText.includes(String(expectedQuestions))) throw new Error("Question count missing on dashboard");
 
 await page.click('[data-nav="outline"]');
+await page.waitForSelector(".knowledge-card");
+const knowledgeCards = await page.$$eval(".knowledge-card", (nodes) => nodes.length);
+if (knowledgeCards !== expectedFinanceKnowledge) throw new Error(`Expected ${expectedFinanceKnowledge} finance knowledge cards, got ${knowledgeCards}`);
+const knowledgeSections = await page.$eval(".knowledge-card", (node) => ({
+  hasCore: Boolean(node.querySelector(".knowledge-core")),
+  panels: node.querySelectorAll(".knowledge-panel").length,
+  hasSources: Boolean(node.querySelector(".knowledge-sources"))
+}));
+if (!knowledgeSections.hasCore || knowledgeSections.panels !== 2 || !knowledgeSections.hasSources) throw new Error(`Incomplete knowledge card: ${JSON.stringify(knowledgeSections)}`);
+await page.screenshot({ path: resolve(root, "diagnostics/smoke-knowledge.png"), fullPage: false });
+await page.select("#knowledge-subject", "law");
+await page.waitForFunction((expected) => document.querySelectorAll(".knowledge-card").length === expected, {}, expectedLawKnowledge);
+const lawKnowledgeCards = await page.$$eval(".knowledge-card", (nodes) => nodes.length);
+await page.click('[data-action="outline-mode"][data-mode="official"]');
 await page.waitForSelector(".outline-page");
 const outlinePages = await page.$$eval(".outline-page", (nodes) => nodes.length);
 if (outlinePages !== expectedOutlinePages) throw new Error(`Expected ${expectedOutlinePages} outline pages, got ${outlinePages}`);
@@ -155,6 +172,8 @@ if (errors.length) throw new Error(`Page errors: ${errors.join(" | ")}`);
 console.log(JSON.stringify({
   ok: true,
   outlinePages,
+  knowledgeCards,
+  lawKnowledgeCards,
   citations,
   dataChecks,
   examBlueprint,

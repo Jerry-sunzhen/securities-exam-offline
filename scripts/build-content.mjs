@@ -18,7 +18,8 @@ const disciplineName = "discipline-and-law-syllabus-2026.doc";
 const pdfPath = join(docsDir, pdfName);
 const disciplinePath = join(docsDir, disciplineName);
 
-const pages = JSON.parse(execFileSync("swift", [join(root, "scripts/extract-outline.swift"), pdfPath], { encoding: "utf8", maxBuffer: 8 * 1024 * 1024 }));
+const pages = JSON.parse(execFileSync("swift", [join(root, "scripts/extract-outline.swift"), pdfPath], { encoding: "utf8", maxBuffer: 8 * 1024 * 1024 }))
+  .map((page) => ({ text: page.text, title: page.title, page: page.page }));
 const disciplineText = execFileSync("textutil", ["-convert", "txt", "-stdout", disciplinePath], { encoding: "utf8", maxBuffer: 1024 * 1024 }).trim();
 
 function makeToc(sourcePages) {
@@ -103,12 +104,25 @@ function stableShuffle(values, key) {
 
 function buildQuestions() {
   const output = [];
+  const knowledgePoints = [];
   for (const fact of facts) {
     const outlineCitation = findOutlineCitation(fact);
     const citations = [
       outlineCitation,
       ...(fact.authorityCitations || []).map((citation) => ({ kind: "authority", ...citation }))
     ];
+    knowledgePoints.push({
+      id: fact.id,
+      subjectId: fact.subjectId,
+      chapterId: fact.chapterId,
+      level: fact.level,
+      topic: fact.topic,
+      statement: fact.statement,
+      explanation: fact.explanation,
+      keyPoints: fact.correctPoints,
+      commonMistakes: fact.incorrectPoints,
+      citations
+    });
     const caseScenario = caseScenarios[fact.id];
     const singleValues = [fact.statement, ...fact.incorrectPoints.slice(0, 3)];
     const singleOrder = stableShuffle(singleValues, `${fact.id}-single`);
@@ -148,10 +162,10 @@ function buildQuestions() {
       explanation: fact.explanation, citations, negation: false
     });
   }
-  return output;
+  return { questions: output, knowledgePoints };
 }
 
-const questions = buildQuestions();
+const { questions, knowledgePoints } = buildQuestions();
 const outline = {
   meta: { title: "证券行业专业人员一般业务水平评价测试大纲（2025）", pageCount: pages.length, effectiveFrom: "2026-01-01" },
   toc: makeToc(pages), pages,
@@ -167,7 +181,7 @@ const questionPayload = {
     contentCutoff: "2026-07-17",
     disclaimer: "依据官方公开范围原创，不是官方题库、真题或押题。"
   },
-  subjects, chapters, questions
+  subjects, chapters, knowledgePoints, questions
 };
 
 writeFileSync(join(dataDir, "outline.json"), JSON.stringify(outline, null, 2));

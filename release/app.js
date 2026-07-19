@@ -1,11 +1,11 @@
 (function () {
   const outlineData = window.OUTLINE_DATA || { meta: {}, toc: [], pages: [], supplements: [] };
-  const questionData = window.QUESTION_DATA || { meta: {}, subjects: [], chapters: [], questions: [] };
+  const questionData = window.QUESTION_DATA || { meta: {}, subjects: [], chapters: [], knowledgePoints: [], questions: [] };
   const questionMap = new Map((questionData.questions || []).map((question) => [question.id, question]));
 
   const navItems = [
     ["dashboard", "⌂", "学习总览"],
-    ["outline", "目", "完整大纲"],
+    ["outline", "知", "知识讲义"],
     ["practice", "练", "章节练习"],
     ["mistakes", "错", "错题与收藏"],
     ["stats", "数", "学习统计"],
@@ -14,7 +14,7 @@
 
   const pageInfo = {
     dashboard: ["学习总览", "从大纲、练习和模考逐步建立完整知识框架"],
-    outline: ["完整考试大纲", "主大纲与 2026 纪法增补均可离线搜索阅读"],
+    outline: ["知识讲义与官方大纲", "先读详细知识点，再用官方原文核对考试范围"],
     practice: ["章节练习", "按科目、章节和题型生成练习"],
     mistakes: ["错题与收藏", "集中修复薄弱知识点"],
     stats: ["学习统计", "区分答题次数、首次覆盖和章节正确率"],
@@ -25,7 +25,9 @@
     view: "dashboard",
     saveStatus: { state: "saved", message: "正在初始化", profileName: "浏览器档案", lastSavedAt: null, bound: false },
     outlineSearch: "",
+    outlineMode: "guide",
     outlineSource: "main",
+    knowledgeSubject: "finance",
     practiceSubject: "finance",
     practiceChapter: "all",
     practiceCount: 20,
@@ -157,7 +159,7 @@
           <h3>先建立知识地图，再用练习检验理解</h3>
           <p>建议先完整阅读两遍官方大纲：第一遍建立章节框架，第二遍标记“掌握、熟悉、了解”。刷题结果页会显示大纲原文、页码和答案依据。</p>
           <div class="hero-actions">
-            <button class="button secondary" data-nav="outline">开始阅读大纲</button>
+            <button class="button secondary" data-nav="outline">开始阅读知识讲义</button>
             <button class="button" data-action="quick-practice">随机练习 20 题</button>
             <button class="button ghost" data-action="start-exam">120 题模拟考试</button>
             ${state.activeExam ? '<button class="button secondary" data-action="resume-exam">恢复未完成模考</button>' : ""}
@@ -260,8 +262,76 @@
     </article>`;
   }
 
-  function renderOutline() {
-    const query = state.outlineSearch.trim();
+  function renderOutlineModeSwitch() {
+    return `<div class="outline-mode-bar">
+      <div class="outline-mode-switch" role="tablist" aria-label="阅读模式">
+        <button class="${state.outlineMode === "guide" ? "active" : ""}" data-action="outline-mode" data-mode="guide">知识讲义</button>
+        <button class="${state.outlineMode === "official" ? "active" : ""}" data-action="outline-mode" data-mode="official">官方大纲原文</button>
+      </div>
+      <span>${state.outlineMode === "guide" ? "推荐先按章节阅读，再进入对应练习" : "用于核对官方考试范围和掌握层级"}</span>
+    </div>`;
+  }
+
+  function knowledgeMatches(point, query) {
+    if (!query) return true;
+    const sourceText = [
+      point.topic,
+      point.statement,
+      point.explanation,
+      ...(point.keyPoints || []),
+      ...(point.commonMistakes || []),
+      ...(point.citations || []).flatMap((citation) => [citation.title, citation.locator, citation.quote])
+    ].join("\n");
+    return sourceText.includes(query);
+  }
+
+  function renderKnowledgePoint(point, query) {
+    return `<article class="card knowledge-card" id="knowledge-${point.id}">
+      <header class="knowledge-card-header">
+        <div><span class="knowledge-index">${escapeHtml(point.id)}</span><h3>${highlightText(point.topic, query)}</h3></div>
+        <span class="tag level-master">${escapeHtml(point.level)}</span>
+      </header>
+      <div class="knowledge-core"><span>核心结论</span><strong>${highlightText(point.statement, query)}</strong></div>
+      <div class="knowledge-explanation"><h4>理解与边界</h4><p>${highlightText(point.explanation, query)}</p></div>
+      <div class="knowledge-columns">
+        <section class="knowledge-panel key"><h4>应当掌握</h4><ul>${(point.keyPoints || []).map((item) => `<li>${highlightText(item, query)}</li>`).join("")}</ul></section>
+        <section class="knowledge-panel mistake"><h4>常见误区</h4><ul>${(point.commonMistakes || []).map((item) => `<li>${highlightText(item, query)}</li>`).join("")}</ul></section>
+      </div>
+      <details class="knowledge-sources"><summary>查看大纲位置与知识来源</summary>${(point.citations || []).map(renderCitation).join("")}</details>
+    </article>`;
+  }
+
+  function renderKnowledgeGuide(query) {
+    const points = (questionData.knowledgePoints || []).filter((point) => point.subjectId === state.knowledgeSubject && knowledgeMatches(point, query));
+    const chapters = subjectChapters(state.knowledgeSubject);
+    const visibleChapters = chapters.map((chapter) => ({
+      ...chapter,
+      points: points.filter((point) => point.chapterId === chapter.id)
+    })).filter((chapter) => chapter.points.length);
+    return `
+      <div class="outline-toolbar knowledge-toolbar">
+        <input class="input outline-search" id="outline-search" value="${escapeHtml(state.outlineSearch)}" placeholder="搜索知识点、结论、误区或法规来源……" />
+        <select class="select outline-source" id="knowledge-subject">
+          ${questionData.subjects.map((subject) => `<option value="${subject.id}" ${state.knowledgeSubject === subject.id ? "selected" : ""}>${escapeHtml(subject.title)}</option>`).join("")}
+        </select>
+        <button class="button" data-action="practice-subject" data-subject="${state.knowledgeSubject}">学习后去刷题</button>
+        <span class="outline-result-count">${query ? `找到 ${points.length} 个知识点` : `${points.length} 个知识点`}</span>
+      </div>
+      <div class="outline-layout knowledge-layout">
+        <aside class="card outline-toc knowledge-toc">
+          <div class="outline-toc-header"><div><span>${escapeHtml(subjectTitle(state.knowledgeSubject))}</span><strong>章节讲义</strong></div><span>${points.length} 点</span></div>
+          <div class="outline-toc-list">
+            ${visibleChapters.map((chapter) => `<button class="toc-button chapter" data-action="jump-outline" data-anchor="knowledge-chapter-${chapter.id}"><span>${escapeHtml(chapter.title)}</span><small>${chapter.points.length}</small></button>`).join("") || '<div class="empty">没有匹配章节</div>'}
+          </div>
+        </aside>
+        <section class="knowledge-reader">
+          <div class="card knowledge-intro"><strong>这不是官方教材，而是本项目依据公开大纲整理的学习讲义。</strong><span>当前覆盖 ${questionData.meta?.factCount || 0} 个基础知识单元。标为“考试范围定位”的引用只证明属于考试范围；标为“答案依据”的引用才是可直接支持结论的原文。</span></div>
+          ${visibleChapters.map((chapter) => `<section class="knowledge-chapter" id="knowledge-chapter-${chapter.id}"><header class="knowledge-chapter-header"><div><span>${escapeHtml(subjectTitle(chapter.subjectId))}</span><h2>${escapeHtml(chapter.title)}</h2></div><strong>${chapter.points.length} 个知识点</strong></header><div class="knowledge-list">${chapter.points.map((point) => renderKnowledgePoint(point, query)).join("")}</div></section>`).join("") || '<div class="card empty"><strong>没有匹配知识点</strong>请尝试更短的关键词。</div>'}
+        </section>
+      </div>`;
+  }
+
+  function renderOfficialOutline(query) {
     const sourcePages = state.outlineSource === "supplement"
       ? (outlineData.supplements || [])
       : (outlineData.pages || []).filter((page) => page.page >= 4 && page.page !== 14);
@@ -289,6 +359,11 @@
           ${filtered.map((page) => renderOutlinePage(page, query)).join("") || '<div class="card empty"><strong>没有匹配内容</strong>请尝试更短的关键词。</div>'}
         </section>
       </div>`;
+  }
+
+  function renderOutline() {
+    const query = state.outlineSearch.trim();
+    return `${renderOutlineModeSwitch()}${state.outlineMode === "guide" ? renderKnowledgeGuide(query) : renderOfficialOutline(query)}`;
   }
 
   function subjectChapters(subjectId) {
@@ -707,6 +782,7 @@
       if (action === "start-practice") startSession({ mode: "practice", questions: selectQuestions({ subjectId: state.practiceSubject, chapterId: state.practiceChapter, count: state.practiceCount, types: state.practiceTypes }), subjectId: state.practiceSubject });
       if (action === "list-tab") { state.listTab = target.dataset.tab; render(); }
       if (action === "practice-list") startSession({ mode: "practice", questions: selectQuestions({ ids: getListQuestions().map((q) => q.id), count: getListQuestions().length }) });
+      if (action === "outline-mode") { state.outlineMode = target.dataset.mode; state.outlineSearch = ""; render(); }
       if (action === "jump-outline") {
         document.querySelectorAll(".toc-button.active").forEach((button) => button.classList.remove("active"));
         target.classList.add("active");
@@ -750,6 +826,7 @@
   app.addEventListener("change", (event) => {
     const target = event.target;
     if (target.id === "outline-source") { state.outlineSource = target.value; render(); }
+    if (target.id === "knowledge-subject") { state.knowledgeSubject = target.value; state.outlineSearch = ""; render(); }
     if (target.id === "practice-subject") { state.practiceSubject = target.value; state.practiceChapter = "all"; render(); }
     if (target.id === "practice-chapter") { state.practiceChapter = target.value; render(); }
     if (target.id === "practice-count") { state.practiceCount = Number(target.value); render(); }
