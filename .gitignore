@@ -5,3 +5,12 @@ diagnostics/*.png
 *.sqlite-*
 *.db
 *.db-*
+docs/base-knowledge.txt
+docs/base-knowledge.html
+release/docs/base-knowledge.txt
+release/docs/base-knowledge.html
+docs/law-regulations.txt
+docs/law-regulations.html
+release/docs/law-regulations.txt
+release/docs/law-regulations.html
+tmp/

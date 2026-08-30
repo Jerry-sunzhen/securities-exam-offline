@@ -179,6 +179,15 @@
         value TEXT NOT NULL,
         modified_at TEXT NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS knowledge_reviews (
+        knowledge_id TEXT PRIMARY KEY,
+        grade TEXT NOT NULL,
+        streak INTEGER NOT NULL DEFAULT 0,
+        review_count INTEGER NOT NULL DEFAULT 0,
+        last_reviewed_at TEXT NOT NULL,
+        next_review_at TEXT NOT NULL,
+        modified_at TEXT NOT NULL
+      );
     `);
     const bookmarkColumns = all("PRAGMA table_info(bookmarks)").map((row) => row.name);
     if (!bookmarkColumns.includes("deleted_at")) run("ALTER TABLE bookmarks ADD COLUMN deleted_at TEXT");
@@ -403,6 +412,17 @@
           }
         }
       }
+      if (incoming.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='knowledge_reviews'").length) {
+        for (const row of incomingRows("knowledge_reviews")) {
+          const local = get("SELECT modified_at FROM knowledge_reviews WHERE knowledge_id=?", [row.knowledge_id]);
+          if (!local || String(row.modified_at) > String(local.modified_at)) {
+            run(
+              "INSERT OR REPLACE INTO knowledge_reviews(knowledge_id,grade,streak,review_count,last_reviewed_at,next_review_at,modified_at) VALUES (?,?,?,?,?,?,?)",
+              [row.knowledge_id, row.grade, row.streak, row.review_count, row.last_reviewed_at, row.next_review_at, row.modified_at]
+            );
+          }
+        }
+      }
       run("COMMIT");
     } catch (error) {
       run("ROLLBACK");
@@ -445,6 +465,41 @@
 
   function getNote(questionId) {
     return get("SELECT body FROM notes WHERE question_id=?", [questionId])?.body || "";
+  }
+
+  function recordKnowledgeReview(knowledgeId, grade) {
+    if (!["again", "hard", "known"].includes(grade)) throw new Error("无效的背诵评价");
+    const existing = get("SELECT * FROM knowledge_reviews WHERE knowledge_id=?", [knowledgeId]);
+    const now = new Date();
+    let streak = Number(existing?.streak || 0);
+    let nextDelayMs;
+    if (grade === "again") {
+      streak = 0;
+      nextDelayMs = 10 * 60 * 1000;
+    } else if (grade === "hard") {
+      streak = Math.max(1, streak);
+      nextDelayMs = 24 * 60 * 60 * 1000;
+    } else {
+      streak += 1;
+      const intervals = [1, 3, 7, 14, 30, 60];
+      nextDelayMs = intervals[Math.min(streak - 1, intervals.length - 1)] * 24 * 60 * 60 * 1000;
+    }
+    const reviewedAt = now.toISOString();
+    const nextReviewAt = new Date(now.getTime() + nextDelayMs).toISOString();
+    run(
+      `INSERT INTO knowledge_reviews(knowledge_id,grade,streak,review_count,last_reviewed_at,next_review_at,modified_at)
+       VALUES (?,?,?,?,?,?,?)
+       ON CONFLICT(knowledge_id) DO UPDATE SET
+         grade=excluded.grade,streak=excluded.streak,review_count=excluded.review_count,
+         last_reviewed_at=excluded.last_reviewed_at,next_review_at=excluded.next_review_at,modified_at=excluded.modified_at`,
+      [knowledgeId, grade, streak, Number(existing?.review_count || 0) + 1, reviewedAt, nextReviewAt, reviewedAt]
+    );
+    scheduleSave();
+    return get("SELECT * FROM knowledge_reviews WHERE knowledge_id=?", [knowledgeId]);
+  }
+
+  function getKnowledgeReviews() {
+    return all("SELECT * FROM knowledge_reviews ORDER BY next_review_at ASC");
   }
 
   function createSession({ id, mode, subjectId, questionIds }) {
@@ -539,6 +594,8 @@
     isBookmarked,
     saveNote,
     getNote,
+    recordKnowledgeReview,
+    getKnowledgeReviews,
     createSession,
     completeSession,
     recordExamAnswer,

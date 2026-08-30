@@ -4,14 +4,22 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:styles": "tailwindcss -i ./styles.input.css -o ./styles.css --minify",
+    "watch:styles": "tailwindcss -i ./styles.input.css -o ./styles.css --watch",
     "build:content": "node scripts/build-content.mjs",
-    "build:release": "node scripts/build-release.mjs",
+    "build:release": "npm run build:styles && node scripts/build-release.mjs",
+    "dev": "node scripts/local-codex-chat.mjs",
+    "chat": "pnpm dev",
+    "chat:release": "node scripts/local-codex-chat.mjs --static-root release",
+    "test:chat": "node scripts/chat-bridge-smoke.mjs",
     "validate": "node scripts/validate-content.mjs",
-    "test": "npm run build:content && npm run validate && npm run build:release && node scripts/browser-smoke.mjs release",
+    "test": "npm run build:content && npm run validate && npm run build:release && npm run test:chat && node scripts/browser-smoke.mjs release",
     "test:browser": "node scripts/browser-smoke.mjs"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
     "puppeteer-core": "24.16.0",
-    "sql.js": "1.13.0"
+    "sql.js": "1.13.0",
+    "tailwindcss": "^4.3.3"
   }
 }
