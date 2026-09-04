@@ -51,6 +51,12 @@ const markdownRendering = await page.evaluate(() => {
     "| --- | --- |",
     "| 合格 | 60% |",
     "",
+    String.raw`\[`,
+    String.raw`债券价值 = \frac{5}{1.04} + \frac{5}{1.04^2} + \frac{105}{1.04^3}`,
+    String.raw`\]`,
+    "",
+    String.raw`收益率为 \(r = \frac{1}{1+i}\)。`,
+    "",
     "`<script>alert(1)</script>`",
     "[危险链接](javascript:alert(1))",
     "[协会官网](https://www.sac.net.cn/)"
@@ -63,12 +69,15 @@ const markdownRendering = await page.evaluate(() => {
     listItems: container.querySelectorAll("ul li").length,
     tableCells: container.querySelectorAll("table td").length,
     escapedCode: [...container.querySelectorAll("code")].some((node) => node.textContent.includes("<script>")),
+    mathBlocks: container.querySelectorAll(".codex-chat-math-display .katex-display").length,
+    inlineMath: container.querySelectorAll(".katex:not(.katex-display .katex)").length,
+    katexLoaded: typeof window.katex?.renderToString === "function",
     executableNodes: container.querySelectorAll("script,img,iframe,object").length,
     unsafeLinks: container.querySelectorAll('a[href^="javascript:"]').length,
     safeLink: container.querySelector('a[href^="https://www.sac.net.cn/"]')?.getAttribute("rel") || ""
   };
 });
-if (markdownRendering.heading !== "核心结论" || markdownRendering.bold !== "重点内容" || markdownRendering.listItems !== 2 || markdownRendering.tableCells !== 2 || !markdownRendering.escapedCode || markdownRendering.executableNodes || markdownRendering.unsafeLinks || !markdownRendering.safeLink.includes("noopener")) {
+if (markdownRendering.heading !== "核心结论" || markdownRendering.bold !== "重点内容" || markdownRendering.listItems !== 2 || markdownRendering.tableCells !== 2 || markdownRendering.mathBlocks !== 1 || !markdownRendering.inlineMath || !markdownRendering.katexLoaded || !markdownRendering.escapedCode || markdownRendering.executableNodes || markdownRendering.unsafeLinks || !markdownRendering.safeLink.includes("noopener")) {
   throw new Error(`Codex Markdown rendering invalid: ${JSON.stringify(markdownRendering)}`);
 }
 
@@ -94,6 +103,27 @@ await page.click('[data-nav="outline"]');
 await page.waitForSelector(".knowledge-card");
 const knowledgeCards = await page.$$eval(".knowledge-card", (nodes) => nodes.length);
 if (knowledgeCards !== expectedFinanceKnowledge) throw new Error(`Expected ${expectedFinanceKnowledge} finance knowledge cards, got ${knowledgeCards}`);
+const chatScrollProbe = await page.evaluate(() => {
+  const messages = document.querySelector(".codex-chat-messages");
+  messages.innerHTML = `<div style="height:2400px">滚动隔离回归内容</div>`;
+  messages.scrollTop = messages.scrollHeight;
+  window.scrollTo(0, 700);
+  const rect = messages.getBoundingClientRect();
+  return {
+    x: rect.left + rect.width / 2,
+    y: rect.top + rect.height / 2,
+    pageScrollBefore: window.scrollY,
+    messagesAtBottom: messages.scrollTop + messages.clientHeight >= messages.scrollHeight - 1,
+    overscrollBehaviorY: getComputedStyle(messages).overscrollBehaviorY
+  };
+});
+await page.mouse.move(chatScrollProbe.x, chatScrollProbe.y);
+await page.mouse.wheel({ deltaY: 700 });
+await new Promise((resolveWait) => setTimeout(resolveWait, 100));
+const chatScrollAfter = await page.evaluate(() => window.scrollY);
+if (!chatScrollProbe.messagesAtBottom || chatScrollProbe.overscrollBehaviorY !== "contain" || chatScrollAfter !== chatScrollProbe.pageScrollBefore) {
+  throw new Error(`Chat scroll isolation invalid: ${JSON.stringify({ ...chatScrollProbe, pageScrollAfter: chatScrollAfter })}`);
+}
 const knowledgeSections = await page.$eval(".knowledge-card", (node) => ({
   hasCore: Boolean(node.querySelector(".knowledge-core")),
   panels: node.querySelectorAll(".knowledge-panel").length,
@@ -453,6 +483,7 @@ console.log(JSON.stringify({
   casePracticeHeader,
   offlineChat,
   markdownRendering,
+  chatScrollIsolation: { pageScrollBefore: chatScrollProbe.pageScrollBefore, pageScrollAfter: chatScrollAfter, overscrollBehaviorY: chatScrollProbe.overscrollBehaviorY },
   chatQuestionContext: { question: chatQuestionContext.question, guidance: chatQuestionContext.guidance },
   submittedChatContext: { id: submittedChatContext.question.id, submitted: submittedChatContext.question.submitted },
   sourceBlocks,

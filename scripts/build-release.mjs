@@ -21,5 +21,6 @@ cpSync(resolve(root, "data/coverage-report.json"), resolve(release, "data/covera
 mkdirSync(resolve(release, "vendor"), { recursive: true });
 cpSync(resolve(root, "vendor/sql-wasm.js"), resolve(release, "vendor/sql-wasm.js"));
 cpSync(resolve(root, "vendor/sql-wasm-data.js"), resolve(release, "vendor/sql-wasm-data.js"));
+cpSync(resolve(root, "vendor/katex"), resolve(release, "vendor/katex"), { recursive: true });
 
 console.log(`Release ready: ${release}`);

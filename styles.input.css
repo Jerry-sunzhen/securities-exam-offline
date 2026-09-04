@@ -345,7 +345,7 @@
     background: linear-gradient(135deg, #1769e0, #6947c7);
   }
   .codex-chat-launcher-icon { @apply size-7 rounded-full text-[11px]; }
-  .codex-chat-panel { @apply fixed inset-y-0 right-0 z-70 grid w-[370px] translate-x-[102%] grid-rows-[auto_auto_minmax(0,1fr)_auto_auto] border-l border-[#d7e0ec] bg-[#f7f9fc] text-ink shadow-[-16px_0_44px_rgba(27,47,78,.13)] transition-transform duration-200 ease-out; }
+  .codex-chat-panel { @apply fixed inset-y-0 right-0 z-70 grid w-[370px] translate-x-[102%] grid-rows-[auto_auto_minmax(0,1fr)_auto_auto] border-l border-[#d7e0ec] bg-[#f7f9fc] text-ink shadow-[-16px_0_44px_rgba(27,47,78,.13)] transition-transform duration-200 ease-out; overscroll-behavior: contain; }
   .codex-chat-open .codex-chat-panel { @apply translate-x-0; }
   .codex-chat-open .codex-chat-launcher { @apply hidden; }
   .codex-chat-header { @apply flex items-center justify-between gap-3 bg-linear-to-r from-[#153e73] to-primary px-[15px] py-4 text-white; }
@@ -362,7 +362,7 @@
   #codex-chat-root[data-status="connecting"] .codex-chat-status-dot { @apply animate-pulse bg-[#e49a19]; }
   #codex-chat-root[data-status="online"] .codex-chat-status-dot { @apply bg-success; }
   #codex-chat-root[data-status="offline"] .codex-chat-status-dot { @apply bg-danger; }
-  .codex-chat-messages { @apply min-h-0 min-w-0 overflow-x-hidden overflow-y-auto px-3.5 pt-4 pb-5; scrollbar-width: thin; }
+  .codex-chat-messages { @apply min-h-0 min-w-0 overflow-x-hidden overflow-y-auto px-3.5 pt-4 pb-5; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
   .codex-chat-welcome { @apply grid gap-[7px] rounded-[13px] border border-[#dce5f1] bg-white p-3.5 text-xs leading-[1.65] text-[#536176]; }
   .codex-chat-welcome strong { @apply text-sm text-[#1a2b44]; }
   .codex-chat-message { @apply mb-[15px] grid min-w-0 gap-[5px]; }
@@ -391,6 +391,10 @@
   .codex-chat-message-content a { @apply text-primary underline underline-offset-2; }
   .codex-chat-message-content del { @apply text-[#8290a3]; }
   .codex-chat-message-content hr { @apply my-3 border-0 border-t border-[#dce4ee]; }
+  .codex-chat-math-display { @apply my-3 min-w-0 max-w-full overflow-x-auto px-1 py-1 text-center; }
+  .codex-chat-math-display .katex-display { @apply my-1; }
+  .codex-chat-message-content .katex { @apply max-w-full; font-size: 1.05em; }
+  .codex-chat-math-fallback { @apply rounded-[5px] bg-[#fff7e5] px-1.5 py-0.5 font-mono text-[#8a5b0a]; white-space: pre-wrap; }
   .codex-chat-table-wrap { @apply my-[9px] min-w-0 w-full max-w-full overflow-x-auto rounded-lg border border-[#dce4ee]; }
   .codex-chat-table-wrap table { @apply w-full border-collapse text-[11px] whitespace-nowrap; }
   .codex-chat-table-wrap th, .codex-chat-table-wrap td { @apply border-b border-[#e4e9f0] px-2 py-[7px] text-left; }

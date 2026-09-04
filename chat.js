@@ -114,6 +114,25 @@
     return null;
   }
 
+  function renderMath(value, displayMode) {
+    const source = String(value ?? "").trim();
+    if (!source) return "";
+    if (typeof window.katex?.renderToString !== "function") {
+      return `<span class="codex-chat-math-fallback">${escapeMarkdownHtml(source)}</span>`;
+    }
+    try {
+      return window.katex.renderToString(source, {
+        displayMode,
+        throwOnError: false,
+        strict: "ignore",
+        trust: false,
+        output: "htmlAndMathml"
+      });
+    } catch {
+      return `<span class="codex-chat-math-fallback">${escapeMarkdownHtml(source)}</span>`;
+    }
+  }
+
   function renderMarkdownInline(value) {
     const tokens = [];
     const hold = (html) => {
@@ -123,6 +142,9 @@
     };
     let text = String(value ?? "");
     text = text.replace(/`([^`\n]+)`/g, (_match, code) => hold(`<code>${escapeMarkdownHtml(code)}</code>`));
+    text = text.replace(/\\\(([^\n]*?)\\\)/g, (_match, source) => hold(renderMath(source, false)));
+    text = text.replace(/\$\$(?!\s*\n)([\s\S]*?)\$\$/g, (_match, source) => hold(renderMath(source, true)));
+    text = text.replace(/\$(?!\$)(?=\S)([^$\n]*?\S)\$(?!\$)/g, (_match, source) => hold(renderMath(source, false)));
     text = text.replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, (_match, label, rawHref) => {
       const href = safeMarkdownHref(rawHref);
       const safeLabel = renderMarkdownInline(label);
@@ -169,12 +191,30 @@
       return !line.trim() || /^\s*```/.test(line) || /^\s{0,3}#{1,6}\s+/.test(line) ||
         /^\s{0,3}>\s?/.test(line) || /^\s*[-+*]\s+/.test(line) || /^\s*\d+[.)]\s+/.test(line) ||
         /^\s{0,3}(?:-{3,}|\*{3,}|_{3,})\s*$/.test(line) ||
+        /^\s*(?:\\\[|\$\$)\s*$/.test(line) ||
         (index + 1 < lines.length && line.includes("|") && isMarkdownTableSeparator(lines[index + 1]));
     };
     let index = 0;
     while (index < lines.length) {
       const line = lines[index];
       if (!line.trim()) { index += 1; continue; }
+
+      const oneLineMath = line.match(/^\s*(\\\[|\$\$)\s*(.*?)\s*(\\\]|\$\$)\s*$/);
+      if (oneLineMath) {
+        html.push(`<div class="codex-chat-math-display">${renderMath(oneLineMath[2], true)}</div>`);
+        index += 1;
+        continue;
+      }
+      const mathOpening = line.match(/^\s*(\\\[|\$\$)\s*$/);
+      if (mathOpening) {
+        const closingPattern = mathOpening[1] === "\\[" ? /^\s*\\\]\s*$/ : /^\s*\$\$\s*$/;
+        const source = [];
+        index += 1;
+        while (index < lines.length && !closingPattern.test(lines[index])) source.push(lines[index++]);
+        if (index < lines.length) index += 1;
+        html.push(`<div class="codex-chat-math-display">${renderMath(source.join("\n"), true)}</div>`);
+        continue;
+      }
 
       const fence = line.match(/^\s*```\s*([\w-]*)\s*$/);
       if (fence) {
@@ -262,6 +302,21 @@
     const distance = messagesNode.scrollHeight - messagesNode.scrollTop - messagesNode.clientHeight;
     return distance <= 24;
   }
+
+  function canScrollVertically(node, deltaY) {
+    if (!node || node.scrollHeight <= node.clientHeight + 1) return false;
+    if (deltaY < 0) return node.scrollTop > 0;
+    return node.scrollTop + node.clientHeight < node.scrollHeight - 1;
+  }
+
+  panel.addEventListener("wheel", (event) => {
+    if (event.defaultPrevented || event.ctrlKey || !event.deltaY || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+    const target = event.target instanceof Element ? event.target : null;
+    const nestedScroller = target?.closest("textarea, pre, .codex-chat-table-wrap");
+    if (nestedScroller && panel.contains(nestedScroller) && canScrollVertically(nestedScroller, event.deltaY)) return;
+    if (target?.closest(".codex-chat-messages") && canScrollVertically(messagesNode, event.deltaY)) return;
+    event.preventDefault();
+  }, { passive: false });
 
   function renderMessages() {
     const shouldStickToBottom = messagesNearBottom();

@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, cpSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { subjects, chapters } from "../content/catalog.mjs";
@@ -13,8 +13,10 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const docsDir = join(root, "docs");
 const dataDir = join(root, "data");
 const vendorDir = join(root, "vendor");
+const katexVendorDir = join(vendorDir, "katex");
 mkdirSync(dataDir, { recursive: true });
 mkdirSync(vendorDir, { recursive: true });
+mkdirSync(katexVendorDir, { recursive: true });
 
 const pdfName = "general-business-syllabus-2025.pdf";
 const disciplineName = "discipline-and-law-syllabus-2026.doc";
@@ -617,4 +619,8 @@ writeFileSync(join(dataDir, "questions.js"), `window.QUESTION_DATA = ${JSON.stri
 copyFileSync(join(root, "node_modules/sql.js/dist/sql-wasm.js"), join(vendorDir, "sql-wasm.js"));
 const wasmBase64 = readFileSync(join(root, "node_modules/sql.js/dist/sql-wasm.wasm")).toString("base64");
 writeFileSync(join(vendorDir, "sql-wasm-data.js"), `window.SQL_WASM_BASE64 = "${wasmBase64}";\n`);
+const katexDistDir = join(root, "node_modules/katex/dist");
+copyFileSync(join(katexDistDir, "katex.min.js"), join(katexVendorDir, "katex.min.js"));
+copyFileSync(join(katexDistDir, "katex.min.css"), join(katexVendorDir, "katex.min.css"));
+cpSync(join(katexDistDir, "fonts"), join(katexVendorDir, "fonts"), { recursive: true });
 console.log(`Built ${questions.length} questions from ${facts.length} facts; outline ${pages.length} pages.`);
