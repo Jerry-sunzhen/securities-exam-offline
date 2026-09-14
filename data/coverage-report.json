@@ -10,7 +10,7 @@
       "unmapped": "未找到达到阈值的题组"
     },
     "factCount": 260,
-    "questionCount": 780,
+    "knowledgePointCount": 260,
     "summary": {
       "requirements": 580,
       "mapped": 360,
@@ -155,7 +155,7 @@
         "F001",
         "F002"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -177,7 +177,7 @@
         "F001",
         "F002"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -199,7 +199,7 @@
         "F001",
         "F002"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -220,7 +220,7 @@
       "factIds": [
         "F002"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -240,7 +240,7 @@
       "factIds": [
         "F003"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -260,7 +260,7 @@
       "factIds": [
         "F003"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -280,7 +280,7 @@
       "factIds": [
         "F003"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -300,7 +300,7 @@
       "factIds": [
         "F004"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -320,7 +320,7 @@
       "factIds": [
         "F004"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -338,7 +338,7 @@
       "text": "了解英、美、香港为代表的主要国家和地区金融市场和监管特征；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -352,7 +352,7 @@
       "text": "了解国际资金流动方式。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -368,7 +368,7 @@
       "factIds": [
         "F061"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -389,7 +389,7 @@
       "factIds": [
         "F062"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -410,7 +410,7 @@
       "factIds": [
         "F063"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -431,7 +431,7 @@
       "factIds": [
         "F064"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -452,7 +452,7 @@
       "factIds": [
         "F065"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official",
@@ -474,7 +474,7 @@
       "factIds": [
         "F066"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -495,7 +495,7 @@
       "factIds": [
         "F067"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -516,7 +516,7 @@
       "factIds": [
         "F068"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -537,7 +537,7 @@
       "factIds": [
         "F069"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -558,7 +558,7 @@
       "factIds": [
         "F070"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -579,7 +579,7 @@
       "factIds": [
         "F005"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -600,7 +600,7 @@
       "factIds": [
         "F006"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -621,7 +621,7 @@
       "factIds": [
         "F071"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -641,7 +641,7 @@
       "factIds": [
         "F007"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -662,7 +662,7 @@
       "factIds": [
         "F008"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -682,7 +682,7 @@
       "factIds": [
         "F072"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -702,7 +702,7 @@
       "factIds": [
         "F072"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -722,7 +722,7 @@
       "factIds": [
         "F009"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -743,7 +743,7 @@
       "factIds": [
         "F009"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -764,7 +764,7 @@
       "factIds": [
         "F076"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -782,7 +782,7 @@
       "text": "熟悉主板的概念与特点；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -798,7 +798,7 @@
       "factIds": [
         "F073"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -818,7 +818,7 @@
       "factIds": [
         "F074"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -839,7 +839,7 @@
         "F073",
         "F074"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -860,7 +860,7 @@
       "factIds": [
         "F075"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -880,7 +880,7 @@
       "factIds": [
         "F076"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -898,7 +898,7 @@
       "text": "了解私募基金市场、区域股权市场、券商柜台市场、机构间私募产品报价与服务系统的概念与特点。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -912,7 +912,7 @@
       "text": "了解全面实行股票发行注册制的政策背景；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -928,7 +928,7 @@
       "factIds": [
         "F010"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -949,7 +949,7 @@
       "factIds": [
         "F077"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -967,7 +967,7 @@
       "text": "掌握证券市场融资活动的概念、方式及特征。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -983,7 +983,7 @@
       "factIds": [
         "F011"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1004,7 +1004,7 @@
       "factIds": [
         "F078"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1024,7 +1024,7 @@
       "factIds": [
         "F078"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1044,7 +1044,7 @@
       "factIds": [
         "F079"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1064,7 +1064,7 @@
       "factIds": [
         "F078"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1085,7 +1085,7 @@
         "F080",
         "F012"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1106,7 +1106,7 @@
       "factIds": [
         "F080"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1126,7 +1126,7 @@
       "factIds": [
         "F012"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1146,7 +1146,7 @@
       "factIds": [
         "F012"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1164,7 +1164,7 @@
       "text": "熟悉政府机构类、金融机构类投资者的概念、特点及分类；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -1180,7 +1180,7 @@
       "factIds": [
         "F080"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1201,7 +1201,7 @@
         "F012",
         "F081"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1222,7 +1222,7 @@
       "factIds": [
         "F013"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1243,7 +1243,7 @@
       "factIds": [
         "F013"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1265,7 +1265,7 @@
         "F082",
         "F014"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1287,7 +1287,7 @@
       "factIds": [
         "F014"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1309,7 +1309,7 @@
         "F082",
         "F014"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1331,7 +1331,7 @@
       "factIds": [
         "F082"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1352,7 +1352,7 @@
         "F014",
         "F082"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1374,7 +1374,7 @@
       "factIds": [
         "F015"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1395,7 +1395,7 @@
       "factIds": [
         "F015"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1416,7 +1416,7 @@
       "factIds": [
         "F015"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1437,7 +1437,7 @@
       "factIds": [
         "F087"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1458,7 +1458,7 @@
         "F083",
         "F082"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1479,7 +1479,7 @@
       "factIds": [
         "F083"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1499,7 +1499,7 @@
       "factIds": [
         "F016"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1520,7 +1520,7 @@
       "factIds": [
         "F016"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1541,7 +1541,7 @@
       "factIds": [
         "F017"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1562,7 +1562,7 @@
       "factIds": [
         "F084"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1582,7 +1582,7 @@
       "factIds": [
         "F084"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1602,7 +1602,7 @@
       "factIds": [
         "F085"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1622,7 +1622,7 @@
       "factIds": [
         "F085"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1642,7 +1642,7 @@
       "factIds": [
         "F086"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1662,7 +1662,7 @@
       "factIds": [
         "F086"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1680,7 +1680,7 @@
       "text": "熟悉证券市场监管的意义、原则、目标和手段；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -1696,7 +1696,7 @@
       "factIds": [
         "F087"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1716,7 +1716,7 @@
       "factIds": [
         "F087"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1736,7 +1736,7 @@
       "factIds": [
         "F018"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1757,7 +1757,7 @@
       "factIds": [
         "F088"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1775,7 +1775,7 @@
       "text": "掌握股利政策、股份变动等与股票相关的资本管理概念。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -1791,7 +1791,7 @@
       "factIds": [
         "F019"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1812,7 +1812,7 @@
       "factIds": [
         "F089"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1832,7 +1832,7 @@
       "factIds": [
         "F019"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1854,7 +1854,7 @@
         "F020",
         "F098"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1873,7 +1873,7 @@
       "text": "了解发行或投资优先股的意义；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -1887,7 +1887,7 @@
       "text": "了解优先股的分类及各种优先股的含义；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -1901,7 +1901,7 @@
       "text": "了解优先股与普通股、债券及其他股债混合产品的区别。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -1915,7 +1915,7 @@
       "text": "了解我国股票按投资主体性质的概念与分类；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -1929,7 +1929,7 @@
       "text": "了解B股、H股、N股、S股、L股、红筹股等概念。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -1945,7 +1945,7 @@
       "factIds": [
         "F021"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -1966,7 +1966,7 @@
       "factIds": [
         "F090"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -1986,7 +1986,7 @@
       "factIds": [
         "F091"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2007,7 +2007,7 @@
         "F092",
         "F093"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2028,7 +2028,7 @@
       "factIds": [
         "F092"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2049,7 +2049,7 @@
         "F093",
         "F018"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -2071,7 +2071,7 @@
       "factIds": [
         "F093"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2091,7 +2091,7 @@
       "factIds": [
         "F093"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2109,7 +2109,7 @@
       "text": "掌握欺诈发行上市股票回购的规定。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -2125,7 +2125,7 @@
       "factIds": [
         "F094"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2146,7 +2146,7 @@
         "F022",
         "F100"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -2166,7 +2166,7 @@
       "text": "熟悉做市商交易的特征；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -2182,7 +2182,7 @@
       "factIds": [
         "F024"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -2203,7 +2203,7 @@
       "factIds": [
         "F095"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2221,7 +2221,7 @@
       "text": "熟悉证券托管和证券存管的概念；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -2235,7 +2235,7 @@
       "text": "了解我国证券托管制度的内容；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -2251,7 +2251,7 @@
       "factIds": [
         "F096"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2271,7 +2271,7 @@
       "factIds": [
         "F096"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2289,7 +2289,7 @@
       "text": "熟悉委托受理的手续和过程；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -2305,7 +2305,7 @@
       "factIds": [
         "F096"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2325,7 +2325,7 @@
       "factIds": [
         "F022"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -2346,7 +2346,7 @@
       "factIds": [
         "F023"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -2367,7 +2367,7 @@
       "factIds": [
         "F097"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2387,7 +2387,7 @@
       "factIds": [
         "F097"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2407,7 +2407,7 @@
       "factIds": [
         "F097"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2427,7 +2427,7 @@
       "factIds": [
         "F098"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2447,7 +2447,7 @@
       "factIds": [
         "F025"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2468,7 +2468,7 @@
         "F025",
         "F099"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2489,7 +2489,7 @@
       "factIds": [
         "F025"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2509,7 +2509,7 @@
       "factIds": [
         "F025"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2527,7 +2527,7 @@
       "text": "熟悉沪港通、深港通和沪伦通的概念及内容；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -2543,7 +2543,7 @@
       "factIds": [
         "F100"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2561,7 +2561,7 @@
       "text": "了解沪港通与沪伦通的区别。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -2577,7 +2577,7 @@
       "factIds": [
         "F026"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2597,7 +2597,7 @@
       "factIds": [
         "F026"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2617,7 +2617,7 @@
       "factIds": [
         "F025"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2637,7 +2637,7 @@
       "factIds": [
         "F101"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2657,7 +2657,7 @@
       "factIds": [
         "F027"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2677,7 +2677,7 @@
       "factIds": [
         "F090"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2697,7 +2697,7 @@
       "factIds": [
         "F028"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2717,7 +2717,7 @@
       "factIds": [
         "F029"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2737,7 +2737,7 @@
       "factIds": [
         "F030"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2758,7 +2758,7 @@
         "F029",
         "F031"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -2780,7 +2780,7 @@
       "factIds": [
         "F031"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -2799,7 +2799,7 @@
       "text": "掌握我国国债的品种、特点和区别；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -2817,7 +2817,7 @@
         "F031",
         "F032"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -2841,7 +2841,7 @@
         "F031",
         "F032"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -2864,7 +2864,7 @@
         "F029",
         "F102"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2885,7 +2885,7 @@
       "factIds": [
         "F102"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2905,7 +2905,7 @@
       "factIds": [
         "F029"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2926,7 +2926,7 @@
         "F033",
         "F103"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2945,7 +2945,7 @@
       "text": "了解我国企业债的品种和管理规定；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -2962,7 +2962,7 @@
         "F102",
         "F105"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -2983,7 +2983,7 @@
       "factIds": [
         "F029"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3003,7 +3003,7 @@
       "factIds": [
         "F029"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3023,7 +3023,7 @@
       "factIds": [
         "F102"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3043,7 +3043,7 @@
       "factIds": [
         "F034"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3064,7 +3064,7 @@
         "F034",
         "F104"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3085,7 +3085,7 @@
       "factIds": [
         "F034"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3105,7 +3105,7 @@
       "factIds": [
         "F034"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3125,7 +3125,7 @@
       "factIds": [
         "F034"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3145,7 +3145,7 @@
       "factIds": [
         "F034"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3163,7 +3163,7 @@
       "text": "了解资产支持证券的概念及分类。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -3177,7 +3177,7 @@
       "text": "掌握国债的发行方式；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -3191,7 +3191,7 @@
       "text": "熟悉记账式国债和凭证式国债的承销程序；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -3205,7 +3205,7 @@
       "text": "掌握国债销售的价格和影响因素。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -3222,7 +3222,7 @@
         "F031",
         "F032"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -3244,7 +3244,7 @@
       "factIds": [
         "F105"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3264,7 +3264,7 @@
       "factIds": [
         "F105"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3285,7 +3285,7 @@
         "F105",
         "F102"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3307,7 +3307,7 @@
         "F105",
         "F102"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3326,7 +3326,7 @@
       "text": "了解短期融资券和中期票据的注册规则、承销的组织；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -3340,7 +3340,7 @@
       "text": "了解中小非金融企业集合票据的特点、偿债保障措施、评级要求、投资者保护机制。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -3357,7 +3357,7 @@
         "F102",
         "F105"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3378,7 +3378,7 @@
       "factIds": [
         "F102"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3399,7 +3399,7 @@
         "F035",
         "F106"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3421,7 +3421,7 @@
         "F035",
         "F106"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3442,7 +3442,7 @@
       "factIds": [
         "F036"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -3461,7 +3461,7 @@
       "text": "熟悉债券的开户、交易、清算、交收的概念及有关规定；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -3477,7 +3477,7 @@
       "factIds": [
         "F105"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3498,7 +3498,7 @@
         "F107",
         "F029"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3519,7 +3519,7 @@
       "factIds": [
         "F107"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3539,7 +3539,7 @@
       "factIds": [
         "F107"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3559,7 +3559,7 @@
       "factIds": [
         "F106"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3579,7 +3579,7 @@
       "factIds": [
         "F106"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3597,7 +3597,7 @@
       "text": "熟悉债券市场转托管的概念及条件；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -3611,7 +3611,7 @@
       "text": "了解债券市场互联互通与对外开放的政策。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -3627,7 +3627,7 @@
       "factIds": [
         "F037"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3647,7 +3647,7 @@
       "factIds": [
         "F037"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3668,7 +3668,7 @@
         "F038",
         "F108"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3689,7 +3689,7 @@
       "factIds": [
         "F109"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3709,7 +3709,7 @@
       "factIds": [
         "F036"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -3731,7 +3731,7 @@
         "F033",
         "F029"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3752,7 +3752,7 @@
       "factIds": [
         "F039"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3772,7 +3772,7 @@
       "factIds": [
         "F040"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -3794,7 +3794,7 @@
         "F044",
         "F110"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -3816,7 +3816,7 @@
       "factIds": [
         "F041"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -3837,7 +3837,7 @@
       "factIds": [
         "F110"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -3857,7 +3857,7 @@
       "factIds": [
         "F042"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -3879,7 +3879,7 @@
         "F041",
         "F043"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -3901,7 +3901,7 @@
       "factIds": [
         "F040"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -3923,7 +3923,7 @@
         "F040",
         "F111"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -3946,7 +3946,7 @@
         "F040",
         "F111"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -3966,7 +3966,7 @@
       "text": "熟悉基金市场参与主体；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -3982,7 +3982,7 @@
       "factIds": [
         "F111"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -4002,7 +4002,7 @@
       "factIds": [
         "F112"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -4022,7 +4022,7 @@
       "factIds": [
         "F112"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -4043,7 +4043,7 @@
         "F041",
         "F113"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4065,7 +4065,7 @@
       "factIds": [
         "F044"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4084,7 +4084,7 @@
       "text": "掌握申购、赎回费用及销售服务费；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -4100,7 +4100,7 @@
       "factIds": [
         "F041"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4121,7 +4121,7 @@
       "factIds": [
         "F041"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4142,7 +4142,7 @@
       "factIds": [
         "F045"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4163,7 +4163,7 @@
       "factIds": [
         "F045"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4184,7 +4184,7 @@
       "factIds": [
         "F045"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4205,7 +4205,7 @@
       "factIds": [
         "F046"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4227,7 +4227,7 @@
         "F040",
         "F111"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4249,7 +4249,7 @@
       "factIds": [
         "F114"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -4267,7 +4267,7 @@
       "text": "熟悉基金投资的税收以及投资者（包括个人和机构）投资基金的税收。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -4281,7 +4281,7 @@
       "text": "了解基金的投资理念与投资风格；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -4298,7 +4298,7 @@
         "F111",
         "F040"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4320,7 +4320,7 @@
       "factIds": [
         "F115"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -4340,7 +4340,7 @@
       "factIds": [
         "F116"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -4358,7 +4358,7 @@
       "text": "掌握我国基金监管机构和自律组织；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -4372,7 +4372,7 @@
       "text": "熟悉对基金机构的监管内容；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -4388,7 +4388,7 @@
       "factIds": [
         "F042"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4409,7 +4409,7 @@
       "factIds": [
         "F047"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4430,7 +4430,7 @@
       "factIds": [
         "F047"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4451,7 +4451,7 @@
       "factIds": [
         "F047"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4472,7 +4472,7 @@
       "factIds": [
         "F040"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4494,7 +4494,7 @@
         "F040",
         "F111"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4517,7 +4517,7 @@
         "F042",
         "F116"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4540,7 +4540,7 @@
         "F040",
         "F111"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4562,7 +4562,7 @@
       "factIds": [
         "F042"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4583,7 +4583,7 @@
       "factIds": [
         "F048"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -4604,7 +4604,7 @@
       "factIds": [
         "F048"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -4625,7 +4625,7 @@
       "factIds": [
         "F048"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -4646,7 +4646,7 @@
       "factIds": [
         "F048"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -4667,7 +4667,7 @@
       "factIds": [
         "F048"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_official"
@@ -4688,7 +4688,7 @@
       "factIds": [
         "F049"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4709,7 +4709,7 @@
       "factIds": [
         "F049"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4731,7 +4731,7 @@
         "F049",
         "F119"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4753,7 +4753,7 @@
       "factIds": [
         "F049"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4774,7 +4774,7 @@
       "factIds": [
         "F049"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4795,7 +4795,7 @@
       "factIds": [
         "F049"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4814,7 +4814,7 @@
       "text": "熟悉商品期货的概念及其分类；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -4828,7 +4828,7 @@
       "text": "了解商品期货市场的现状；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -4842,7 +4842,7 @@
       "text": "熟悉商品期权的概念、分类；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -4856,7 +4856,7 @@
       "text": "了解期货交易所上市的商品期货期权品种。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -4870,7 +4870,7 @@
       "text": "掌握金融期货的概念、分类、特征及其与远期交易的区别；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -4886,7 +4886,7 @@
       "factIds": [
         "F117"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -4904,7 +4904,7 @@
       "text": "熟悉中国金融期货交易所上市的期货产品及其交易规则。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -4920,7 +4920,7 @@
       "factIds": [
         "F052"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4942,7 +4942,7 @@
         "F052",
         "F120"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4965,7 +4965,7 @@
         "F052",
         "F118"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -4987,7 +4987,7 @@
       "factIds": [
         "F052"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -5006,7 +5006,7 @@
       "text": "了解场外期权产品。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -5020,7 +5020,7 @@
       "text": "了解金融远期合约的概念与分类；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -5036,7 +5036,7 @@
       "factIds": [
         "F049"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -5057,7 +5057,7 @@
       "factIds": [
         "F119"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5077,7 +5077,7 @@
       "factIds": [
         "F119"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5095,7 +5095,7 @@
       "text": "了解我国公司在海外发行存托凭证的情况；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -5111,7 +5111,7 @@
       "factIds": [
         "F049"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -5133,7 +5133,7 @@
         "F119",
         "F049"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook",
         "china_law"
@@ -5156,7 +5156,7 @@
         "F127",
         "F128"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5178,7 +5178,7 @@
         "F056",
         "F124"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5199,7 +5199,7 @@
       "factIds": [
         "F056"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5219,7 +5219,7 @@
       "factIds": [
         "F121"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5239,7 +5239,7 @@
       "factIds": [
         "F056"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5260,7 +5260,7 @@
         "F123",
         "F127"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5281,7 +5281,7 @@
       "factIds": [
         "F122"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5301,7 +5301,7 @@
       "factIds": [
         "F128"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5321,7 +5321,7 @@
       "factIds": [
         "F124"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5341,7 +5341,7 @@
       "factIds": [
         "F123"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5361,7 +5361,7 @@
       "factIds": [
         "F124"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5382,7 +5382,7 @@
         "F056",
         "F057"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5401,7 +5401,7 @@
       "text": "熟悉市场风险在业务中的暴露；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -5417,7 +5417,7 @@
       "factIds": [
         "F125"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5435,7 +5435,7 @@
       "text": "掌握市场风险应对中的限额管理、估值管理、对冲管理、绩效和激励管理。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -5452,7 +5452,7 @@
         "F056",
         "F058"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5474,7 +5474,7 @@
         "F058",
         "F126"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5493,7 +5493,7 @@
       "text": "掌握证券经营机构的信用风险；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -5510,7 +5510,7 @@
         "F126",
         "F056"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5531,7 +5531,7 @@
       "factIds": [
         "F058"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5551,7 +5551,7 @@
       "factIds": [
         "F058"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5571,7 +5571,7 @@
       "factIds": [
         "F126"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5592,7 +5592,7 @@
         "F124",
         "F056"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5614,7 +5614,7 @@
         "F127",
         "F059"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5635,7 +5635,7 @@
       "factIds": [
         "F127"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5656,7 +5656,7 @@
         "F056",
         "F059"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5677,7 +5677,7 @@
       "factIds": [
         "F059"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5697,7 +5697,7 @@
       "factIds": [
         "F060"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5718,7 +5718,7 @@
         "F060",
         "F128"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5739,7 +5739,7 @@
       "factIds": [
         "F129"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5760,7 +5760,7 @@
         "F129",
         "F127"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5782,7 +5782,7 @@
         "F129",
         "F128"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5801,7 +5801,7 @@
       "text": "了解证券公司风险管理体系建立与发展历程；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -5815,7 +5815,7 @@
       "text": "了解证券公司风险管理政策、机制与文化；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -5831,7 +5831,7 @@
       "factIds": [
         "F130"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official_textbook"
       ],
@@ -5849,7 +5849,7 @@
       "text": "了解法的概念与特征；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -5865,7 +5865,7 @@
       "factIds": [
         "L001"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -5883,7 +5883,7 @@
       "factIds": [
         "L071"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -5901,7 +5901,7 @@
       "text": "掌握公司的分类；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -5917,7 +5917,7 @@
       "factIds": [
         "L002"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -5937,7 +5937,7 @@
       "factIds": [
         "L072"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -5957,7 +5957,7 @@
       "factIds": [
         "L072"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -5977,7 +5977,7 @@
       "factIds": [
         "L003"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -5997,7 +5997,7 @@
       "factIds": [
         "L073"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6017,7 +6017,7 @@
       "factIds": [
         "L074"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6038,7 +6038,7 @@
         "L073",
         "L074"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6059,7 +6059,7 @@
       "factIds": [
         "L075"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6082,7 +6082,7 @@
         "L012",
         "L076"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6105,7 +6105,7 @@
       "factIds": [
         "L004"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -6123,7 +6123,7 @@
       "factIds": [
         "L004"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -6144,7 +6144,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6165,7 +6165,7 @@
       "text": "掌握上市公司组织机构的特别规定。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6179,7 +6179,7 @@
       "text": "熟悉国家出资公司组织机构的特别规定。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6195,7 +6195,7 @@
       "factIds": [
         "L005"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -6213,7 +6213,7 @@
       "factIds": [
         "L077"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6231,7 +6231,7 @@
       "text": "了解公司合并、分立；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6247,7 +6247,7 @@
       "factIds": [
         "L072"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6269,7 +6269,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6292,7 +6292,7 @@
         "L078",
         "L079"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6316,7 +6316,7 @@
         "L012",
         "L078"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6342,7 +6342,7 @@
         "L012",
         "L079"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6367,7 +6367,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6391,7 +6391,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6411,7 +6411,7 @@
       "text": "掌握证券法的修订要点；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6427,7 +6427,7 @@
       "factIds": [
         "L006"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6450,7 +6450,7 @@
         "L012",
         "L081"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6474,7 +6474,7 @@
         "L008",
         "L080"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6498,7 +6498,7 @@
         "L012",
         "L080"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6522,7 +6522,7 @@
         "L007",
         "L009"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6541,7 +6541,7 @@
       "text": "掌握证券上市的条件和终止上市交易的情形；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6559,7 +6559,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6584,7 +6584,7 @@
         "L010",
         "L012"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6609,7 +6609,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6634,7 +6634,7 @@
         "L012",
         "L082"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6657,7 +6657,7 @@
       "factIds": [
         "L011"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6679,7 +6679,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6704,7 +6704,7 @@
         "L012",
         "L083"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6730,7 +6730,7 @@
         "L012",
         "L084"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6755,7 +6755,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6777,7 +6777,7 @@
       "factIds": [
         "L013"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6795,7 +6795,7 @@
       "text": "熟悉设立基金管理公司的条件；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6812,7 +6812,7 @@
         "L013",
         "L008"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6833,7 +6833,7 @@
       "factIds": [
         "L013"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6851,7 +6851,7 @@
       "text": "熟悉基金公开募集与非公开募集的区别；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6865,7 +6865,7 @@
       "text": "熟悉公开募集基金运作的方式；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6879,7 +6879,7 @@
       "text": "熟悉非公开募集基金的合格投资者的要求；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6893,7 +6893,7 @@
       "text": "了解非公开募集基金管理人的登记及非公开募集基金的备案要求。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6911,7 +6911,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6931,7 +6931,7 @@
       "text": "熟悉期货和衍生品法的适用范围、调整对象及相关定义。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6945,7 +6945,7 @@
       "text": "掌握期货交易和衍生品交易的一般规定、期货合约的上市注册、期货交易的基本制度、衍生品交易的审批机制、衍生品交易的基本制度；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6961,7 +6961,7 @@
       "factIds": [
         "L014"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -6979,7 +6979,7 @@
       "text": "熟悉期货交易者适当性管理制度、对交易者的保护措施。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -6993,7 +6993,7 @@
       "text": "了解期货公司的业务许可制度及许可范围；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -7009,7 +7009,7 @@
       "factIds": [
         "L083"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7027,7 +7027,7 @@
       "text": "了解跨境监督管理与协作。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -7045,7 +7045,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7065,7 +7065,7 @@
       "text": "熟悉证券公司依法审慎经营、履行诚信义务的规定以及证券公司股东和实际控制人的禁止行为；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -7079,7 +7079,7 @@
       "text": "了解证券公司的设立条件、股东出资规定及成为证券公司主要股东、实际控制人资格的禁止性规定；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -7097,7 +7097,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7121,7 +7121,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7145,7 +7145,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7165,7 +7165,7 @@
       "text": "掌握证券公司及其分支机构业务经营的约束机制；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -7183,7 +7183,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7207,7 +7207,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7231,7 +7231,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7251,7 +7251,7 @@
       "text": "了解证券公司主要违法违规情形及其处罚措施。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -7269,7 +7269,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7293,7 +7293,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7313,7 +7313,7 @@
       "text": "了解证券公司风险处置的监督协调机制。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -7327,7 +7327,7 @@
       "text": "熟悉私募投资基金监督管理条例的适用范围、基本原则、诚实勤勉义务与财产独立性；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -7341,7 +7341,7 @@
       "text": "了解私募基金管理人的主体性质、准入条件、负面情形、登记备案、职责；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -7360,7 +7360,7 @@
         "L012",
         "L013"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7385,7 +7385,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7409,7 +7409,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7429,7 +7429,7 @@
       "text": "了解注销私募基金管理人登记的情形、困境基金的处理。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -7447,7 +7447,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7471,7 +7471,7 @@
         "L009",
         "L012"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7494,7 +7494,7 @@
         "L015",
         "L016"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -7513,7 +7513,7 @@
       "factIds": [
         "L085"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7534,7 +7534,7 @@
         "L093",
         "L090"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7556,7 +7556,7 @@
         "L015",
         "L016"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -7575,7 +7575,7 @@
       "factIds": [
         "L016"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -7594,7 +7594,7 @@
         "L086",
         "L100"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7615,7 +7615,7 @@
       "factIds": [
         "L016"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -7634,7 +7634,7 @@
         "L015",
         "L016"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -7654,7 +7654,7 @@
         "L017",
         "L090"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7676,7 +7676,7 @@
         "L017",
         "L090"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7697,7 +7697,7 @@
       "factIds": [
         "L090"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7718,7 +7718,7 @@
         "L017",
         "L090"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7739,7 +7739,7 @@
       "factIds": [
         "L018"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -7757,7 +7757,7 @@
       "factIds": [
         "L018"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -7776,7 +7776,7 @@
         "L015",
         "L016"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -7796,7 +7796,7 @@
         "L018",
         "L093"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7817,7 +7817,7 @@
       "factIds": [
         "L091"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7837,7 +7837,7 @@
       "factIds": [
         "L091"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7859,7 +7859,7 @@
         "L016",
         "L019"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -7880,7 +7880,7 @@
         "L019",
         "L092"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7901,7 +7901,7 @@
       "factIds": [
         "L019"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -7919,7 +7919,7 @@
       "factIds": [
         "L019"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -7937,7 +7937,7 @@
       "factIds": [
         "L020"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -7956,7 +7956,7 @@
         "L020",
         "L093"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -7978,7 +7978,7 @@
         "L092",
         "L019"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8000,7 +8000,7 @@
         "L093",
         "L096"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8021,7 +8021,7 @@
       "factIds": [
         "L096"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8042,7 +8042,7 @@
         "L096",
         "L095"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8063,7 +8063,7 @@
       "factIds": [
         "L094"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8084,7 +8084,7 @@
         "L015",
         "L016"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -8101,7 +8101,7 @@
       "text": "熟悉市场风险识别、评估、限额管理、监测、应对及报告的相关要求；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -8118,7 +8118,7 @@
         "L095",
         "L096"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8139,7 +8139,7 @@
       "factIds": [
         "L023"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         0.25
@@ -8157,7 +8157,7 @@
       "factIds": [
         "L095"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8177,7 +8177,7 @@
       "factIds": [
         "L095"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8198,7 +8198,7 @@
         "L095",
         "L094"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8217,7 +8217,7 @@
       "text": "熟悉声誉约束、评价及问责机制；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -8233,7 +8233,7 @@
       "factIds": [
         "L096"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8251,7 +8251,7 @@
       "text": "熟悉操作风险基本管理机制、专项领域操作风险管理机制及主要业务常见操作风险管理措施。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -8268,7 +8268,7 @@
         "L097",
         "L093"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8291,7 +8291,7 @@
         "L016",
         "L097"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8313,7 +8313,7 @@
       "factIds": [
         "L021"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8331,7 +8331,7 @@
       "factIds": [
         "L021"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8349,7 +8349,7 @@
       "factIds": [
         "L022"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8367,7 +8367,7 @@
       "factIds": [
         "L098"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8387,7 +8387,7 @@
       "factIds": [
         "L022"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8405,7 +8405,7 @@
       "factIds": [
         "L098"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8425,7 +8425,7 @@
       "factIds": [
         "L099"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8445,7 +8445,7 @@
       "factIds": [
         "L022"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8463,7 +8463,7 @@
       "factIds": [
         "L021"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8482,7 +8482,7 @@
         "L015",
         "L016"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -8501,7 +8501,7 @@
       "factIds": [
         "L016"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8521,7 +8521,7 @@
         "L016",
         "L023"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -8541,7 +8541,7 @@
       "factIds": [
         "L100"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8561,7 +8561,7 @@
       "factIds": [
         "L101"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8582,7 +8582,7 @@
         "L096",
         "L102"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8603,7 +8603,7 @@
       "factIds": [
         "L102"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8624,7 +8624,7 @@
         "L096",
         "L102"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8646,7 +8646,7 @@
         "L018",
         "L096"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8668,7 +8668,7 @@
         "L102",
         "L085"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8690,7 +8690,7 @@
         "L096",
         "L102"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8709,7 +8709,7 @@
       "text": "了解信息技术服务机构为证券基金业务活动提供信息技术服务的相关规定；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -8726,7 +8726,7 @@
         "L096",
         "L102"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8747,7 +8747,7 @@
       "factIds": [
         "L025"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8765,7 +8765,7 @@
       "factIds": [
         "L025"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8783,7 +8783,7 @@
       "factIds": [
         "L024"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8802,7 +8802,7 @@
         "L025",
         "L103"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8823,7 +8823,7 @@
       "factIds": [
         "L025"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8841,7 +8841,7 @@
       "factIds": [
         "L026"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8859,7 +8859,7 @@
       "factIds": [
         "L029"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8878,7 +8878,7 @@
         "L027",
         "L029"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -8897,7 +8897,7 @@
       "factIds": [
         "L027"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8915,7 +8915,7 @@
       "factIds": [
         "L030"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8933,7 +8933,7 @@
       "factIds": [
         "L029"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -8953,7 +8953,7 @@
         "L029",
         "L104"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8977,7 +8977,7 @@
         "L029",
         "L104"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -8999,7 +8999,7 @@
       "factIds": [
         "L026"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -9017,7 +9017,7 @@
       "factIds": [
         "L105"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9039,7 +9039,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9060,7 +9060,7 @@
         "L031",
         "L032"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9080,7 +9080,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9100,7 +9100,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9121,7 +9121,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9143,7 +9143,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9165,7 +9165,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9186,7 +9186,7 @@
         "L031",
         "L106"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9209,7 +9209,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9230,7 +9230,7 @@
         "L034",
         "L039"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9249,7 +9249,7 @@
       "factIds": [
         "L034"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -9269,7 +9269,7 @@
         "L033",
         "L034"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9289,7 +9289,7 @@
       "factIds": [
         "L035"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -9307,7 +9307,7 @@
       "factIds": [
         "L035"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -9327,7 +9327,7 @@
         "L033",
         "L107"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9351,7 +9351,7 @@
         "L033",
         "L107"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9374,7 +9374,7 @@
         "L035",
         "L108"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9396,7 +9396,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9417,7 +9417,7 @@
         "L037",
         "L039"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9438,7 +9438,7 @@
         "L036",
         "L037"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9458,7 +9458,7 @@
         "L036",
         "L037"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9479,7 +9479,7 @@
         "L037",
         "L109"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9501,7 +9501,7 @@
       "factIds": [
         "L109"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9524,7 +9524,7 @@
         "L036",
         "L037"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9546,7 +9546,7 @@
         "L038",
         "L046"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         0.28,
@@ -9567,7 +9567,7 @@
         "L037",
         "L110"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9590,7 +9590,7 @@
         "L039",
         "L110"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9611,7 +9611,7 @@
       "factIds": [
         "L110"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9631,7 +9631,7 @@
       "factIds": [
         "L111"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9651,7 +9651,7 @@
       "factIds": [
         "L035"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -9670,7 +9670,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9689,7 +9689,7 @@
       "factIds": [
         "L039"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -9707,7 +9707,7 @@
       "factIds": [
         "L039"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -9725,7 +9725,7 @@
       "factIds": [
         "L039"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -9743,7 +9743,7 @@
       "factIds": [
         "L039"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -9762,7 +9762,7 @@
         "L045",
         "L112"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9783,7 +9783,7 @@
       "factIds": [
         "L112"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9805,7 +9805,7 @@
         "L033",
         "L039"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9826,7 +9826,7 @@
         "L040",
         "L041"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9847,7 +9847,7 @@
         "L040",
         "L041"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9869,7 +9869,7 @@
         "L040",
         "L041"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9890,7 +9890,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -9911,7 +9911,7 @@
         "L033",
         "L113"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9934,7 +9934,7 @@
         "L113",
         "L040"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9955,7 +9955,7 @@
       "factIds": [
         "L042"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -9974,7 +9974,7 @@
         "L042",
         "L114"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -9996,7 +9996,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10016,7 +10016,7 @@
         "L042",
         "L114"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10038,7 +10038,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10058,7 +10058,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10080,7 +10080,7 @@
         "L040",
         "L041"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10103,7 +10103,7 @@
         "L033",
         "L043"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10126,7 +10126,7 @@
         "L043",
         "L115"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10151,7 +10151,7 @@
         "L033",
         "L043"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10171,7 +10171,7 @@
       "factIds": [
         "L044"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -10189,7 +10189,7 @@
       "factIds": [
         "L044"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -10207,7 +10207,7 @@
       "factIds": [
         "L044"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         0.25
@@ -10226,7 +10226,7 @@
         "L029",
         "L044"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10247,7 +10247,7 @@
         "L033",
         "L045"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10269,7 +10269,7 @@
         "L033",
         "L045"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10289,7 +10289,7 @@
       "factIds": [
         "L116"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10310,7 +10310,7 @@
         "L032",
         "L033"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10330,7 +10330,7 @@
         "L117",
         "L116"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10351,7 +10351,7 @@
       "factIds": [
         "L117"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10372,7 +10372,7 @@
         "L036",
         "L117"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10394,7 +10394,7 @@
         "L105",
         "L118"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10415,7 +10415,7 @@
       "factIds": [
         "L118"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10435,7 +10435,7 @@
       "factIds": [
         "L046"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -10454,7 +10454,7 @@
         "L116",
         "L044"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10477,7 +10477,7 @@
         "L048",
         "L050"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10500,7 +10500,7 @@
         "L050",
         "L123"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10526,7 +10526,7 @@
         "L049",
         "L050"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10550,7 +10550,7 @@
         "L050",
         "L119"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10576,7 +10576,7 @@
         "L050",
         "L120"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10601,7 +10601,7 @@
         "L048",
         "L050"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10623,7 +10623,7 @@
         "L048",
         "L050"
       ],
-      "questionCount": 9,
+      "knowledgePointCount": 3,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10646,7 +10646,7 @@
         "L050",
         "L052"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10671,7 +10671,7 @@
         "L051",
         "L122"
       ],
-      "questionCount": 15,
+      "knowledgePointCount": 5,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10698,7 +10698,7 @@
         "L050",
         "L053"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10722,7 +10722,7 @@
         "L050",
         "L054"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -10746,7 +10746,7 @@
         "L050",
         "L121"
       ],
-      "questionCount": 12,
+      "knowledgePointCount": 4,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10767,7 +10767,7 @@
       "text": "掌握积极培育中国特色金融文化相关内容；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -10784,7 +10784,7 @@
         "L055",
         "L060"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10806,7 +10806,7 @@
         "L055",
         "L060"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10825,7 +10825,7 @@
       "text": "了解证券公司文化建设实践评估的指标、结果及应用。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -10842,7 +10842,7 @@
         "L056",
         "L060"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10864,7 +10864,7 @@
         "L056",
         "L060"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10886,7 +10886,7 @@
         "L056",
         "L060"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10908,7 +10908,7 @@
         "L056",
         "L060"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10930,7 +10930,7 @@
         "L056",
         "L060"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -10951,7 +10951,7 @@
       "factIds": [
         "L057"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -10969,7 +10969,7 @@
       "factIds": [
         "L057"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -10987,7 +10987,7 @@
       "factIds": [
         "L055"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         0.3
@@ -11005,7 +11005,7 @@
       "factIds": [
         "L058"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -11021,7 +11021,7 @@
       "text": "掌握市场禁入的类型、规则及禁入信息的发布、记录。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -11037,7 +11037,7 @@
       "factIds": [
         "L059"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -11056,7 +11056,7 @@
         "L059",
         "L130"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11077,7 +11077,7 @@
       "factIds": [
         "L059"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -11095,7 +11095,7 @@
       "factIds": [
         "L059"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -11113,7 +11113,7 @@
       "factIds": [
         "L059"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -11129,7 +11129,7 @@
       "text": "熟悉分支机构负责人范围、任职条件、备案及公示的相关要求；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -11143,7 +11143,7 @@
       "text": "熟悉董事、高级管理人员及分支机构负责人、部门负责人的履职限制、审计要求及薪酬递延机制。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -11159,7 +11159,7 @@
       "factIds": [
         "L130"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11179,7 +11179,7 @@
       "factIds": [
         "L130"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11200,7 +11200,7 @@
         "L130",
         "L059"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11222,7 +11222,7 @@
         "L130",
         "L059"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11243,7 +11243,7 @@
       "factIds": [
         "L130"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11264,7 +11264,7 @@
         "L130",
         "L059"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11285,7 +11285,7 @@
       "factIds": [
         "L124"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11305,7 +11305,7 @@
       "factIds": [
         "L125"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11325,7 +11325,7 @@
       "factIds": [
         "L124"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11343,7 +11343,7 @@
       "text": "掌握“十五五”规划的主要内容及落实要求；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -11357,7 +11357,7 @@
       "text": "熟悉《中国共产党廉洁自律准则》中廉洁自律规范的要求；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -11371,7 +11371,7 @@
       "text": "掌握《中国共产党廉洁自律准则》中党员领导干部廉洁自律规范要求（仅限高管）；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -11387,7 +11387,7 @@
       "factIds": [
         "L126"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11407,7 +11407,7 @@
       "factIds": [
         "L127"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11427,7 +11427,7 @@
       "factIds": [
         "L128"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11447,7 +11447,7 @@
       "factIds": [
         "L127"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11465,7 +11465,7 @@
       "text": "熟悉《中国共产党问责条例》中问责的情形、方式及程序（高管考试要求为掌握）；",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -11479,7 +11479,7 @@
       "text": "掌握《国有企业领导人员廉洁从业规定》中国有企业领导人员廉洁从业行为规范及违反规定行为的处理规定。",
       "status": "unmapped",
       "factIds": [],
-      "questionCount": 0,
+      "knowledgePointCount": 0,
       "answerBasisTypes": [],
       "matchScores": []
     },
@@ -11496,7 +11496,7 @@
         "L061",
         "L062"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -11515,7 +11515,7 @@
       "factIds": [
         "L063"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -11533,7 +11533,7 @@
       "factIds": [
         "L064"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -11551,7 +11551,7 @@
       "factIds": [
         "L064"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -11569,7 +11569,7 @@
       "factIds": [
         "L065"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -11587,7 +11587,7 @@
       "factIds": [
         "L129"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [
         "china_official"
       ],
@@ -11607,7 +11607,7 @@
       "factIds": [
         "L066"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -11625,7 +11625,7 @@
       "factIds": [
         "L067"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1
@@ -11644,7 +11644,7 @@
         "L068",
         "L069"
       ],
-      "questionCount": 6,
+      "knowledgePointCount": 2,
       "answerBasisTypes": [],
       "matchScores": [
         1,
@@ -11663,7 +11663,7 @@
       "factIds": [
         "L070"
       ],
-      "questionCount": 3,
+      "knowledgePointCount": 1,
       "answerBasisTypes": [],
       "matchScores": [
         1

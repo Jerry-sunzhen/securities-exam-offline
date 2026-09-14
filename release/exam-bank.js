@@ -28,7 +28,7 @@
   }
   function selectCases(pool, count) {
     const groups = grouped(pool.filter((q) => q.type === "case" && q.caseMaterial));
-    const complete = groups.filter((g) => g.length === g[0].caseGroupSize && g.length >= 4);
+    const complete = groups.filter((g) => g.length === g[0].caseGroupSize);
     const preferred = [...shuffled(complete.filter((g) => imported(g[0]))), ...shuffled(complete.filter((g) => !imported(g[0])))];
     const choices = new Map([[0, []]]);
     for (const group of preferred) {

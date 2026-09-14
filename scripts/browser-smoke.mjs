@@ -238,7 +238,7 @@ await page.waitForSelector('[data-action="start-practice"]');
 await page.click('[data-action="start-case-practice"]');
 await page.waitForSelector(".case-material strong");
 const casePracticeHeader = await page.$eval(".case-material strong", (node) => node.textContent || "");
-if (!casePracticeHeader.includes("第 1/4 问")) throw new Error(`Case practice did not start at a complete pack: ${casePracticeHeader}`);
+if (!/第 1\/\d+ 问/.test(casePracticeHeader)) throw new Error(`Case practice did not start at a complete pack: ${casePracticeHeader}`);
 await page.click('[data-action="exit-session"]');
 await page.waitForSelector('[data-nav="practice"]');
 await page.click('[data-nav="practice"]');

@@ -161,7 +161,8 @@
           <div class="sidebar-footer">
             <strong>${escapeHtml(questionData.meta?.factCount || "—")} 个大纲核对知识单元</strong>
             ${escapeHtml(questionData.meta?.questionCount || questionData.questions.length)} 道题型练习<br />
-            ${escapeHtml(questionData.meta?.casePackCount || 0)} 个综合案例包 · ${escapeHtml(questionData.meta?.caseQuestionCount || 0)} 问<br />
+            ${escapeHtml(questionData.meta?.caseGroupCount || 0)} 组综合案例 · ${escapeHtml(questionData.meta?.caseQuestionCount || 0)} 问<br />
+            每道题绑定复习资料页码<br />
             官方大纲版本：${escapeHtml(questionData.meta?.outlineVersion || "2025 + 纪法2026")}<br />
             内容核验截止：${escapeHtml(questionData.meta?.contentCutoff || "2026-08-18")}
           </div>
@@ -349,7 +350,7 @@
           </section>
           <section class="card card-body">
             <h3 class="card-title">本版本说明</h3>
-            <div class="notice">当前题库包含 ${questionData.meta?.authoredQuestionCount || 780} 道原创基础题，以及 ${questionData.meta?.importedQuestionCount || 0} 道历年整理题（去重后），共 ${questionData.questions.filter((q) => q.examEligible !== false).length} 道可练习题；待核验题不会进入默认练习。多选题采用“全部选对才得分”的本地规则。</div>
+            <div class="notice">题库只保留本地历年整理题：共 ${questionData.meta?.importedQuestionCount || 0} 道（去重后），其中 ${questionData.meta?.eligibleQuestionCount || 0} 道进入练习与模考；待核验题不会进入默认练习。每道题都绑定到复习资料的具体页码，答完题可以在解析区直接打开对应页。多选题采用“全部选对才得分”的本地规则。</div>
             <div class="profile-status">
               <div class="status-row"><span>主大纲</span><strong>2025 版，24 页</strong></div>
               <div class="status-row"><span>补充范围</span><strong>纪法知识大纲 2026</strong></div>
@@ -697,8 +698,8 @@
             </div>
             <div class="field"><label>题型</label><div class="checkbox-row">${[["single","单选"],["multiple","多选"],["judgment","判断"],["case","综合材料"]].map(([id,label]) => `<label class="check-chip"><input type="checkbox" data-practice-type="${id}" ${state.practiceTypes.has(id) ? "checked" : ""} />${label}</label>`).join("")}</div></div>
             <div class="field"><label>题目数量</label><select class="select" id="practice-count">${countChoices.map((count) => `<option value="${count}" ${state.practiceCount === count ? "selected" : ""}>${caseOnly ? `${count / 4} 组 · ` : ""}${count} 题</option>`).join("")}</select></div>
-            <div class="notice">当前条件共有 ${available} 道可用题。${caseOnly && state.practiceChapter === "all" ? "综合材料专项会按完整题组连续出题，同一材料连续回答 4 问。" : "章节练习会即时显示答案、解析、大纲原文和引用出处。"}</div>
-            <div class="action-group"><button class="button" data-action="start-practice" ${available ? "" : "disabled"}>开始章节练习</button><button class="button secondary" data-action="start-case-practice">综合案例专项 · 4组16问</button></div>
+            <div class="notice">当前条件共有 ${available} 道可用题。${caseOnly && state.practiceChapter === "all" ? "综合材料专项按完整材料出题，同一段材料下的小问会连续作答。" : "章节练习会即时显示答案、解析、大纲原文和引用出处。"}</div>
+            <div class="action-group"><button class="button" data-action="start-practice" ${available ? "" : "disabled"}>开始章节练习</button><button class="button secondary" data-action="start-case-practice">综合案例专项 · 按材料出题</button></div>
           </div>
         </section>
         <section class="card card-body">
@@ -801,7 +802,7 @@
             <li>如果两边都产生了记录，使用“合并另一份档案”，不要直接覆盖。</li>
           </ol>
           <h3 class="card-title mt-22-safe">内容与版权</h3>
-          <p class="content-note">本工具仅供个人非商业学习。内置大纲原件版权归发布机构；题目为依据公开范围原创，不复制商业题库，不宣称官方题库或真题。</p>
+          <p class="content-note">本工具仅供个人非商业学习。内置大纲原件、统编教材与备考笔记版权归原发布机构；题目来自本地历年试题整理资料，按原资料保存答案与解析，不宣称官方题库或真题。</p>
         </section>
       </div>`;
   }
@@ -1052,10 +1053,22 @@
   }
 
   function renderImportedLinks(question) {
-    if (!question?.bookLinks?.length && !question?.knowledgeLinks?.length) return "";
-    const books = (question.bookLinks || []).map((link) => `<li>教材第 ${escapeHtml(String(link.page))} 页（自动匹配，相关度 ${escapeHtml(String(link.score))}）</li>`).join("");
-    const points = (question.knowledgeLinks || []).map((link) => `<li>${escapeHtml(link.topic)}（自动关联，相关度 ${escapeHtml(String(link.score))}）</li>`).join("");
-    return `<div class="imported-links"><strong>历年题教材定位（自动匹配）</strong><ul>${books}${points}</ul><small>关联结果用于定位复习，尚未逐题人工确认，不作为答案核验结论。</small></div>`;
+    const links = question?.bookLinks || [];
+    const points = question?.knowledgeLinks || [];
+    if (!links.length && !points.length) return "";
+    const items = links.map((link) => {
+      const page = escapeHtml(String(link.page));
+      const title = escapeHtml(link.sourceTitle || link.sourceLabel || "复习资料");
+      const badge = link.reviewStatus === "verified"
+        ? '<span class="tag binding-verified">教材定位</span>'
+        : '<span class="tag binding-suggested">自动匹配</span>';
+      const cross = link.crossSubject ? '<span class="tag binding-cross">另一科笔记</span>' : "";
+      const open = link.localPath ? `<a href="${escapeHtml(link.localPath)}#page-${page}" target="_blank">打开第 ${page} 页</a>` : "";
+      const quote = link.quote ? `<details class="binding-quote"><summary>查看匹配原文</summary><blockquote>${escapeHtml(link.quote.slice(0, 300))}${link.quote.length > 300 ? "…" : ""}</blockquote></details>` : "";
+      return `<li><div class="binding-head"><strong>${title}</strong><span class="binding-page">第 ${page} 页</span>${badge}${cross}</div>${open}${quote}</li>`;
+    }).join("");
+    const pointsHtml = points.length ? `<li class="binding-points"><div class="binding-head"><strong>关联知识点</strong></div><div class="binding-point-list">${points.map((link) => `<span>${escapeHtml(link.topic)}</span>`).join("")}</div></li>` : "";
+    return `<div class="imported-links"><strong>教材与笔记出处</strong><ul>${items}${pointsHtml}</ul><small>每道题都会绑定到可回查的复习资料页码，点开即可核对原文；「教材定位」指按知识点在教材中的页码摘录原文，「自动匹配」由文本相似度给出。两者都只用于定位复习，不代表答案经官方核对。</small></div>`;
   }
 
   function renderScopeReference(citation) {

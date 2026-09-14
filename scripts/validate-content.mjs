@@ -19,14 +19,21 @@ for (let index = 1; index < historicalLawTextbookParts.length; index += 2) {
   historicalLawTextbookPages.set(Number(historicalLawTextbookParts[index]), historicalLawTextbookParts[index + 1].trim());
 }
 const chapterIds = new Set(payload.chapters.map((item) => item.id));
+const materialPages = new Map();
+for (const source of payload.meta?.materialSources || []) {
+  const text = readFileSync(resolve(root, source.localTextPath.replace(/^\.\//, "")), "utf8");
+  const pages = new Map();
+  const parts = text.split(/^===== PDF 第 (\d+) 页 =====\s*$/m);
+  for (let index = 1; index < parts.length; index += 2) pages.set(Number(parts[index]), parts[index + 1]);
+  materialPages.set(source.id, { source, pages });
+}
 const ids = new Set();
-const authoredQuestions = payload.questions.filter((question) => question.verificationStatus === "outline_checked");
 const importedQuestions = payload.questions.filter((question) => question.verificationStatus === "source_transcribed");
+if (importedQuestions.length !== payload.questions.length) errors.push("题库中不应再包含非历年整理的原创题");
 const errors = [];
 const warnings = [];
-const answerPositions = { A: 0, B: 0, C: 0, D: 0 };
 const multiCombinations = new Map();
-const factCounts = new Map();
+const factIdSet = new Set(payload.knowledgePoints.map((point) => point.id));
 const caseGroups = new Map();
 const allowedCitationKinds = new Set(["scope", "authority", "textbook"]);
 const allowedSourceClasses = new Set(["china_law", "china_official", "china_official_textbook", "international_standard", "general_textbook", "historical_exam_textbook"]);
@@ -113,39 +120,6 @@ if (!Array.isArray(payload.knowledgePoints) || payload.knowledgePoints.length !=
   }
 }
 
-for (const question of authoredQuestions) {
-  if (ids.has(question.id)) errors.push(`duplicate id ${question.id}`);
-  ids.add(question.id);
-  if (!chapterIds.has(question.chapterId)) errors.push(`${question.id}: unknown chapter`);
-  if (!question.factId) errors.push(`${question.id}: missing factId`);
-  factCounts.set(question.factId, (factCounts.get(question.factId) || 0) + 1);
-  if (question.verificationStatus !== "outline_checked") errors.push(`${question.id}: invalid verification status`);
-  if (!question.stem || !question.explanation) errors.push(`${question.id}: missing stem/explanation`);
-  if (!Array.isArray(question.options) || question.options.length < 2) errors.push(`${question.id}: invalid options`);
-  const optionIds = new Set(question.options.map((option) => option.id));
-  if (optionIds.size !== question.options.length) errors.push(`${question.id}: duplicate option ids`);
-  if (new Set(question.options.map((option) => option.text.trim())).size !== question.options.length) warnings.push(`${question.id}: duplicate option text`);
-  if (!question.correctOptionIds.length || question.correctOptionIds.some((id) => !optionIds.has(id))) errors.push(`${question.id}: invalid answers`);
-  if (question.type === "single" || question.type === "case") {
-    if (question.correctOptionIds.length !== 1) errors.push(`${question.id}: single/case must have one answer`);
-    else answerPositions[question.correctOptionIds[0]] += 1;
-  }
-  if (question.type === "case") {
-    if (!question.caseMaterial || !question.caseGroupId || !question.caseGroupTitle || !question.caseOrder || !question.caseGroupSize) errors.push(`${question.id}: incomplete case-pack metadata`);
-    const group = caseGroups.get(question.caseGroupId) || [];
-    group.push(question); caseGroups.set(question.caseGroupId, group);
-  } else if (question.caseGroupId || question.caseMaterial) {
-    errors.push(`${question.id}: non-case question has case-pack metadata`);
-  }
-  if (question.type === "multiple") {
-    if (question.correctOptionIds.length < 2) errors.push(`${question.id}: multiple needs >=2 answers`);
-    const combination = [...question.correctOptionIds].sort().join("");
-    multiCombinations.set(combination, (multiCombinations.get(combination) || 0) + 1);
-  }
-  if (!question.citations?.length) errors.push(`${question.id}: missing citation`);
-  for (const citation of question.citations || []) validateCitation(citation, question.id);
-}
-
 for (const question of importedQuestions) {
   if (ids.has(question.id)) errors.push(`duplicate imported id ${question.id}`);
   ids.add(question.id);
@@ -156,16 +130,34 @@ for (const question of importedQuestions) {
   if (!Array.isArray(question.correctOptionIds) || !question.correctOptionIds.length) errors.push(`${question.id}: imported answer missing`);
   if (question.examEligible !== false && question.correctOptionIds.some((id) => !question.options.some((option) => option.id === id))) errors.push(`${question.id}: imported answer not in options`);
   if (!question.origins?.length || !question.origins[0].sourceId) errors.push(`${question.id}: imported source provenance missing`);
-  if (!question.knowledgeLinks?.length || !question.bookLinks?.length) warnings.push(`${question.id}: automatic book/knowledge mapping incomplete`);
+  if (question.type === "case") {
+    if (!question.caseMaterial || !question.caseGroupId || !question.caseOrder || !question.caseGroupSize) errors.push(`${question.id}: incomplete case metadata`);
+    const group = caseGroups.get(question.caseGroupId) || [];
+    group.push(question);
+    caseGroups.set(question.caseGroupId, group);
+  } else if (question.caseGroupId && question.caseMaterial) {
+    errors.push(`${question.id}: non-case question carries case metadata`);
+  }
+  if (!question.knowledgeLinks?.length) warnings.push(`${question.id}: knowledge point mapping missing`);
+  if (!question.bookLinks?.length) errors.push(`${question.id}: 缺少教材／笔记出处绑定`);
+  for (const link of question.bookLinks || []) {
+    if (!link.sourceId || !link.localPath) errors.push(`${question.id}: 出处绑定缺少来源信息`);
+    const material = materialPages.get(link.sourceId);
+    if (!material) { errors.push(`${question.id}: 出处绑定引用了未知来源 ${link.sourceId}`); continue; }
+    if (!Number.isInteger(link.page) || link.page < 1 || link.page > material.source.pageCount) errors.push(`${question.id}: 出处页码 ${link.page} 超出 ${link.sourceId} 范围`);
+    if (!link.quote || link.quote.replace(/\s+/g, "").length < 20) errors.push(`${question.id}: 出处绑定缺少可核对原文`);
+    const pageText = material.pages.get(link.page) || "";
+    if (link.quote && !pageText.replace(/\s+/g, "").includes(link.quote.replace(/\s+/g, ""))) errors.push(`${question.id}: 出处原文与 ${link.sourceId} 第 ${link.page} 页不一致`);
+    if (!new Set(["verified", "suggested"]).has(link.reviewStatus)) errors.push(`${question.id}: 出处绑定核验状态无效`);
+    if (!new Set(["notes", "textbook"]).has(link.kind)) errors.push(`${question.id}: 出处绑定类型无效`);
+    if (!existsSync(resolve(root, link.localPath.replace(/^\.\//, "")))) errors.push(`${question.id}: 出处阅读文件不存在 ${link.localPath}`);
+  }
+  if (!(question.bookLinks || []).some((link) => link.kind === "notes")) errors.push(`${question.id}: 缺少备考笔记出处`);
 }
 
-for (const [factId, count] of factCounts) {
-  if (count !== 3) errors.push(`${factId}: expected 3 question variants, got ${count}`);
-}
-const positionValues = Object.values(answerPositions);
-if (Math.max(...positionValues) - Math.min(...positionValues) > 15) errors.push(`unbalanced single answer positions ${JSON.stringify(answerPositions)}`);
-if (multiCombinations.size < 6) errors.push("multiple choice answer combinations are too concentrated");
-if (Math.max(...multiCombinations.values()) > payload.questions.filter((q) => q.type === "multiple").length * 0.3) errors.push("one multiple answer combination exceeds 30%");
+const multipleTotal = payload.questions.filter((q) => q.type === "multiple").length;
+if (multiCombinations.size < 6) warnings.push("multiple choice answer combinations are concentrated");
+if (multipleTotal && Math.max(...multiCombinations.values()) > multipleTotal * 0.3) warnings.push("one multiple answer combination exceeds 30%");
 
 const normalized = new Map();
 for (const question of payload.questions) {
@@ -182,32 +174,34 @@ for (const [type, items] of Object.entries(typeCounts)) console.log(`  type ${ty
 console.log(`Outline pages: ${outline.pages.length}; TOC items: ${outline.toc.length}`);
 console.log(`Warnings: ${warnings.length}`);
 if (warnings.length) console.log(warnings.slice(0, 20).map((item) => `  WARN ${item}`).join("\n"));
-if (authoredQuestions.length !== payload.meta.factCount * 3 || payload.meta.authoredQuestionCount !== authoredQuestions.length) {
-  errors.push(`authored question metadata must describe exactly three variants per fact (${payload.meta.factCount} facts / ${authoredQuestions.length} questions)`);
-}
-if (payload.questions.length < 720) errors.push("question count must contain the complete authored banks");
+if (payload.meta.questionCount !== payload.questions.length || payload.meta.importedQuestionCount !== payload.questions.length) errors.push("question count metadata is stale");
+if (payload.meta.eligibleQuestionCount !== payload.questions.filter((q) => q.examEligible !== false).length) errors.push("eligible question metadata is stale");
+if (payload.questions.length < 2000) errors.push("question bank must keep the imported past-exam records");
+if (payload.meta.materialBinding?.boundQuestionCount !== payload.questions.length) errors.push("material binding metadata is stale");
+if (payload.meta.materialBinding?.notesBoundQuestionCount !== payload.questions.length) errors.push("every question must bind to a study-note page");
 for (const subject of payload.subjects) {
-  const subjectFacts = new Set(payload.questions.filter((q) => q.subjectId === subject.id).map((q) => q.factId));
-  if (subjectFacts.size < 120) errors.push(`${subject.id}: needs at least 120 fact groups for a 120-question unique-fact exam`);
-  const mockFactIds = [...subjectFacts].slice(0, 120);
-  if (mockFactIds.length !== 120 || new Set(mockFactIds).size !== 120) errors.push(`${subject.id}: cannot form a 120-question unique-fact exam`);
-  if (payload.meta.subjectFactCounts?.[subject.id] !== subjectFacts.size) errors.push(`${subject.id}: subject fact metadata is stale`);
+  const eligible = payload.questions.filter((q) => q.subjectId === subject.id && q.examEligible !== false);
+  const subjectFacts = new Set(eligible.map((q) => q.factId));
+  const needed = { single: 40, multiple: 40, judgment: 30, case: 10 };
+  for (const [type, count] of Object.entries(needed)) {
+    const stems = new Set(eligible.filter((q) => q.type === type).map((q) => q.stem));
+    if (stems.size < count) errors.push(`${subject.id}: ${type} 可用题量不足（${stems.size}/${count}），无法生成模考`);
+  }
+  if (subjectFacts.size < 120) warnings.push(`${subject.id}: 知识点组数 ${subjectFacts.size}，模考去重会更激进`);
 }
 if ((typeCounts.case || []).length < 20) errors.push("case question coverage is below 20");
-if (payload.meta.caseQuestionCount !== (typeCounts.case || []).length || payload.meta.casePackCount !== caseGroups.size) errors.push("case-pack metadata counts are stale");
+if (payload.meta.caseQuestionCount !== (typeCounts.case || []).length || payload.meta.caseGroupCount !== caseGroups.size) errors.push("case metadata counts are stale");
 for (const [groupId, items] of caseGroups) {
   const expectedSize = items[0].caseGroupSize;
-  if (expectedSize !== 4 || items.length !== expectedSize) errors.push(`${groupId}: case pack must contain exactly four questions`);
-  if (new Set(items.map((item) => item.factId)).size !== items.length) errors.push(`${groupId}: case pack repeats a fact`);
-  if (new Set(items.map((item) => item.caseMaterial)).size !== 1 || new Set(items.map((item) => item.caseGroupTitle)).size !== 1) errors.push(`${groupId}: case pack must share one material and title`);
-  if (new Set(items.map((item) => item.subjectId)).size !== 1) errors.push(`${groupId}: case pack crosses subjects`);
+  if (expectedSize !== items.length) errors.push(`${groupId}: case group size ${items.length} does not match ${expectedSize}`);
+  if (new Set(items.map((item) => item.caseMaterial)).size !== 1) errors.push(`${groupId}: case group must share one material`);
+  if (new Set(items.map((item) => item.subjectId)).size !== 1) errors.push(`${groupId}: case group crosses subjects`);
   const orders = items.map((item) => item.caseOrder).sort((left, right) => left - right);
-  if (orders.join(",") !== "1,2,3,4") errors.push(`${groupId}: case question order must be 1-4`);
+  if (orders.join(",") !== [...orders.keys()].map((index) => index + 1).join(",")) errors.push(`${groupId}: case question order is not consecutive`);
 }
 for (const subject of payload.subjects) {
   const subjectGroups = [...caseGroups.values()].filter((items) => items[0].subjectId === subject.id);
-  const expected = payload.meta.subjectCasePackCounts?.[subject.id];
-  if (subjectGroups.length < 10 || expected !== subjectGroups.length) errors.push(`${subject.id}: needs at least 10 complete case packs and current metadata`);
+  if (subjectGroups.length < 5) errors.push(`${subject.id}: needs at least five complete case groups`);
 }
 if (officialTextbookPages.size !== 568) errors.push(`official textbook text must contain 568 pages, got ${officialTextbookPages.size}`);
 if (historicalLawTextbookPages.size !== 274) errors.push(`historical law textbook text must contain 274 pages, got ${historicalLawTextbookPages.size}`);
@@ -226,7 +220,7 @@ if (payload.meta.lawHistoricalTextbookCoverage !== `${historicalLawCount}/${lawP
 }
 if (payload.meta.lawCurrentAuthorityCoverage !== `${currentLawAuthorityCount}/${lawPoints.length}`) errors.push("current law authority coverage metadata is stale");
 
-if (coverageReport.meta?.factCount !== payload.meta.factCount || coverageReport.meta?.questionCount !== authoredQuestions.length) {
+if (coverageReport.meta?.factCount !== payload.meta.factCount || coverageReport.meta?.knowledgePointCount !== payload.knowledgePoints.length) {
   errors.push("coverage report content counts are stale");
 }
 if (!coverageReport.meta?.limitation?.includes("自动近似映射") || !Array.isArray(coverageReport.requirements)) {
@@ -239,8 +233,8 @@ if (!coverageReport.meta?.limitation?.includes("自动近似映射") || !Array.i
     if (!chapterIds.has(requirement.chapterId)) errors.push(`${requirement.id}: coverage report has unknown chapter`);
     if (!new Set(["mapped", "partial", "unmapped"]).has(requirement.status)) errors.push(`${requirement.id}: invalid coverage status`);
     if (requirement.status === "unmapped" && requirement.factIds.length) errors.push(`${requirement.id}: unmapped requirement must not list facts`);
-    if (requirement.factIds.some((factId) => !factCounts.has(factId))) errors.push(`${requirement.id}: coverage report references an unknown fact`);
-    if (requirement.questionCount !== requirement.factIds.length * 3) errors.push(`${requirement.id}: coverage question count is stale`);
+    if (requirement.factIds.some((factId) => !factIdSet.has(factId))) errors.push(`${requirement.id}: coverage report references an unknown fact`);
+    if (requirement.knowledgePointCount !== requirement.factIds.length) errors.push(`${requirement.id}: coverage knowledge point count is stale`);
   }
   for (const subject of payload.subjects) {
     const summary = coverageReport.meta.bySubject?.[subject.id];
@@ -252,7 +246,7 @@ if (!coverageReport.meta?.limitation?.includes("自动近似映射") || !Array.i
     if (!summary || mappedOrPartial / items.length < 0.8) errors.push(`${subject.id}: approximate outline mapping fell below 80%`);
   }
   const reportFactIds = new Set((coverageReport.facts || []).map((item) => item.factId));
-  if (reportFactIds.size !== payload.meta.factCount || [...factCounts.keys()].some((factId) => !reportFactIds.has(factId))) errors.push("coverage report must list every fact");
+  if (reportFactIds.size !== payload.meta.factCount || [...factIdSet].some((factId) => !reportFactIds.has(factId))) errors.push("coverage report must list every fact");
 }
 if (errors.length) {
   console.error(errors.map((item) => `ERROR ${item}`).join("\n"));
