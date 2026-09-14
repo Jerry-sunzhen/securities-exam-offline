@@ -313,17 +313,17 @@
         </div>
         <div class="grid two">
           <section class="card card-body">
-            <h3 class="card-title">按科目开始</h3>
+            <h3 class="card-title">按科目开始 <span class="metric-label">（含历年题去重版）</span></h3>
             <div class="quick-list">
               ${subjects.map((subject) => {
-                const count = questionData.questions.filter((q) => q.subjectId === subject.id).length;
+                const count = questionData.questions.filter((q) => q.subjectId === subject.id && q.examEligible !== false).length;
                 return `<div class="quick-item"><div><strong>${escapeHtml(subject.title)}</strong><br /><span>${count} 道题 · ${subject.chapterCount} 章</span></div><button class="button small" data-action="practice-subject" data-subject="${subject.id}">开始练习</button></div>`;
               }).join("")}
             </div>
           </section>
           <section class="card card-body">
             <h3 class="card-title">本版本说明</h3>
-            <div class="notice">当前题库由 ${questionData.meta?.factCount || 0} 个经大纲范围定位的知识单元生成 ${questionData.questions.length} 道题型练习，含 ${questionData.meta?.casePackCount || 0} 个共享材料案例包、${questionData.meta?.caseQuestionCount || 0} 道案例小题；结构和引用定位已自动校验，不代表逐题经过官方或专家审定。多选题采用“全部选对才得分”的本地规则。</div>
+            <div class="notice">当前题库包含 ${questionData.meta?.authoredQuestionCount || 780} 道原创基础题，以及 ${questionData.meta?.importedQuestionCount || 0} 道历年整理题（去重后），共 ${questionData.questions.filter((q) => q.examEligible !== false).length} 道可练习题；待核验题不会进入默认练习。多选题采用“全部选对才得分”的本地规则。</div>
             <div class="profile-status">
               <div class="status-row"><span>主大纲</span><strong>2025 版，24 页</strong></div>
               <div class="status-row"><span>补充范围</span><strong>纪法知识大纲 2026</strong></div>
@@ -537,7 +537,8 @@
 
   function renderOutline() {
     const query = state.outlineSearch.trim();
-    return `${renderOutlineModeSwitch()}${state.outlineMode === "guide" ? renderKnowledgeGuide(query) : renderOfficialOutline(query)}`;
+    return `${renderOutlineModeSwitch()}${state.outlineMode === "guide" ? renderKnowledgeGuide(query) : renderOfficialOutline(query)}
+      <button type="button" class="button outline-back-to-top" data-action="back-to-top"><span aria-hidden="true">↑</span> 回到顶部</button>`;
   }
 
   function startMemorySession(subjectId, chapterId = null) {
@@ -717,7 +718,7 @@
     return `
       <div class="grid two">
         <section class="card card-body">
-          <h3 class="card-title">章节表现</h3>
+          <h3 class="card-title">章节表现 <span class="metric-label">（含历年题去重版）</span></h3>
           ${grouped.size ? `<div class="table-wrap"><table class="table"><thead><tr><th>章节</th><th>已覆盖</th><th>作答次数</th><th>正确率</th></tr></thead><tbody>${questionData.chapters.map((chapter) => {
             const item = grouped.get(chapter.id);
             if (!item) return "";
@@ -771,12 +772,14 @@
   }
 
   function selectQuestions({ subjectId, chapterId = "all", count = 20, types = null, ids = null }) {
-    let pool = ids ? ids.map((id) => questionMap.get(id)).filter(Boolean) : questionData.questions.filter((question) => {
+    let pool = ids ? ids.map((id) => questionMap.get(id)).filter((question) => question && question.examEligible !== false) : questionData.questions.filter((question) => {
       return (!subjectId || question.subjectId === subjectId) &&
         (chapterId === "all" || question.chapterId === chapterId) &&
-        (!types || types.has(question.type));
+        (!types || types.has(question.type)) && question.examEligible !== false;
     });
     if (types?.size === 1 && types.has("case")) {
+      const importedCaseSelection = ExamBank.selectCases(pool, count);
+      if (importedCaseSelection.length) return importedCaseSelection;
       const groups = new Map();
       for (const question of pool) {
         const key = question.caseGroupId || question.id;
@@ -795,43 +798,19 @@
     return shuffle(pool).slice(0, Math.min(count, pool.length));
   }
 
-  function selectExamQuestions(subjectId, count = 120) {
-    const pool = questionData.questions.filter((question) => question.subjectId === subjectId);
-    const groups = new Map();
-    for (const question of pool) {
-      const list = groups.get(question.factId) || [];
-      list.push(question); groups.set(question.factId, list);
-    }
-    const caseGroups = new Map();
-    for (const question of pool.filter((item) => item.type === "case" && item.caseGroupId)) {
-      const list = caseGroups.get(question.caseGroupId) || [];
-      list.push(question); caseGroups.set(question.caseGroupId, list);
-    }
-    const completeCaseGroups = [...caseGroups.values()].filter((group) => group.length === group[0].caseGroupSize);
-    const selectedCaseGroups = shuffle(completeCaseGroups).slice(0, Math.min(4, Math.floor(count / 4)))
-      .map((group) => group.sort((left, right) => left.caseOrder - right.caseOrder));
-    const usedFactIds = new Set(selectedCaseGroups.flat().map((question) => question.factId));
-    const remainingGroups = shuffle([...groups.values()].filter((group) => !usedFactIds.has(group[0].factId)));
-    const remainingUnits = [];
-    const targets = ["single", "judgment", "multiple"];
-    for (let index = 0; remainingUnits.length + selectedCaseGroups.flat().length < count && index < remainingGroups.length; index += 1) {
-      const group = remainingGroups[index];
-      const target = targets[index % targets.length];
-      const match = group.find((question) => question.type === target) || group.find((question) => question.type !== "case");
-      if (match) remainingUnits.push([match]);
-    }
-    const result = shuffle([...selectedCaseGroups, ...remainingUnits]).flat();
-    if (groups.size >= count && new Set(result.map((question) => question.factId)).size !== count) throw new Error("模拟卷未满足知识点去重约束");
-    return result;
+  function selectExamQuestions(subjectId) {
+    return ExamBank.selectExam(questionData.questions, subjectId);
   }
 
-  function startSession({ mode, questions, subjectId = null, seconds = null }) {
+  function startSession({ mode, questions, subjectId = null, seconds = null, scoringScheme = "legacy" }) {
     if (!questions.length) return toast("没有符合条件的题目", "error");
     const id = crypto.randomUUID();
     state.session = {
       id,
       mode,
       subjectId,
+      scoringScheme,
+      totalPoints: questions.reduce((sum, q) => sum + ExamBank.points(q, scoringScheme), 0),
       questions,
       index: 0,
       answers: {},
@@ -842,14 +821,14 @@
       finished: false,
       score: null
     };
-    if (mode === "exam") StudyDb.createSession({ id, mode, subjectId, questionIds: questions.map((q) => q.id) });
+    if (mode === "exam") StudyDb.createSession({ id, mode, subjectId, questionIds: questions.map((q) => q.id), scoringScheme, totalPoints: state.session.totalPoints });
     render();
   }
 
   function startExam(subjectId) {
     const pool = selectExamQuestions(subjectId, 120);
     if (pool.length < 120) toast(`当前科目只有 ${pool.length} 道可用题，将以现有题量生成模拟卷`, "error");
-    startSession({ mode: "exam", questions: pool, subjectId, seconds: 120 * 60 });
+    startSession({ mode: "exam", questions: pool, subjectId, seconds: 120 * 60, scoringScheme: "paper-100-v1" });
   }
 
   function bindSessionTimer() {
@@ -883,7 +862,7 @@
     const submitted = Boolean(session.submitted[question.id]);
     const correct = sameAnswer(selected, new Set(question.correctOptionIds));
     const type = typeLabel(question.type);
-    const isMultiple = question.type === "multiple";
+    const isMultiple = ExamBank.multiple(question);
     return `
       <main class="main session-shell">
         <div class="session-header">
@@ -897,6 +876,7 @@
             <span class="tag">${escapeHtml(subjectTitle(question.subjectId))}</span>
             <span class="tag">${escapeHtml(chapterTitle(question.chapterId))}</span>
             <span class="tag level-master">${escapeHtml(question.level || "掌握")}</span>
+            ${question.repeatLabel ? `<span class="tag repeat-tag">★ ${escapeHtml(question.repeatLabel)}</span>` : ""}
             ${question.negation ? '<span class="tag negative">注意否定表述</span>' : ""}
           </div>
           ${question.caseMaterial ? `<div class="case-material"><strong>综合案例 · ${escapeHtml(question.caseGroupTitle || "材料题")} · 第 ${question.caseOrder || 1}/${question.caseGroupSize || 1} 问</strong><p>${escapeHtml(question.caseMaterial)}</p></div>` : ""}
@@ -941,7 +921,7 @@
         <h4>解析</h4><p>${escapeHtml(question.explanation)}</p>
         ${question.optionExplanations ? `<h4>选项说明</h4>${question.options.map((option) => `<p><strong>${option.id}：</strong>${escapeHtml(question.optionExplanations[option.id] || "")}</p>`).join("")}` : ""}
         <h4>答案出处与核验说明</h4>
-        ${renderSourceReferences(question.citations || [])}
+        ${renderSourceReferences(question.citations || [])}${renderImportedLinks(question)}
         <h4>个人笔记</h4>
         <textarea class="textarea" id="question-note" placeholder="记录自己的理解、易错点或记忆方法……">${escapeHtml(StudyDb.getNote(question.id))}</textarea>
         <button class="button small mt-2-safe" data-action="save-note">保存笔记</button>
@@ -970,6 +950,13 @@
     return `<div class="citation ${presentation.citationClass}"><div class="citation-title"><span class="tag ${presentation.tagClass}">${presentation.label}</span> ${escapeHtml(citation.title)}</div><div class="citation-locator">${escapeHtml(citation.locator || "")}</div>${metadata ? `<div class="citation-meta">${metadata}</div>` : ""}<div class="citation-quote-label">${presentation.quoteLabel}</div><blockquote>${escapeHtml(citation.quote || "")}</blockquote>${textNotice}${original}<div class="citation-links">${local}${online}</div></div>`;
   }
 
+  function renderImportedLinks(question) {
+    if (!question?.bookLinks?.length && !question?.knowledgeLinks?.length) return "";
+    const books = (question.bookLinks || []).map((link) => `<li>教材第 ${escapeHtml(String(link.page))} 页（自动匹配，相关度 ${escapeHtml(String(link.score))}）</li>`).join("");
+    const points = (question.knowledgeLinks || []).map((link) => `<li>${escapeHtml(link.topic)}（自动关联，相关度 ${escapeHtml(String(link.score))}）</li>`).join("");
+    return `<div class="imported-links"><strong>历年题教材定位（自动匹配）</strong><ul>${books}${points}</ul><small>关联结果用于定位复习，尚未逐题人工确认，不作为答案核验结论。</small></div>`;
+  }
+
   function renderScopeReference(citation) {
     const local = citation.localPath ? `<a href="${escapeHtml(citation.localPath)}${citation.page ? `#page=${citation.page}` : ""}" target="_blank">本地大纲</a>` : "";
     const official = citation.url ? `<a href="${escapeHtml(citation.url)}" target="_blank">官方大纲</a>` : "";
@@ -977,6 +964,7 @@
   }
 
   function renderSourceReferences(citations) {
+    if (!citations.length) return `<div class="source-status supplement"><strong>历年整理题 · 来源答案待核验</strong><span>题目来自本地历年试题整理资料，答案和解析按原资料保存；现行规则应以最新官方文本复核。</span></div><div class="scope-reference"><div><span class="tag">大纲范围 · 非答案出处</span><strong>历年试题教材定位</strong></div></div>`;
     const chinaAuthorities = citations.filter(isChinaAuthority);
     const hasOfficialTextbook = chinaAuthorities.some((citation) => citation.sourceClass === "china_official_textbook");
     const hasOtherChinaAuthority = chinaAuthorities.some((citation) => citation.sourceClass !== "china_official_textbook");
@@ -1002,7 +990,7 @@
     const session = state.session;
     const question = session.questions[session.index];
     const selected = new Set(session.answers[question.id] || []);
-    if (question.type === "multiple") {
+    if (ExamBank.multiple(question)) {
       if (selected.has(optionId)) selected.delete(optionId); else selected.add(optionId);
     } else {
       selected.clear(); selected.add(optionId);
@@ -1052,7 +1040,7 @@
     for (const question of session.questions) {
       const selected = session.answers[question.id] || [];
       const correct = sameAnswer(new Set(selected), new Set(question.correctOptionIds));
-      if (correct) score += 1;
+      if (correct) score += ExamBank.points(question, session.scoringScheme);
       StudyDb.recordAttempt({ questionId: question.id, questionVersion: question.version || 1, selected, isCorrect: correct, mode: "exam", sessionId: session.id });
     }
     const duration = Math.round((Date.now() - session.startedAt) / 1000);
@@ -1065,9 +1053,9 @@
   }
 
   function renderExamResult(session) {
-    const percent = Math.round(session.score * 100 / session.questions.length);
+    const percent = Math.round(session.score * 100 / (session.totalPoints || session.questions.length));
     const wrongIds = session.questions.filter((question) => !sameAnswer(new Set(session.answers[question.id] || []), new Set(question.correctOptionIds))).map((q) => q.id);
-    return `<main class="main session-shell"><section class="card card-body"><div class="empty"><strong class="exam-score">${session.score} / ${session.questions.length}</strong><div class="exam-result-summary">正确率 ${percent}% · ${percent >= 60 ? "达到本地模拟要求" : "建议回看薄弱章节"}</div><div class="action-group center-actions"><button class="button" data-action="review-exam-wrong" ${wrongIds.length ? "" : "disabled"}>逐题复习错题</button><button class="button secondary" data-action="review-exam-all">查看全部解析与来源</button><button class="button secondary" data-action="exit-session">返回总览</button></div></div><div class="notice">该成绩只反映本工具的题型练习表现，不代表官方成绩预测。交卷记录已写入学习档案。</div></section></main>`;
+    return `<main class="main session-shell"><section class="card card-body"><div class="empty"><strong class="exam-score">${session.score} / ${session.totalPoints || session.questions.length}</strong><div class="exam-result-summary">得分率 ${percent}% · ${percent >= 60 ? "达到本地模拟要求" : "建议回看薄弱章节"}</div><div class="action-group center-actions"><button class="button" data-action="review-exam-wrong" ${wrongIds.length ? "" : "disabled"}>逐题复习错题</button><button class="button secondary" data-action="review-exam-all">查看全部解析与来源</button><button class="button secondary" data-action="exit-session">返回总览</button></div></div><div class="notice">该成绩只反映本工具的题型练习表现，不代表官方成绩预测。交卷记录已写入学习档案。</div></section></main>`;
   }
 
   function beginExamReview(wrongOnly) {
@@ -1096,6 +1084,8 @@
       id: active.id,
       mode: "exam",
       subjectId: active.subject_id,
+      scoringScheme: active.scoringScheme || "legacy",
+      totalPoints: active.total,
       questions,
       index: firstUnanswered === -1 ? questions.length - 1 : firstUnanswered,
       answers: active.answers,
@@ -1176,6 +1166,12 @@
       if (action === "list-tab") { state.listTab = target.dataset.tab; render(); }
       if (action === "practice-list") startSession({ mode: "practice", questions: selectQuestions({ ids: getListQuestions().map((q) => q.id), count: getListQuestions().length }) });
       if (action === "outline-mode") { captureReadingPosition(); state.outlineMode = target.dataset.mode; state.outlineSearch = ""; render(); resetReadingPositionAfterRender(); }
+      if (action === "back-to-top") {
+        readingRestoreToken += 1;
+        restoringReadingPosition = false;
+        window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+        scheduleReadingPositionCapture();
+      }
       if (action === "start-memory") { captureReadingPosition(); startMemorySession(target.dataset.subject || state.knowledgeSubject, target.dataset.chapter || null); }
       if (action === "reveal-memory") { state.memorySession.revealed = true; render(); }
       if (action === "grade-memory") {

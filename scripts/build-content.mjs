@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { copyFileSync, cpSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { subjects, chapters } from "../content/catalog.mjs";
@@ -562,13 +562,21 @@ const outline = {
   supplementToc: [{ title: "纪法知识大纲（2026）", page: 1, level: "chapter" }],
   supplements: [{ page: 1, title: "证券行业专业人员水平评价测试纪法知识大纲（2026）", text: disciplineText }]
 };
+const importedPath = join(root, "content/imported-exams.json");
+const imported = existsSync(importedPath) ? JSON.parse(readFileSync(importedPath, "utf8")) : null;
+const importedQuestions = imported?.questions || [];
+const allQuestions = [...questions, ...importedQuestions];
 const questionPayload = {
   meta: {
     title: "证券从业原创离线题库",
-    questionCount: questions.length,
+    questionCount: allQuestions.length,
+    authoredQuestionCount: questions.length,
+    importedQuestionCount: importedQuestions.length,
+    importedSourceCount: imported?.sources?.length || 0,
+    importedHeldCount: imported?.meta?.heldCount || 0,
     factCount: facts.length,
     casePackCount: casePacks.length,
-    caseQuestionCount: questions.filter((question) => question.type === "case").length,
+    caseQuestionCount: allQuestions.filter((question) => question.type === "case").length,
     subjectCasePackCounts: Object.fromEntries(subjects.map((subject) => [subject.id, casePacks.filter((pack) => pack.subjectId === subject.id).length])),
     outlineVersion: "一般业务大纲2025 + 纪法大纲2026",
     contentCutoff: "2026-08-18",
@@ -608,7 +616,9 @@ const questionPayload = {
     },
     disclaimer: "依据官方公开范围原创，不是官方题库、真题或押题。"
   },
-  subjects, chapters, knowledgePoints, questions
+  subjects, chapters, knowledgePoints, questions: allQuestions,
+  importedSources: imported?.sources || [],
+  importedUnparsed: imported?.unparsed || []
 };
 
 writeFileSync(join(dataDir, "outline.json"), JSON.stringify(outline, null, 2));
@@ -623,4 +633,4 @@ const katexDistDir = join(root, "node_modules/katex/dist");
 copyFileSync(join(katexDistDir, "katex.min.js"), join(katexVendorDir, "katex.min.js"));
 copyFileSync(join(katexDistDir, "katex.min.css"), join(katexVendorDir, "katex.min.css"));
 cpSync(join(katexDistDir, "fonts"), join(katexVendorDir, "fonts"), { recursive: true });
-console.log(`Built ${questions.length} questions from ${facts.length} facts; outline ${pages.length} pages.`);
+console.log(`Built ${allQuestions.length} questions from ${facts.length} authored facts and ${importedQuestions.length} imported records; outline ${pages.length} pages.`);

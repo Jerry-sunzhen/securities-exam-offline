@@ -10,7 +10,7 @@ if (!/tailwindcss v4\./.test(readFileSync(resolve(root, "styles.css"), "utf8")))
 rmSync(release, { recursive: true, force: true });
 mkdirSync(release, { recursive: true });
 
-for (const item of ["index.html", "styles.css", "app.js", "chat.js", "db.js", "README.md", "study-plan.md", "exam-guide-and-sources.md", "docs"]) {
+for (const item of ["index.html", "styles.css", "app.js", "exam-bank.js", "chat.js", "db.js", "README.md", "study-plan.md", "exam-guide-and-sources.md", "docs"]) {
   cpSync(resolve(root, item), resolve(release, item), { recursive: true });
 }
 rmSync(resolve(release, "docs/.gitkeep"), { force: true });

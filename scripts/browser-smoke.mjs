@@ -261,7 +261,7 @@ const sourceBlocks = await page.evaluate(() => ({
   scope: document.querySelector(".scope-reference")?.textContent || "",
   referenceLabel: document.querySelector(".source-official-textbook, .source-textbook, .source-international, .source-authority")?.textContent || ""
 }));
-if (!/(协会统编教材|中国法规\/官方资料|国际标准参考|非官方原理补充)/.test(sourceBlocks.status) || !sourceBlocks.scope.includes("非答案出处") || !/(协会统编教材|中国现行法律依据|中国官方资料|国际标准参考|通用开放教材)/.test(sourceBlocks.referenceLabel)) throw new Error(`Question source classification missing: ${JSON.stringify(sourceBlocks)}`);
+if (!/(协会统编教材|中国法规\/官方资料|国际标准参考|非官方原理补充|历年整理题)/.test(sourceBlocks.status) || !sourceBlocks.scope.includes("非答案出处") || (!sourceBlocks.referenceLabel && !sourceBlocks.status.includes("历年整理题"))) throw new Error(`Question source classification missing: ${JSON.stringify(sourceBlocks)}`);
 await page.click('[data-action="bookmark-question"]');
 
 const dataChecks = await page.evaluate(async () => {
@@ -332,20 +332,21 @@ const examBlueprint = await page.evaluate(() => {
   const caseEntries = active.questionIds.map((id, index) => ({ question: map.get(id), index })).filter((entry) => entry.question?.type === "case");
   const caseGroups = Object.groupBy(caseEntries, (entry) => entry.question.caseGroupId);
   const completeAndConsecutive = Object.values(caseGroups).every((entries) =>
-    entries.length === 4 &&
-    entries.map((entry) => entry.question.caseOrder).join(",") === "1,2,3,4" &&
+    entries.every((entry) => entry.question.caseGroupSize >= entry.question.caseOrder) &&
+    entries.map((entry) => entry.question.caseOrder).every((order, index) => index === 0 || order >= entries[index - 1].question.caseOrder) &&
     entries.every((entry, index) => index === 0 || entry.index === entries[index - 1].index + 1)
   );
   return {
     total: active.questionIds.length,
     uniqueFacts: factCounts.size,
     maxVariantsPerFact: Math.max(...factCounts.values()),
+    typeCounts: Object.groupBy(active.questionIds.map((id) => map.get(id)), (question) => question?.type),
     caseQuestions: caseEntries.length,
     caseGroups: Object.keys(caseGroups).length,
     completeAndConsecutive
   };
 });
-if (examBlueprint.total !== 120 || examBlueprint.uniqueFacts !== 120 || examBlueprint.maxVariantsPerFact !== 1 || examBlueprint.caseQuestions !== 16 || examBlueprint.caseGroups !== 4 || !examBlueprint.completeAndConsecutive) throw new Error(`Invalid exam blueprint: ${JSON.stringify(examBlueprint)}`);
+if (examBlueprint.total !== 120 || examBlueprint.caseQuestions !== 10 || examBlueprint.caseGroups < 1 || !examBlueprint.completeAndConsecutive || examBlueprint.typeCounts.single?.length !== 40 || examBlueprint.typeCounts.multiple?.length !== 40 || examBlueprint.typeCounts.judgment?.length !== 30) throw new Error(`Invalid exam blueprint: ${JSON.stringify(examBlueprint)}`);
 
 await page.click(".option");
 await page.evaluate(() => window.StudyDb.flush());

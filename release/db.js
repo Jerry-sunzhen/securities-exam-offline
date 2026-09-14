@@ -502,11 +502,12 @@
     return all("SELECT * FROM knowledge_reviews ORDER BY next_review_at ASC");
   }
 
-  function createSession({ id, mode, subjectId, questionIds }) {
+  function createSession({ id, mode, subjectId, questionIds, scoringScheme = "legacy", totalPoints = questionIds.length }) {
     run(
       "INSERT INTO exam_sessions(id,mode,subject_id,question_ids_json,total,started_at) VALUES (?,?,?,?,?,?)",
-      [id, mode, subjectId || null, JSON.stringify(questionIds), questionIds.length, new Date().toISOString()]
+      [id, mode, subjectId || null, JSON.stringify(questionIds), totalPoints, new Date().toISOString()]
     );
+    run("INSERT OR REPLACE INTO settings(key,value,modified_at) VALUES (?,?,?)", [`exam-scoring:${id}`, scoringScheme, new Date().toISOString()]);
     scheduleSave();
   }
 
@@ -533,6 +534,7 @@
     const answers = all("SELECT question_id,selected_json FROM exam_answers WHERE session_id=?", [session.id]);
     return {
       ...session,
+      scoringScheme: get("SELECT value FROM settings WHERE key=?", [`exam-scoring:${session.id}`])?.value || "legacy",
       questionIds: JSON.parse(session.question_ids_json),
       answers: Object.fromEntries(answers.map((row) => [row.question_id, JSON.parse(row.selected_json)]))
     };

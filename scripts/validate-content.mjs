@@ -20,6 +20,8 @@ for (let index = 1; index < historicalLawTextbookParts.length; index += 2) {
 }
 const chapterIds = new Set(payload.chapters.map((item) => item.id));
 const ids = new Set();
+const authoredQuestions = payload.questions.filter((question) => question.verificationStatus === "outline_checked");
+const importedQuestions = payload.questions.filter((question) => question.verificationStatus === "source_transcribed");
 const errors = [];
 const warnings = [];
 const answerPositions = { A: 0, B: 0, C: 0, D: 0 };
@@ -111,7 +113,7 @@ if (!Array.isArray(payload.knowledgePoints) || payload.knowledgePoints.length !=
   }
 }
 
-for (const question of payload.questions) {
+for (const question of authoredQuestions) {
   if (ids.has(question.id)) errors.push(`duplicate id ${question.id}`);
   ids.add(question.id);
   if (!chapterIds.has(question.chapterId)) errors.push(`${question.id}: unknown chapter`);
@@ -144,6 +146,19 @@ for (const question of payload.questions) {
   for (const citation of question.citations || []) validateCitation(citation, question.id);
 }
 
+for (const question of importedQuestions) {
+  if (ids.has(question.id)) errors.push(`duplicate imported id ${question.id}`);
+  ids.add(question.id);
+  if (!/^IMP-[FL]-[a-f0-9]{16}$/.test(question.id)) errors.push(`${question.id}: invalid imported id`);
+  if (!["finance", "law"].includes(question.subjectId)) errors.push(`${question.id}: imported subject outside general business scope`);
+  if (!["single", "multiple", "judgment", "case"].includes(question.type)) errors.push(`${question.id}: invalid imported type`);
+  if (!question.stem || !Array.isArray(question.options) || question.options.length < 2) errors.push(`${question.id}: incomplete imported question`);
+  if (!Array.isArray(question.correctOptionIds) || !question.correctOptionIds.length) errors.push(`${question.id}: imported answer missing`);
+  if (question.examEligible !== false && question.correctOptionIds.some((id) => !question.options.some((option) => option.id === id))) errors.push(`${question.id}: imported answer not in options`);
+  if (!question.origins?.length || !question.origins[0].sourceId) errors.push(`${question.id}: imported source provenance missing`);
+  if (!question.knowledgeLinks?.length || !question.bookLinks?.length) warnings.push(`${question.id}: automatic book/knowledge mapping incomplete`);
+}
+
 for (const [factId, count] of factCounts) {
   if (count !== 3) errors.push(`${factId}: expected 3 question variants, got ${count}`);
 }
@@ -167,10 +182,10 @@ for (const [type, items] of Object.entries(typeCounts)) console.log(`  type ${ty
 console.log(`Outline pages: ${outline.pages.length}; TOC items: ${outline.toc.length}`);
 console.log(`Warnings: ${warnings.length}`);
 if (warnings.length) console.log(warnings.slice(0, 20).map((item) => `  WARN ${item}`).join("\n"));
-if (payload.questions.length !== payload.meta.factCount * 3 || payload.meta.questionCount !== payload.questions.length) {
-  errors.push(`question metadata must describe exactly three variants per fact (${payload.meta.factCount} facts / ${payload.questions.length} questions)`);
+if (authoredQuestions.length !== payload.meta.factCount * 3 || payload.meta.authoredQuestionCount !== authoredQuestions.length) {
+  errors.push(`authored question metadata must describe exactly three variants per fact (${payload.meta.factCount} facts / ${authoredQuestions.length} questions)`);
 }
-if (payload.questions.length < 720 || payload.questions.length > 1500) errors.push("question count must be 720-1500 for two complete subject banks");
+if (payload.questions.length < 720) errors.push("question count must contain the complete authored banks");
 for (const subject of payload.subjects) {
   const subjectFacts = new Set(payload.questions.filter((q) => q.subjectId === subject.id).map((q) => q.factId));
   if (subjectFacts.size < 120) errors.push(`${subject.id}: needs at least 120 fact groups for a 120-question unique-fact exam`);
@@ -211,7 +226,7 @@ if (payload.meta.lawHistoricalTextbookCoverage !== `${historicalLawCount}/${lawP
 }
 if (payload.meta.lawCurrentAuthorityCoverage !== `${currentLawAuthorityCount}/${lawPoints.length}`) errors.push("current law authority coverage metadata is stale");
 
-if (coverageReport.meta?.factCount !== payload.meta.factCount || coverageReport.meta?.questionCount !== payload.questions.length) {
+if (coverageReport.meta?.factCount !== payload.meta.factCount || coverageReport.meta?.questionCount !== authoredQuestions.length) {
   errors.push("coverage report content counts are stale");
 }
 if (!coverageReport.meta?.limitation?.includes("自动近似映射") || !Array.isArray(coverageReport.requirements)) {

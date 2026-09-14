@@ -116,6 +116,13 @@
   .outline-search { @apply max-w-[520px] flex-[1_1_360px]; }
   .outline-source { @apply flex-[0_1_255px]; }
   .outline-result-count { @apply ml-auto text-xs text-muted; }
+  .repeat-tag { @apply border border-[#f1c96b] bg-[#fff7df] text-[#9a6500]; }
+  .imported-links { @apply mt-4 rounded-[10px] border border-[#dbe4f1] bg-[#f7faff] p-3 text-xs text-muted; }
+  .imported-links strong { @apply text-ink; }
+  .imported-links ul { @apply my-2 pl-4; }
+  .imported-links small { @apply text-[11px] text-muted; }
+  .outline-back-to-top { @apply fixed right-5 bottom-20 z-40 inline-flex min-h-11 items-center gap-1.5 rounded-full shadow-panel; }
+  .outline-back-to-top:focus-visible { @apply outline-2 outline-offset-4 outline-primary; }
   .outline-layout { @apply mx-auto grid max-w-[1230px] grid-cols-[260px_minmax(0,940px)] items-start gap-[22px]; }
   .outline-toc { @apply sticky top-5 max-h-[calc(100vh-40px)] overflow-hidden p-0; }
   .outline-toc-header { @apply flex items-end justify-between gap-3 border-b border-line bg-white px-[18px] pt-[18px] pb-3.5; }
@@ -430,6 +437,7 @@
   .codex-chat-open .knowledge-layout { grid-template-columns: 210px minmax(0, 1fr); }
   .codex-chat-open .outline-page { @apply px-8 pt-[30px] pb-[34px]; }
   .codex-chat-open .toast-stack { @apply right-[390px]; }
+  .codex-chat-open .outline-back-to-top { @apply right-[390px]; }
 }
 
 @media (max-width: 1100px) {
