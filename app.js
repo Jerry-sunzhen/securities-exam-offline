@@ -2,6 +2,27 @@
   const outlineData = window.OUTLINE_DATA || { meta: {}, toc: [], pages: [], supplements: [] };
   const questionData = window.QUESTION_DATA || { meta: {}, subjects: [], chapters: [], knowledgePoints: [], questions: [] };
   const questionMap = new Map((questionData.questions || []).map((question) => [question.id, question]));
+  // 历年题的考频索引：只统计已核验可练的导入题，按知识点归集年份与题量。
+  const examFrequencyMap = (() => {
+    const map = new Map();
+    for (const question of questionData.questions || []) {
+      if (question.verificationStatus !== "source_transcribed" || question.examEligible === false || !question.factId) continue;
+      const entry = map.get(question.factId) || { count: 0, years: new Set(), questions: [] };
+      entry.count += 1;
+      for (const year of question.repeatYears || []) {
+        const parsed = Number(year);
+        if (parsed) entry.years.add(parsed);
+      }
+      entry.questions.push(question);
+      map.set(question.factId, entry);
+    }
+    for (const entry of map.values()) {
+      entry.years = [...entry.years].sort((left, right) => left - right);
+      entry.questions.sort((left, right) => (right.repeatCount || 0) - (left.repeatCount || 0) || (right.year || 0) - (left.year || 0));
+      entry.multiYear = entry.years.length >= 2;
+    }
+    return map;
+  })();
   const READING_POSITION_KEY = "securities-exam-reading-position-v1";
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
@@ -40,6 +61,7 @@
     view: "dashboard",
     saveStatus: { state: "saved", message: "正在初始化", profileName: "浏览器档案", lastSavedAt: null, bound: false },
     outlineSearch: "",
+    multiYearOnly: false,
     outlineMode: "guide",
     outlineSource: "main",
     knowledgeSubject: "finance",
@@ -450,10 +472,11 @@
         : referenceCount
           ? { className: "supplement", label: "非官方原理补充", coreLabel: "通用金融原理 · 非中国官方答案" }
           : { className: "summary", label: "讲义归纳", coreLabel: "项目讲义归纳" };
+    const frequency = examFrequencyMap.get(point.id);
     return `<article class="card knowledge-card" id="knowledge-${point.id}">
       <header class="knowledge-card-header">
         <div><span class="knowledge-index">${escapeHtml(point.id)}</span><h3>${highlightText(point.topic, query)}</h3></div>
-        <div class="knowledge-card-tags"><span class="tag level-master">${escapeHtml(point.level)}</span><span class="tag source-tag ${sourceBadge.className}">${sourceBadge.label}</span></div>
+        <div class="knowledge-card-tags"><span class="tag level-master">${escapeHtml(point.level)}</span><span class="tag source-tag ${sourceBadge.className}">${sourceBadge.label}</span>${frequency ? `<span class="tag exam-tag">历年 ${frequency.count} 题</span>` : ""}${frequency?.multiYear ? `<span class="tag repeat-tag">★ 多年考点 · ${frequency.years.join(" / ")}</span>` : ""}</div>
       </header>
       <div class="knowledge-core"><span>${sourceBadge.coreLabel}</span><strong>${highlightText(point.statement, query)}</strong></div>
       <div class="knowledge-explanation"><h4>理解与边界</h4><p>${highlightText(point.explanation, query)}</p></div>
@@ -464,12 +487,16 @@
         <section class="knowledge-panel mistake"><h4>错误说法（不要这样记）</h4><p class="knowledge-panel-note">以下内容均错误，是常见干扰项。</p><ul>${(point.commonMistakes || []).map((item) => `<li>${highlightText(item, query)}</li>`).join("")}</ul></section>
       </div>
       ${(point.examTips || []).length ? `<section class="knowledge-exam-tips"><h4>考试提示</h4><ul>${point.examTips.map((item) => `<li>${highlightText(item, query)}</li>`).join("")}</ul></section>` : ""}
+      ${frequency ? `<details class="knowledge-exam-frequency"${frequency.multiYear ? " open" : ""}><summary>关联历年考点 ${frequency.count} 道${frequency.multiYear ? ` · 覆盖 ${frequency.years.join(" / ")} 年` : frequency.years.length ? ` · ${frequency.years[0]} 年` : ""}</summary><ul>${frequency.questions.slice(0, 8).map((item) => `<li><span class="exam-year">${escapeHtml(String(item.year || "—"))}</span>${highlightText(item.stem, query)}${item.repeatLabel ? `<span class="exam-repeat">${escapeHtml(item.repeatLabel)}</span>` : ""}</li>`).join("")}</ul>${frequency.questions.length > 8 ? `<p class="knowledge-panel-note">另有 ${frequency.questions.length - 8} 道同知识点历年题，可在练习页继续刷。</p>` : ""}<button class="button secondary small" data-action="practice-fact" data-fact="${escapeHtml(point.id)}">刷这个知识点的历年题</button></details>` : ""}
       <details class="knowledge-sources"><summary>${referenceCount ? `查看参考原文（${referenceCount} 条）` : "查看出处说明"}</summary>${renderSourceReferences(point.citations || [])}</details>
     </article>`;
   }
 
   function renderKnowledgeGuide(query) {
-    const points = (questionData.knowledgePoints || []).filter((point) => point.subjectId === state.knowledgeSubject && knowledgeMatches(point, query));
+    const points = (questionData.knowledgePoints || []).filter((point) => point.subjectId === state.knowledgeSubject && knowledgeMatches(point, query) && (!state.multiYearOnly || examFrequencyMap.get(point.id)?.multiYear));
+    const examTotal = points.reduce((total, point) => total + (examFrequencyMap.get(point.id)?.count || 0), 0);
+    const pointsWithExams = points.filter((point) => examFrequencyMap.has(point.id)).length;
+    const multiYearPoints = points.filter((point) => examFrequencyMap.get(point.id)?.multiYear).length;
     const chinaAuthorityCount = points.filter((point) => (point.citations || []).some(isChinaAuthority)).length;
     const officialTextbookCount = points.filter((point) => (point.citations || []).some((citation) => citation.sourceClass === "china_official_textbook")).length;
     const internationalStandardCount = points.filter((point) => (point.citations || []).some((citation) => citation.sourceClass === "international_standard")).length;
@@ -488,6 +515,7 @@
           ${questionData.subjects.map((subject) => `<option value="${subject.id}" ${state.knowledgeSubject === subject.id ? "selected" : ""}>${escapeHtml(subject.title)}</option>`).join("")}
         </select>
         <button class="button secondary" data-action="start-memory" data-subject="${state.knowledgeSubject}">今日背诵 12 个</button>
+        <button class="button ${state.multiYearOnly ? "" : "secondary"}" data-action="toggle-multi-year">${state.multiYearOnly ? "显示全部知识点" : "只看多年考点"}</button>
         <button class="button" data-action="practice-subject" data-subject="${state.knowledgeSubject}">学习后去刷题</button>
         <span class="outline-result-count">${query ? `找到 ${points.length} 个知识点` : `${points.length} 个知识点`}</span>
       </div>
@@ -499,8 +527,11 @@
           </div>
         </aside>
         <section class="knowledge-reader">
-          <div class="card knowledge-intro"><strong>先看来源等级，再记答案；大纲位置不作为答案出处。</strong><span>当前 ${points.length} 个知识点中，${officialTextbookCount} 个附有协会统编教材摘录，${chinaAuthorityCount} 个有中国法规、官方资料或协会教材支持，${internationalStandardCount} 个有国际标准参考，${generalTextbookCount} 个有通用开放教材补充，${historicalTextbookCount} 个有2020历史商业教材辅助；${withoutChinaAuthorityCount} 个尚未附中国权威原文。</span>${state.knowledgeSubject === "finance" ? `<span>已收录《中国证券业专业人员一般业务水平评价测试统编教材（2025）·金融市场基础知识》568 页本地识别文本，并按知识点定位摘录。识别文字可能存在同形字、标点和表格误差，请以原书为准。<a href="./docs/base-knowledge.html" target="_blank">打开教材全文</a> · <a href="https://www.sac.net.cn/fwdt/ksfw/jcdg/202512/t20251231_70825.html" target="_blank">查看协会教材页面</a></span>` : ""}${state.knowledgeSubject === "law" ? `<span>已收录《证券市场基本法律法规》（2020 商业备考教材）274 页本地识别文本，并为仍有可比基础内容的知识点提供历史摘录。它不是协会统编教材，也不作为现行规则或考试答案依据；涉及法条、期限、比例、处罚和业务规则时必须核对最新官方文本。<a href="./docs/law-regulations.html" target="_blank">打开历史教材全文</a></span>` : ""}</div>
-          ${visibleChapters.map((chapter) => `<section class="knowledge-chapter" id="knowledge-chapter-${chapter.id}"><header class="knowledge-chapter-header"><div><span>${escapeHtml(subjectTitle(chapter.subjectId))}</span><h2>${escapeHtml(chapter.title)}</h2></div><div class="knowledge-chapter-actions"><strong>${chapter.points.length} 个知识点</strong><button class="button secondary small" data-action="start-memory" data-subject="${chapter.subjectId}" data-chapter="${chapter.id}">背这一章</button></div></header><div class="knowledge-list">${chapter.points.map((point) => renderKnowledgePoint(point, query)).join("")}</div></section>`).join("") || '<div class="card empty"><strong>没有匹配知识点</strong>请尝试更短的关键词。</div>'}
+          <div class="card knowledge-intro"><strong>先看来源等级，再记答案；大纲位置不作为答案出处。</strong><span>已关联 ${examTotal} 道历年整理题，覆盖 ${pointsWithExams} 个知识点，其中 ${multiYearPoints} 个属于两年以上重复考点，卡片会标出年份。</span><span>当前 ${points.length} 个知识点中，${officialTextbookCount} 个附有协会统编教材摘录，${chinaAuthorityCount} 个有中国法规、官方资料或协会教材支持，${internationalStandardCount} 个有国际标准参考，${generalTextbookCount} 个有通用开放教材补充，${historicalTextbookCount} 个有2020历史商业教材辅助；${withoutChinaAuthorityCount} 个尚未附中国权威原文。</span>${state.knowledgeSubject === "finance" ? `<span>已收录《中国证券业专业人员一般业务水平评价测试统编教材（2025）·金融市场基础知识》568 页本地识别文本，并按知识点定位摘录。识别文字可能存在同形字、标点和表格误差，请以原书为准。<a href="./docs/base-knowledge.html" target="_blank">打开教材全文</a> · <a href="https://www.sac.net.cn/fwdt/ksfw/jcdg/202512/t20251231_70825.html" target="_blank">查看协会教材页面</a></span>` : ""}${state.knowledgeSubject === "law" ? `<span>已收录《证券市场基本法律法规》（2020 商业备考教材）274 页本地识别文本，并为仍有可比基础内容的知识点提供历史摘录。它不是协会统编教材，也不作为现行规则或考试答案依据；涉及法条、期限、比例、处罚和业务规则时必须核对最新官方文本。<a href="./docs/law-regulations.html" target="_blank">打开历史教材全文</a></span>` : ""}</div>
+          ${visibleChapters.map((chapter) => {
+            const chapterExamCount = chapter.points.reduce((total, point) => total + (examFrequencyMap.get(point.id)?.count || 0), 0);
+            return `<section class="knowledge-chapter" id="knowledge-chapter-${chapter.id}"><header class="knowledge-chapter-header"><div><span>${escapeHtml(subjectTitle(chapter.subjectId))}</span><h2>${escapeHtml(chapter.title)}</h2></div><div class="knowledge-chapter-actions"><strong>${chapter.points.length} 个知识点${chapterExamCount ? ` · 历年 ${chapterExamCount} 题` : ""}</strong><button class="button secondary small" data-action="start-memory" data-subject="${chapter.subjectId}" data-chapter="${chapter.id}">背这一章</button></div></header><div class="knowledge-list">${chapter.points.map((point) => renderKnowledgePoint(point, query)).join("")}</div></section>`;
+          }).join("") || '<div class="card empty"><strong>没有匹配知识点</strong>请尝试更短的关键词。</div>'}
         </section>
       </div>`;
   }
@@ -1165,6 +1196,14 @@
       if (action === "start-case-practice") startSession({ mode: "practice", questions: selectQuestions({ subjectId: state.practiceSubject, chapterId: "all", count: 16, types: new Set(["case"]) }), subjectId: state.practiceSubject });
       if (action === "list-tab") { state.listTab = target.dataset.tab; render(); }
       if (action === "practice-list") startSession({ mode: "practice", questions: selectQuestions({ ids: getListQuestions().map((q) => q.id), count: getListQuestions().length }) });
+      if (action === "toggle-multi-year") { state.multiYearOnly = !state.multiYearOnly; render(); }
+      if (action === "practice-fact") {
+        captureReadingPosition();
+        const factId = target.dataset.fact;
+        const related = (questionData.questions || []).filter((question) => question.factId === factId && question.examEligible !== false && question.verificationStatus === "source_transcribed");
+        if (!related.length) { toast("这个知识点暂无可用历年题", "error"); return; }
+        startSession({ mode: "practice", questions: shuffle(related).slice(0, Math.min(20, related.length)), subjectId: related[0].subjectId });
+      }
       if (action === "outline-mode") { captureReadingPosition(); state.outlineMode = target.dataset.mode; state.outlineSearch = ""; render(); resetReadingPositionAfterRender(); }
       if (action === "back-to-top") {
         readingRestoreToken += 1;
