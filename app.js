@@ -2,6 +2,10 @@
   const outlineData = window.OUTLINE_DATA || { meta: {}, toc: [], pages: [], supplements: [] };
   const questionData = window.QUESTION_DATA || { meta: {}, subjects: [], chapters: [], knowledgePoints: [], questions: [] };
   const questionMap = new Map((questionData.questions || []).map((question) => [question.id, question]));
+  const STEM_MARKERS = "ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ①②③④⑤⑥⑦⑧⑨⑩";
+  const STEM_MARKER_GLOBAL = new RegExp(`[${STEM_MARKERS}]`, "g");
+  const STEM_STATEMENT_PATTERN = new RegExp(`^[（(]?([${STEM_MARKERS}])[)）]?[\\s.、,，:：]*([\\s\\S]+)$`);
+  const STEM_COMBO_PATTERN = new RegExp(`^[\\s${STEM_MARKERS}.、,，．。]+$`);
   // 历年题的考频索引：只统计已核验可练的导入题，按知识点归集年份与题量。
   const examFrequencyMap = (() => {
     const map = new Map();
@@ -487,7 +491,7 @@
         <section class="knowledge-panel mistake"><h4>错误说法（不要这样记）</h4><p class="knowledge-panel-note">以下内容均错误，是常见干扰项。</p><ul>${(point.commonMistakes || []).map((item) => `<li>${highlightText(item, query)}</li>`).join("")}</ul></section>
       </div>
       ${(point.examTips || []).length ? `<section class="knowledge-exam-tips"><h4>考试提示</h4><ul>${point.examTips.map((item) => `<li>${highlightText(item, query)}</li>`).join("")}</ul></section>` : ""}
-      ${frequency ? `<details class="knowledge-exam-frequency"${frequency.multiYear ? " open" : ""}><summary>关联历年考点 ${frequency.count} 道${frequency.multiYear ? ` · 覆盖 ${frequency.years.join(" / ")} 年` : frequency.years.length ? ` · ${frequency.years[0]} 年` : ""}</summary><ul>${frequency.questions.slice(0, 8).map((item) => `<li><span class="exam-year">${escapeHtml(String(item.year || "—"))}</span>${highlightText(item.stem, query)}${item.repeatLabel ? `<span class="exam-repeat">${escapeHtml(item.repeatLabel)}</span>` : ""}</li>`).join("")}</ul>${frequency.questions.length > 8 ? `<p class="knowledge-panel-note">另有 ${frequency.questions.length - 8} 道同知识点历年题，可在练习页继续刷。</p>` : ""}<button class="button secondary small" data-action="practice-fact" data-fact="${escapeHtml(point.id)}">刷这个知识点的历年题</button></details>` : ""}
+      ${frequency ? `<details class="knowledge-exam-frequency"${frequency.multiYear ? " open" : ""}><summary>关联历年考点 ${frequency.count} 道${frequency.multiYear ? ` · 覆盖 ${frequency.years.join(" / ")} 年` : frequency.years.length ? ` · ${frequency.years[0]} 年` : ""}</summary><ul>${frequency.questions.slice(0, 8).map((item) => `<li><span class="exam-year">${escapeHtml(String(item.year || "—"))}</span>${highlightText(normalizeExamText(item.stem).split("\n")[0], query)}${item.repeatLabel ? `<span class="exam-repeat">${escapeHtml(item.repeatLabel)}</span>` : ""}</li>`).join("")}</ul>${frequency.questions.length > 8 ? `<p class="knowledge-panel-note">另有 ${frequency.questions.length - 8} 道同知识点历年题，可在练习页继续刷。</p>` : ""}<button class="button secondary small" data-action="practice-fact" data-fact="${escapeHtml(point.id)}">刷这个知识点的历年题</button></details>` : ""}
       <details class="knowledge-sources"><summary>${referenceCount ? `查看参考原文（${referenceCount} 条）` : "查看出处说明"}</summary>${renderSourceReferences(point.citations || [])}</details>
     </article>`;
   }
@@ -724,7 +728,7 @@
           </div>
           <button class="button small" data-action="practice-list" ${items.length ? "" : "disabled"}>练习本列表</button>
         </div>
-        ${items.length ? `<div class="table-wrap"><table class="table"><thead><tr><th>题目</th><th>科目</th><th>章节</th><th>题型</th></tr></thead><tbody>${items.map((q) => `<tr><td>${escapeHtml(q.stem).slice(0,90)}${q.stem.length > 90 ? "…" : ""}</td><td>${escapeHtml(subjectTitle(q.subjectId))}</td><td>${escapeHtml(chapterTitle(q.chapterId))}</td><td>${typeLabel(q.type)}</td></tr>`).join("")}</tbody></table></div>` : '<div class="empty"><strong>这里还是空的</strong>答错或收藏的题目会自动出现在这里。</div>'}
+        ${items.length ? `<div class="table-wrap"><table class="table"><thead><tr><th>题目</th><th>科目</th><th>章节</th><th>题型</th></tr></thead><tbody>${items.map((q) => `<tr><td>${escapeHtml(normalizeExamText(q.stem).replace(/\n/g, " ")).slice(0,90)}${q.stem.length > 90 ? "…" : ""}</td><td>${escapeHtml(subjectTitle(q.subjectId))}</td><td>${escapeHtml(chapterTitle(q.chapterId))}</td><td>${typeLabel(q.type)}</td></tr>`).join("")}</tbody></table></div>` : '<div class="empty"><strong>这里还是空的</strong>答错或收藏的题目会自动出现在这里。</div>'}
       </section>`;
   }
 
@@ -912,13 +916,13 @@
           </div>
           ${question.caseMaterial ? `<div class="case-material"><strong>综合案例 · ${escapeHtml(question.caseGroupTitle || "材料题")} · 第 ${question.caseOrder || 1}/${question.caseGroupSize || 1} 问</strong><p>${escapeHtml(question.caseMaterial)}</p></div>` : ""}
           <div class="question-stem">${renderStem(question.stem)}</div>
-          <div class="options">
+          <div class="options${compactOptions(question) ? " compact" : ""}">
             ${question.options.map((option, index) => {
               const chosen = selected.has(option.id);
               const isRight = question.correctOptionIds.includes(option.id);
               let optionClass = chosen ? "selected" : "";
               if (submitted) optionClass += isRight ? " correct" : (chosen ? " incorrect" : "");
-              return `<button class="option ${optionClass}" data-action="choose-option" data-option="${option.id}" ${submitted ? "disabled" : ""}><span class="option-key">${String.fromCharCode(65 + index)}</span><span>${escapeHtml(option.text)}</span></button>`;
+              return `<button class="option ${optionClass}" data-action="choose-option" data-option="${option.id}" ${submitted ? "disabled" : ""}><span class="option-key">${String.fromCharCode(65 + index)}</span><span>${escapeHtml(formatOptionText(option.text))}</span></button>`;
             }).join("")}
           </div>
           <div class="question-actions">
@@ -937,12 +941,78 @@
       </main>`;
   }
 
-  function renderStem(stem) {
-    let safe = escapeHtml(stem);
+  // 历年题来自扫描件识别文本，句读常被识别成半角句点：中文之间的“.”按顿号还原。
+  function normalizeExamText(value) {
+    return String(value || "")
+      .replace(/\r\n?/g, "\n")
+      .replace(/([\u4e00-\u9fff])\.(?=[\u4e00-\u9fff])/g, "$1、")
+      .replace(/[ \t]{2,}/g, " ")
+      .replace(/[ \t]+$/gm, "")
+      .trim();
+  }
+
+  function splitStemLines(text) {
+    const lines = text.split("\n").map((line) => line.trim()).filter(Boolean);
+    if (lines.length !== 1) return lines;
+    // 单行题干中出现顺序排列的 Ⅰ/Ⅱ/Ⅲ 或 ①/②/③ 分项时，按标记拆行。
+    const markers = [...lines[0].matchAll(STEM_MARKER_GLOBAL)];
+    if (markers.length < 2) return lines;
+    const ascending = markers.every((marker, index) => index === 0 || STEM_MARKERS.indexOf(marker[0]) > STEM_MARKERS.indexOf(markers[index - 1][0]));
+    if (!ascending) return lines;
+    const first = lines[0].slice(0, markers[0].index).trim();
+    return [first, ...markers.map((marker, index) => lines[0].slice(marker.index, index + 1 < markers.length ? markers[index + 1].index : lines[0].length).trim())].filter(Boolean);
+  }
+
+  // 识别文本常在句中断行：中文直接续接，英文与数字之间补空格。
+  function joinStemText(previous, next) {
+    if (!previous) return next;
+    const needsSpace = /[A-Za-z0-9]/.test(previous.slice(-1)) && /[A-Za-z0-9]/.test(next.slice(0, 1));
+    return needsSpace ? `${previous} ${next}` : previous + next;
+  }
+
+  function parseStem(rawStem) {
+    const lines = splitStemLines(normalizeExamText(rawStem));
+    let lead = "";
+    const statements = [];
+    for (const line of lines) {
+      const match = line.match(STEM_STATEMENT_PATTERN);
+      if (match) statements.push({ key: match[1], text: match[2].trim() });
+      else if (statements.length) statements[statements.length - 1].text = joinStemText(statements[statements.length - 1].text, line);
+      else lead = joinStemText(lead, line);
+    }
+    return { lead, statements };
+  }
+
+  function renderStemText(text) {
+    let safe = escapeHtml(text);
     for (const word of ["不正确", "错误", "不属于", "不得", "不包括"]) {
       safe = safe.replaceAll(word, `<span class="stem-negation">${word}</span>`);
     }
     return safe;
+  }
+
+  function renderStem(stem) {
+    const { lead, statements } = parseStem(stem);
+    const leadHtml = lead ? `<p class="stem-lead">${renderStemText(lead)}</p>` : "";
+    if (!statements.length) return leadHtml || `<p class="stem-lead">${renderStemText(normalizeExamText(stem))}</p>`;
+    const listHtml = statements.map((statement) => `<li><span class="stem-key">${escapeHtml(statement.key)}</span><span class="stem-text">${renderStemText(statement.text)}</span></li>`).join("");
+    return `${leadHtml}<ul class="stem-statements">${listHtml}</ul>`;
+  }
+
+  // 组合选择题的选项就是 Ⅰ/Ⅱ/Ⅲ 的排列，用顿号统一显示并排成两列。
+  function formatOptionText(text) {
+    if (!STEM_COMBO_PATTERN.test(text || "")) return normalizeExamText(text);
+    const keys = String(text).match(STEM_MARKER_GLOBAL) || [];
+    return keys.join("、");
+  }
+
+  // 选项本身很短（年份、金额、Ⅰ/Ⅱ 组合等）时排成两列，避免一道题占满整屏。
+  function compactOptions(question) {
+    if (question.options.length < 2) return false;
+    return question.options.every((option) => {
+      const text = formatOptionText(option.text);
+      return text.length > 0 && text.length <= 10 && !text.includes("\n");
+    });
   }
 
   function renderExplanation(question, correct) {

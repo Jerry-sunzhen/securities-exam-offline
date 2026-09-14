@@ -268,12 +268,19 @@
   .tag { @apply rounded-[7px] bg-[#eef3f8] px-2 py-[5px] text-xs text-[#496074]; }
   .tag.level-master { @apply bg-[#fff0dc] text-[#8c3e00]; }
   .tag.negative { @apply bg-danger-soft text-danger; }
-  .question-stem { @apply text-lg font-[680] leading-[1.75]; }
+  .question-stem { @apply text-[17px] leading-[1.85] text-[#233047]; }
+  .stem-lead { @apply m-0 font-semibold; }
+  .stem-lead + .stem-lead { @apply mt-2; }
+  .stem-statements { @apply mt-2.5 mb-0 grid list-none gap-1.5 p-0; }
+  .stem-statements li { @apply grid grid-cols-[26px_minmax(0,1fr)] items-start gap-2.5; }
+  .stem-key { @apply mt-[3px] grid size-[22px] place-items-center rounded-md bg-[#eef3f8] text-[11px] font-bold text-[#5a6b81]; }
+  .stem-text { @apply leading-[1.8] text-[#33405a]; }
   .stem-negation { @apply text-danger underline; }
   .case-material { @apply my-4 border-l-4 border-[#8db7f1] bg-[#f2f7ff] p-[15px] leading-[1.75] text-[#36445c]; }
   .case-material strong { @apply mb-2 block text-xs text-[#176c52]; }
   .case-material p { @apply m-0; }
   .options { @apply mt-[21px] grid gap-[11px]; }
+  .options.compact { @apply grid-cols-2 gap-2.5; }
   .option { @apply grid w-full grid-cols-[30px_minmax(0,1fr)] items-start gap-[11px] rounded-xl border border-line bg-white px-[15px] py-[13px] text-left text-ink; }
   .option:hover { @apply border-[#9dbde8] bg-[#f8fbff]; }
   .option.selected { @apply border-primary bg-primary-soft; }
