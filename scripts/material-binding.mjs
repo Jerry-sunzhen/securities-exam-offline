@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// 复习资料（2026 新大纲三色笔记）与两本教材全文，用于把每道题绑定到具体页码。
+// 仅保留用户提供的内部材料：2026 新大纲三色笔记 + 两本教材。
 export const NOTE_SOURCES = [
   {
     id: "notes-finance",
@@ -42,6 +42,9 @@ export const TEXTBOOK_SOURCES = [
   }
 ];
 
+// 教材页只作补充定位，分数太低的匹配宁可不要，避免给出无关页码。
+export const TEXTBOOK_MIN_SCORE = 55;
+
 export function parsePagedText(text) {
   const pages = new Map();
   const parts = text.split(/^===== PDF 第 (\d+) 页 =====\s*$/m);
@@ -65,7 +68,7 @@ function tokens(value) {
   return output;
 }
 
-// BM25 检索：与 scripts/import-exams.py 中的实现保持同一套参数。
+// BM25 检索：讲义、题目与教材用的是同一套参数。
 export function createIndex(docs) {
   const postings = new Map();
   const lengths = [];
@@ -125,15 +128,15 @@ export function chunkPages(pages, { size = 420, step = 240, minimum = 60, skip =
   return docs;
 }
 
-// 讲义按「第X章」标题分章，用于把检索限制在题干所属章节内。
+// 讲义按「第X章」标题分章，用于把检索限制在题目所属章节内。
 export function detectChapterRanges(pages, chapters) {
   const ranges = new Map();
   const lookup = new Map(chapters.map((chapter) => [normalize(chapter.title), chapter.id]));
   let current = null;
-  for (const [page] of pages) {
-    const body = pages.get(page) || "";
-    for (const line of body.split("\n")) {
-      const chapterId = lookup.get(normalize(line.trim()));
+  for (const page of [...pages.keys()].sort((left, right) => left - right)) {
+    const lines = String(pages.get(page) || "").split("\n").map((line) => normalize(line.trim()));
+    for (const line of lines) {
+      const chapterId = lookup.get(line);
       if (chapterId) { current = chapterId; break; }
     }
     if (!current) continue;
@@ -144,65 +147,31 @@ export function detectChapterRanges(pages, chapters) {
   return ranges;
 }
 
-// 部分知识点摘录只有十几个字，绑定出处时按页扩展成一段可读原文。
-function extendQuote(pageText, quote, target = 220) {
-  const normalizedQuote = String(quote || "").replace(/\s+/g, "");
-  if (!pageText || normalizedQuote.length >= target) return quote;
-  const page = pageText.replace(/\s+/g, "");
-  const index = page.indexOf(normalizedQuote);
-  if (index < 0) return quote;
-  const start = Math.max(0, index - Math.floor((target - normalizedQuote.length) / 2));
-  return page.slice(start, Math.min(page.length, start + target));
-}
-
-function citationLink(citation, source, textbookPages) {
-  const pageText = textbookPages?.get(source.id)?.get(citation.page) || "";
-  return {
-    sourceId: source.id,
-    sourceLabel: source.label,
-    sourceTitle: citation.title || source.title,
-    kind: "textbook",
-    page: citation.page,
-    quote: extendQuote(pageText, citation.quote),
-    score: null,
-    localPath: citation.localPath || source.viewerPath,
-    method: "knowledge_point",
-    reviewStatus: "verified"
-  };
-}
-
-export function createMaterialContext({ docsDir, chapters, knowledgePoints }) {
+export function createMaterialContext({ docsDir }) {
   const notes = NOTE_SOURCES.map((source) => {
     const pages = parsePagedText(readFileSync(join(docsDir, source.textName), "utf8"));
-    return { source, pages, ranges: detectChapterRanges(pages, chapters) };
+    return { source, pages };
   });
-  const indexes = notes.map((entry) => ({
-    ...entry,
-    index: createIndex(chunkPages(entry.pages)),
-    scoped: new Map([...entry.ranges.entries()].map(([chapterId, range]) => [
-      chapterId,
-      createIndex(chunkPages(new Map([...entry.pages].filter(([page]) => page >= range.firstPage && page <= range.lastPage))))
-    ]))
-  }));
-  const factMap = new Map(knowledgePoints.map((point) => [point.id, point]));
-  const textbookPages = new Map(TEXTBOOK_SOURCES.map((source) => [
-    source.id,
-    parsePagedText(readFileSync(join(docsDir, source.textName), "utf8"))
-  ]));
-  return { notes, indexes, factMap, textbookPages };
+  const textbooks = TEXTBOOK_SOURCES.map((source) => {
+    const pages = parsePagedText(readFileSync(join(docsDir, source.textName), "utf8"));
+    return { source, pages, index: createIndex(chunkPages(pages, { skip: (page) => page < 10 })) };
+  });
+  return { notes, textbooks };
 }
 
-function buildQuery(question, fact) {
-  return [
-    question.stem, question.stem,
-    (question.options || []).map((option) => option.text).join(""),
-    String(question.explanation || "").slice(0, 650),
-    question.caseMaterial || "",
-    fact?.topic || "", fact?.statement || ""
-  ].join("");
+// 讲义章节范围来自笔记自身的「第X章」标题。
+export function createNoteIndexes(context, chapters) {
+  return context.notes.map((entry) => {
+    const scoped = new Map();
+    const ranges = detectChapterRanges(entry.pages, chapters);
+    for (const [chapterId, range] of ranges) {
+      scoped.set(chapterId, createIndex(chunkPages(new Map([...entry.pages].filter(([page]) => page >= range.firstPage && page <= range.lastPage)))));
+    }
+    return { ...entry, index: createIndex(chunkPages(entry.pages)), scoped };
+  });
 }
 
-function notesLink(entry, best, crossSubject) {
+function notesLink(entry, best) {
   return {
     sourceId: entry.source.id,
     sourceLabel: entry.source.label,
@@ -213,61 +182,44 @@ function notesLink(entry, best, crossSubject) {
     score: best.score,
     localPath: `./docs/${entry.source.viewerName}`,
     method: "text_similarity",
-    reviewStatus: "suggested",
-    ...(crossSubject ? { crossSubject: true } : {})
+    reviewStatus: "suggested"
   };
 }
 
-export function bindQuestion(question, context) {
-  const fact = context.factMap.get(question.factId);
-  const query = buildQuery(question, fact);
-  const own = context.indexes.find((entry) => entry.source.subjectId === question.subjectId);
-  const other = context.indexes.find((entry) => entry.source.subjectId !== question.subjectId);
-
-  let ownBest = null;
-  if (own) {
-    const scoped = question.chapterId ? own.scoped.get(question.chapterId) : null;
-    const scopedBest = scoped ? searchIndex(scoped, query, 1)[0] : null;
-    const fullBest = searchIndex(own.index, query, 1)[0];
-    // 先按章节取页，避免同一本书里跨章节误配；差距明显时才退回整本检索。
-    ownBest = scopedBest && (!fullBest || scopedBest.score * 1.15 >= fullBest.score) ? scopedBest : fullBest;
-    if (!ownBest) ownBest = fullBest || scopedBest;
-  }
-  const otherBest = other ? searchIndex(other.index, query, 1)[0] : null;
-
-  const links = [];
-  // 押题卷里常混入另一科的题：另一本笔记明显更贴合时，绑定到那一本。
-  const preferOther = ownBest && otherBest &&
-    otherBest.score > ownBest.score * 1.25 && otherBest.score - ownBest.score > 15;
-  const chosen = (!ownBest && otherBest) || preferOther
-    ? { entry: other, best: otherBest, crossSubject: true }
-    : ownBest ? { entry: own, best: ownBest, crossSubject: false } : null;
-  if (chosen) links.push(notesLink(chosen.entry, chosen.best, chosen.crossSubject));
-
-  const textbookSource = TEXTBOOK_SOURCES.find((source) => source.subjectId === question.subjectId);
-  const citation = (fact?.citations || []).find((entry) => entry.sourceClass === (question.subjectId === "finance" ? "china_official_textbook" : "historical_exam_textbook"));
-  if (citation && textbookSource) links.push(citationLink(citation, textbookSource, context.textbookPages));
-  return links;
-}
-
-function buildPointQuery(point) {
-  return [
-    point.topic, point.topic,
-    point.statement,
-    point.explanation,
-    (point.keyPoints || []).join(""),
-    (point.detailSections || []).map((section) => [section.title, ...(section.points || [])].join("")).join("")
+export function bindQuestion(question, context, chapterId = null) {
+  const entry = context.indexes?.find((item) => item.source.subjectId === question.subjectId);
+  if (!entry) return [];
+  const query = [
+    question.stem, question.stem,
+    (question.options || []).map((option) => option.text).join(""),
+    String(question.explanation || "").slice(0, 650),
+    question.caseMaterial || ""
   ].join("");
+  const scoped = chapterId ? entry.scoped?.get(chapterId) : null;
+  const scopedBest = scoped ? searchIndex(scoped, query, 1)[0] : null;
+  const fullBest = searchIndex(entry.index, query, 1)[0];
+  // 先按章节取页，避免同一本书里跨章节误配；差距明显时才退回整本检索。
+  const best = scopedBest && (!fullBest || scopedBest.score * 1.15 >= fullBest.score) ? scopedBest : fullBest || scopedBest;
+  return best ? [notesLink(entry, best)] : [];
 }
 
-// 知识讲义也要能回查内部材料：先在该知识点所属章节内检索，差距明显时再退回整本笔记。
-export function bindKnowledgePoint(point, context) {
-  const own = context.indexes.find((entry) => entry.source.subjectId === point.subjectId);
-  if (!own) return [];
-  const query = buildPointQuery(point);
-  const scoped = point.chapterId ? own.scoped.get(point.chapterId) : null;
-  const scopedBest = scoped ? searchIndex(scoped, query, 1)[0] : null;
-  const fullBest = searchIndex(own.index, query, 1)[0];
-  const best = scopedBest && (!fullBest || scopedBest.score * 1.15 >= fullBest.score) ? scopedBest : fullBest || scopedBest;
-  return best ? [notesLink(own, best, false)] : [];
+// 讲义知识点补一条教材参考页：匹配分数太低就不给，避免误导。
+export function bindTextbook(point, context) {
+  const entry = context.textbooks?.find((item) => item.source.subjectId === point.subjectId);
+  if (!entry) return null;
+  const query = [point.topic, point.topic, ...(point.points || [])].join("");
+  const best = searchIndex(entry.index, query, 1)[0];
+  if (!best || best.score < TEXTBOOK_MIN_SCORE) return null;
+  return {
+    sourceId: entry.source.id,
+    sourceLabel: entry.source.label,
+    sourceTitle: entry.source.title,
+    kind: "textbook",
+    page: best.doc.page,
+    quote: best.doc.quote,
+    score: best.score,
+    localPath: entry.source.viewerPath,
+    method: "text_similarity",
+    reviewStatus: "suggested"
+  };
 }

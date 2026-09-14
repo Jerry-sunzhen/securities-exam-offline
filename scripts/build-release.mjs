@@ -17,7 +17,6 @@ rmSync(resolve(release, "docs/.gitkeep"), { force: true });
 mkdirSync(resolve(release, "data"), { recursive: true });
 cpSync(resolve(root, "data/outline.js"), resolve(release, "data/outline.js"));
 cpSync(resolve(root, "data/questions.js"), resolve(release, "data/questions.js"));
-cpSync(resolve(root, "data/coverage-report.json"), resolve(release, "data/coverage-report.json"));
 mkdirSync(resolve(release, "vendor"), { recursive: true });
 cpSync(resolve(root, "vendor/sql-wasm.js"), resolve(release, "vendor/sql-wasm.js"));
 cpSync(resolve(root, "vendor/sql-wasm-data.js"), resolve(release, "vendor/sql-wasm-data.js"));

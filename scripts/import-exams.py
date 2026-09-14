@@ -10,7 +10,6 @@ import collections
 import hashlib
 import html
 import json
-import math
 from pathlib import Path
 import re
 import shutil
@@ -180,70 +179,6 @@ def parse_source(source, text):
     return occurrences, rejected, len(answers)
 
 
-def tokens(value):
-    value = normalize(value)
-    runs = re.findall(r'[\u4e00-\u9fff]+|[a-z0-9]+', value)
-    return [r[i:i+2] for r in runs for i in range(len(r)-1)]
-
-
-class SearchIndex:
-    def __init__(self, docs):
-        self.docs = docs
-        self.postings = collections.defaultdict(list)
-        self.lengths = []
-        for i, doc in enumerate(docs):
-            terms = collections.Counter(tokens(doc['search']))
-            self.lengths.append(sum(terms.values()))
-            for term, count in terms.items(): self.postings[term].append((i,count))
-        self.avg = sum(self.lengths)/max(1,len(docs))
-
-    def search(self, value, limit=3):
-        scores = collections.defaultdict(float)
-        for token, qfreq in collections.Counter(tokens(value)).items():
-            postings = self.postings.get(token, [])
-            idf = math.log(1+(len(self.docs)-len(postings)+.5)/(len(postings)+.5))
-            for i, tf in postings:
-                scores[i] += idf * tf * 2.2/(tf+1.2*(.25+.75*self.lengths[i]/max(1,self.avg))) * min(qfreq,2)
-        return [(self.docs[i],round(score,2)) for i,score in sorted(scores.items(),key=lambda x:x[1],reverse=True)[:limit]]
-
-
-def link_books(questions):
-    baseline = json.loads((ROOT/'data/questions.json').read_text())
-    knowledge = baseline['knowledgePoints']
-    indexes, point_indexes = {}, {}
-    for subject, filename in [('finance','base-knowledge'),('law','law-regulations')]:
-        text = (ROOT/f'docs/{filename}.txt').read_text()
-        parts = re.split(r'^===== PDF 第 (\d+) 页 =====\s*$',text,flags=re.M)
-        docs = []
-        for j in range(1,len(parts),2):
-            page, body = int(parts[j]), parts[j+1].strip()
-            if page < (12 if subject=='finance' else 12):continue
-            # Overlapping windows preserve sentences that cross an OCR line.
-            body = re.sub(r'\s+','',body)
-            for start in range(0,len(body),240):
-                quote = body[start:start+420]
-                if len(quote)<60:continue
-                docs.append({'page':page,'quote':quote,'search':quote})
-        indexes[subject] = SearchIndex(docs)
-        point_indexes[subject] = SearchIndex([{'id':p['id'],'chapterId':p['chapterId'],'topic':p['topic'],
-            'search':p['topic']*3+p['statement']+p['explanation']+''.join(p['keyPoints'])} for p in knowledge if p['subjectId']==subject])
-    for q in questions:
-        query = q['stem']*2 + ''.join(o['text'] for o in q['options']) + q['explanation'][:650]
-        points = point_indexes[q['subjectId']].search(query,3)
-        q['knowledgeLinks'] = [{'knowledgeId':p['id'],'topic':p['topic'],'score':score,'method':'text_similarity','reviewStatus':'suggested'} for p,score in points]
-        q['chapterId'] = points[0][0]['chapterId']
-        q['factId'] = points[0][0]['id']
-        book_results = indexes[q['subjectId']].search(query,12)
-        selected = []
-        for page,score in book_results:
-            if page['page'] in [x['page'] for x in selected]:continue
-            selected.append({'page':page['page'],'quote':page['quote'],'score':score,
-                'bookId':'base-knowledge' if q['subjectId']=='finance' else 'law-regulations',
-                'method':'text_similarity','reviewStatus':'suggested'})
-            if len(selected)==2:break
-        q['bookLinks'] = selected
-
-
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('source',type=Path)
@@ -327,16 +262,12 @@ def main():
         q['reviewStatus']='held' if q['issues'] else 'source_answer'
         q['verificationStatus']='source_transcribed'
         q['version']=1
-        q['difficulty']='unrated'
-        q['level']='历年整理'
         q['negation']=bool(re.search('不属于|不包括|错误|不正确|不符合',q['stem']))
-        q['citations']=[]
         q['examEligible']=not q['issues']
         years = sorted({int(o.get('year')) for o in q.get('origins', []) if str(o.get('year','')).isdigit()})
         q['repeatYears'] = years
         q['repeatCount'] = len(q.get('origins', []))
         q['repeatLabel'] = ('多年考点 · ' + ' / '.join(map(str, years))) if len(years) >= 2 else ('重复出现 · ' + str(years[0]) if q['repeatCount'] > 1 and years else None)
-    link_books(questions)
     # Group sizes belong to the imported passage, not to a fixed four-question template.
     groups=collections.defaultdict(list)
     for q in questions:

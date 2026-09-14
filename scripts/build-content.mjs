@@ -3,12 +3,10 @@ import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, writeFileSyn
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { subjects, chapters } from "../content/catalog.mjs";
-import { facts } from "../content/facts.mjs";
-import { NOTE_SOURCES, createMaterialContext, bindQuestion, bindKnowledgePoint } from "./material-binding.mjs";
-import { financeReferenceMap } from "../content/finance-references.mjs";
-import { officialFinanceTextbookNeedles } from "../content/official-finance-textbook.mjs";
-import { historicalLawTextbookLocators } from "../content/historical-law-textbook.mjs";
+import { NOTE_SOURCES, TEXTBOOK_SOURCES, createMaterialContext, createNoteIndexes, bindQuestion, bindTextbook } from "./material-binding.mjs";
+import { parseNotesSections, locateSection } from "./notes-sections.mjs";
 
+// 内容全部来自内部材料：2026 新大纲三色笔记（讲义 + 题目定位）与两本教材（补充定位）。
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const docsDir = join(root, "docs");
 const dataDir = join(root, "data");
@@ -35,8 +33,6 @@ const disciplineText = execFileSync("textutil", ["-convert", "txt", "-stdout", d
 const officialTextbookText = readFileSync(officialTextbookPath, "utf8");
 const historicalLawTextbookText = readFileSync(historicalLawTextbookPath, "utf8");
 
-const normalizeText = (value) => String(value || "").replace(/\s+/g, "");
-
 function parseTextPages(text, expectedPageCount, label) {
   const parts = text.split(/^===== PDF 第 (\d+) 页 =====\s*$/m);
   const parsed = [];
@@ -51,132 +47,6 @@ function parseTextPages(text, expectedPageCount, label) {
 
 const officialTextbookPages = parseTextPages(officialTextbookText, 568, "official finance textbook");
 const historicalLawTextbookPages = parseTextPages(historicalLawTextbookText, 274, "historical law textbook");
-const officialTextbookRanges = {
-  "finance-1": [12, 45],
-  "finance-2": [46, 123],
-  "finance-3": [124, 206],
-  "finance-4": [207, 293],
-  "finance-5": [294, 400],
-  "finance-6": [401, 452],
-  "finance-7": [453, 508],
-  "finance-8": [509, 566]
-};
-
-function extractTextbookQuote(pageText, needle) {
-  const text = normalizeText(pageText);
-  const normalizedNeedle = normalizeText(needle);
-  const matchIndex = text.indexOf(normalizedNeedle);
-  if (matchIndex < 0) throw new Error(`official textbook quote missing needle: ${needle}`);
-
-  let start = matchIndex;
-  for (let index = matchIndex - 1; index >= Math.max(0, matchIndex - 90); index -= 1) {
-    if (/[。！？；]/.test(text[index])) { start = index + 1; break; }
-  }
-
-  let end = Math.min(text.length, matchIndex + normalizedNeedle.length + 420);
-  let sentenceCount = 0;
-  let lastBoundary = -1;
-  for (let index = matchIndex + normalizedNeedle.length; index < end; index += 1) {
-    if (/[。！？]/.test(text[index])) {
-      sentenceCount += 1;
-      lastBoundary = index + 1;
-      if (sentenceCount === 2) { end = index + 1; break; }
-    }
-  }
-  if (sentenceCount < 2 && lastBoundary > matchIndex + normalizedNeedle.length) end = lastBoundary;
-  return text.slice(start, end);
-}
-
-function extractHistoricalTextbookQuote(pageText, needle, endNeedle = "") {
-  const quote = extractTextbookQuote(pageText, needle);
-  const maxLength = 360;
-  const normalizedNeedle = normalizeText(needle);
-  const matchIndex = quote.indexOf(normalizedNeedle);
-  if (endNeedle) {
-    const normalizedEndNeedle = normalizeText(endNeedle);
-    const endIndex = quote.indexOf(normalizedEndNeedle, matchIndex);
-    if (endIndex < 0) throw new Error(`historical textbook quote missing end needle: ${endNeedle}`);
-    return quote.slice(0, endIndex + normalizedEndNeedle.length);
-  }
-  for (let index = matchIndex + normalizedNeedle.length; index < Math.min(quote.length, maxLength); index += 1) {
-    if (/[。！？；]/.test(quote[index])) return quote.slice(0, index + 1);
-  }
-  if (quote.length <= maxLength) return quote;
-
-  const shortened = quote.slice(0, maxLength);
-  const minimumBoundary = Math.max(120, shortened.indexOf(normalizedNeedle) + normalizedNeedle.length);
-  for (let index = shortened.length - 1; index >= minimumBoundary; index -= 1) {
-    if (/[。！？；]/.test(shortened[index])) return shortened.slice(0, index + 1);
-  }
-  return shortened;
-}
-
-function findOfficialTextbookCitations(fact) {
-  if (fact.subjectId !== "finance") return [];
-  const configuredNeedles = officialFinanceTextbookNeedles[fact.id];
-  const fallbackNeedle = fact.textbookSearch || fact.topic;
-  const needles = configuredNeedles?.length
-    ? configuredNeedles
-    : [Array.isArray(fallbackNeedle) ? fallbackNeedle[0] : fallbackNeedle];
-  if (!needles?.length) throw new Error(`${fact.id}: missing official textbook locator`);
-  const [firstPage, lastPage] = officialTextbookRanges[fact.chapterId] || [];
-  if (!firstPage) throw new Error(`${fact.id}: missing official textbook chapter range`);
-
-  return needles.map((needle) => {
-    const normalizedNeedle = normalizeText(needle);
-    const matches = officialTextbookPages.filter((page) =>
-      page.page >= firstPage && page.page <= lastPage && normalizeText(page.text).includes(normalizedNeedle)
-    );
-    if (!matches.length) {
-      throw new Error(`${fact.id}: official textbook match missing for “${needle}”`);
-    }
-    // Curated legacy locators are unique. Expansion facts may deliberately use a
-    // repeated textbook term; the first match inside the fact's chapter is a
-    // stable, reviewable anchor and the extracted quote is still validated.
-    const page = matches[0];
-    return {
-      kind: "authority",
-      sourceClass: "china_official_textbook",
-      jurisdiction: "中国大陆 / 证券业一般业务水平评价测试",
-      answerBasis: true,
-      title: "《金融市场基础知识》（证券行业专业人员一般业务水平评价测试统编教材 2025）",
-      publisher: "中国证券业协会编，中国财政经济出版社出版",
-      locator: `PDF 第${page.page}页 · 书内第${page.page - 11}页`,
-      quote: extractTextbookQuote(page.text, needle),
-      page: page.page,
-      localPath: `./docs/${officialTextbookViewerName}`,
-      fullTextPath: `./docs/${officialTextbookName}`,
-      url: "https://www.sac.net.cn/fwdt/ksfw/jcdg/202512/t20251231_70825.html",
-      effectiveDate: "2025年版（内容更新截至2025年9月）",
-      textNotice: "本段来自扫描版识别文本，可能存在同形字、标点或表格识别误差，请以原书页面为准。"
-    };
-  });
-}
-
-function findHistoricalLawTextbookCitations(fact) {
-  if (fact.subjectId !== "law") return [];
-  const locator = historicalLawTextbookLocators[fact.id];
-  if (!locator) return [];
-  const page = historicalLawTextbookPages.find((entry) => entry.page === locator.page);
-  if (!page || !normalizeText(page.text).includes(normalizeText(locator.needle))) {
-    throw new Error(`${fact.id}: historical law textbook locator missing on PDF page ${locator.page}`);
-  }
-  return [{
-    kind: "textbook",
-    sourceClass: "historical_exam_textbook",
-    jurisdiction: "中国大陆证券从业考试历史口径（2020）",
-    answerBasis: false,
-    title: "《证券市场基本法律法规》（2020 商业备考教材）",
-    publisher: "证券业从业人员一般从业资格考试专用教材编写组编，中国铁道出版社有限公司",
-    locator: `PDF 第${page.page}页 · 书内第${page.page - 9}页`,
-    quote: extractHistoricalTextbookQuote(page.text, locator.needle, locator.endNeedle),
-    page: page.page,
-    localPath: `./docs/${historicalLawTextbookViewerName}`,
-    fullTextPath: `./docs/${historicalLawTextbookName}`,
-    effectiveDate: "2020年2月第1版（历史版本）",
-    textNotice: "本段来自2020年商业备考书的扫描版识别文本，仅供历史辅助，不是协会统编教材，也不是2025/2026考试或中国现行法律的答案依据。法条、期限、比例、处罚及业务规则必须核对最新官方文本；识别文字也可能有误。"
-  }];
-}
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>\"']/g, (character) => ({
@@ -231,278 +101,6 @@ function makeToc(sourcePages) {
   });
 }
 
-function findOutlineCitation(fact) {
-  if (fact.supplementSearch) {
-    const queries = Array.isArray(fact.supplementSearch) ? fact.supplementSearch : [fact.supplementSearch];
-    const compact = disciplineText.replace(/\s+/g, "");
-    const normalizedQueries = queries.map((query) => query.replace(/\s+/g, ""));
-    const query = normalizedQueries.find((item) => compact.includes(item));
-    if (!query) throw new Error(`${fact.id}: cannot locate discipline citation for ${queries.join(" / ")}`);
-    const index = compact.indexOf(query);
-    return {
-      kind: "scope",
-      title: "《证券行业专业人员水平评价测试纪法知识大纲（2026）》",
-      locator: "一般业务法规科增补范围",
-      quote: compact.slice(Math.max(0, index - 70), Math.min(compact.length, index + query.length + 220)),
-      page: null,
-      localPath: `./docs/${disciplineName}`,
-      url: "https://www.sac.net.cn/pxzx/pxzdydg/202511/t20251110_68680.html",
-      effectiveDate: "2026年6月版"
-    };
-  }
-  const queries = Array.isArray(fact.citationSearch) ? fact.citationSearch : [fact.citationSearch || fact.topic];
-  const contentPages = pages.filter((entry) => fact.subjectId === "finance" ? entry.page >= 4 && entry.page <= 13 : entry.page >= 14);
-  const normalizedQueries = queries.map((query) => query.replace(/\s+/g, ""));
-  const page = contentPages.find((entry) => {
-    const compact = entry.text.replace(/\s+/g, "");
-    return normalizedQueries.every((query) => compact.includes(query));
-  }) || contentPages.find((entry) => {
-    const compact = entry.text.replace(/\s+/g, "");
-    return normalizedQueries.some((query) => compact.includes(query));
-  });
-  if (!page) throw new Error(`${fact.id}: cannot locate outline citation for ${queries.join(" / ")}`);
-  const quoteSource = page.text.replace(/\s+/g, "");
-  const query = normalizedQueries.find((item) => quoteSource.includes(item));
-  if (!query) throw new Error(`${fact.id}: outline page found but query missing`);
-  const index = quoteSource.indexOf(query);
-  const start = Math.max(0, index - 80);
-  const end = Math.min(quoteSource.length, index + query.length + 220);
-  return {
-    kind: "scope",
-    title: "《证券行业专业人员一般业务水平评价测试大纲（2025）》",
-    locator: `${chapters.find((c) => c.id === fact.chapterId)?.title || ""} · PDF第${page.page}页`,
-    quote: quoteSource.slice(start, end).trim(),
-    page: page.page,
-    localPath: `./docs/${pdfName}`,
-    url: "https://www.sac.net.cn/pxzx/pxzdydg/202511/t20251110_68680.html",
-    effectiveDate: "2026-01-01"
-  };
-}
-
-function buildKnowledgePoints() {
-  const knowledgePoints = [];
-  for (const fact of facts) {
-    const outlineCitation = findOutlineCitation(fact);
-    const citations = [
-      outlineCitation,
-      ...findOfficialTextbookCitations(fact),
-      ...(fact.authorityCitations || []).map((citation) => ({
-        kind: "authority",
-        sourceClass: "china_official",
-        jurisdiction: "中国大陆",
-        answerBasis: true,
-        ...citation
-      })),
-      ...findHistoricalLawTextbookCitations(fact),
-      ...(financeReferenceMap[fact.id] || []).map((citation) => ({ ...citation }))
-    ];
-    knowledgePoints.push({
-      id: fact.id,
-      subjectId: fact.subjectId,
-      chapterId: fact.chapterId,
-      level: fact.level,
-      topic: fact.topic,
-      statement: fact.statement,
-      explanation: fact.explanation,
-      keyPoints: fact.correctPoints,
-      commonMistakes: fact.incorrectPoints,
-      memoryHook: fact.memoryHook || null,
-      detailSections: fact.detailSections || [],
-      examTips: fact.examTips || [],
-      citations
-    });
-  }
-  return { knowledgePoints };
-}
-
-const { knowledgePoints } = buildKnowledgePoints();
-const financeKnowledgePoints = knowledgePoints.filter((point) => point.subjectId === "finance");
-const lawKnowledgePoints = knowledgePoints.filter((point) => point.subjectId === "law");
-const sourceCoverage = (predicate) => `${financeKnowledgePoints.filter((point) => point.citations.some(predicate)).length}/${financeKnowledgePoints.length}`;
-const lawSourceCoverage = (predicate) => `${lawKnowledgePoints.filter((point) => point.citations.some(predicate)).length}/${lawKnowledgePoints.length}`;
-
-function splitRequirementText(text) {
-  return (text.match(/[^；。]+[；。]?/g) || [])
-    .map((item) => item.trim())
-    .filter((item) => /^(掌握|熟悉|了解)/.test(item));
-}
-
-function extractMainOutlineRequirements() {
-  const requirements = [];
-  let currentSubjectId = null;
-  let currentChapterId = null;
-  let currentSection = "";
-  let sectionText = "";
-  const chapterLookup = new Map(chapters.map((chapter) => [`${chapter.subjectId}:${normalizeText(chapter.title)}`, chapter.id]));
-
-  const flushSection = () => {
-    if (!currentSubjectId || !currentChapterId || !sectionText) return;
-    for (const text of splitRequirementText(sectionText)) {
-      requirements.push({
-        id: `${currentSubjectId === "finance" ? "FIN" : "LAW"}-${String(requirements.filter((item) => item.subjectId === currentSubjectId && item.source === "main").length + 1).padStart(3, "0")}`,
-        source: "main",
-        subjectId: currentSubjectId,
-        chapterId: currentChapterId,
-        section: currentSection,
-        level: text.match(/^(掌握|熟悉|了解)/)?.[1] || null,
-        text
-      });
-    }
-    sectionText = "";
-  };
-
-  for (const page of pages.filter((entry) => (entry.page >= 4 && entry.page <= 13) || (entry.page >= 15 && entry.page <= 24))) {
-    const subjectId = page.page <= 13 ? "finance" : "law";
-    if (subjectId !== currentSubjectId) {
-      flushSection();
-      currentSubjectId = subjectId;
-      currentChapterId = null;
-      currentSection = "";
-    }
-    for (const rawLine of page.text.split(/\r?\n/)) {
-      const line = rawLine.trim();
-      if (!line || /^\d+$/.test(line) || line === "金融市场基础知识" || line === "证券市场基本法律法规") continue;
-      if (/^第[一二三四五六七八九十]+章/.test(line)) {
-        flushSection();
-        currentChapterId = chapterLookup.get(`${subjectId}:${normalizeText(line)}`) || null;
-        currentSection = "";
-        continue;
-      }
-      if (/^第[一二三四五六七八九十]+节/.test(line)) {
-        flushSection();
-        currentSection = line;
-        continue;
-      }
-      if (currentChapterId && currentSection) sectionText += normalizeText(line);
-    }
-  }
-  flushSection();
-  return requirements;
-}
-
-function extractDisciplineRequirements() {
-  const compact = normalizeText(disciplineText);
-  const start = compact.search(/(?:掌握|熟悉)《习近平/);
-  if (start < 0) throw new Error("cannot locate 2026 discipline requirements");
-  return splitRequirementText(compact.slice(start)).map((text, index) => ({
-    id: `DISC-${String(index + 1).padStart(3, "0")}`,
-    source: "discipline-2026",
-    subjectId: "law",
-    chapterId: "law-5",
-    section: "纪法知识增补（2026）",
-    level: text.match(/^(掌握|熟悉|了解)/)?.[1] || null,
-    text
-  }));
-}
-
-function bigrams(value) {
-  const compact = normalizeText(value).replace(/[《》（）、，：“”"']/g, "");
-  const output = new Set();
-  for (let index = 0; index < compact.length - 1; index += 1) output.add(compact.slice(index, index + 2));
-  return output;
-}
-
-function requirementSimilarity(requirement, fact) {
-  const required = bigrams(requirement.text);
-  const factText = [fact.topic, fact.statement, fact.citationSearch, fact.supplementSearch]
-    .flat(Infinity).filter(Boolean).join("");
-  const candidate = bigrams(factText);
-  if (!required.size || !candidate.size) return 0;
-  let overlap = 0;
-  for (const token of required) if (candidate.has(token)) overlap += 1;
-  return overlap / required.size;
-}
-
-function buildCoverageReport() {
-  const requirements = [...extractMainOutlineRequirements(), ...extractDisciplineRequirements()];
-  const pointMap = new Map(knowledgePoints.map((point) => [point.id, point]));
-  const factMappings = new Map(facts.map((fact) => [fact.id, []]));
-  const mappedRequirements = requirements.map((requirement) => {
-    const candidates = facts.filter((fact) =>
-      fact.subjectId === requirement.subjectId &&
-      fact.chapterId === requirement.chapterId &&
-      (requirement.source === "discipline-2026" ? Boolean(fact.supplementSearch) : !fact.supplementSearch)
-    );
-    const exact = candidates.filter((fact) => {
-      const searches = [requirement.source === "discipline-2026" ? fact.supplementSearch : fact.citationSearch]
-        .flat(Infinity).filter(Boolean).map(normalizeText).filter((item) => item.length >= 4);
-      const text = normalizeText(requirement.text);
-      return searches.some((search) => text.includes(search) || search.includes(text.replace(/^(掌握|熟悉|了解)/, "")));
-    });
-    let status = "mapped";
-    let matches = exact.map((fact) => ({ fact, score: 1 }));
-    if (!matches.length) {
-      matches = candidates
-        .map((fact) => ({ fact, score: requirementSimilarity(requirement, fact) }))
-        .filter((item) => item.score >= 0.24)
-        .sort((left, right) => right.score - left.score)
-        .slice(0, 2);
-      status = matches.length ? "partial" : "unmapped";
-    }
-    for (const match of matches) factMappings.get(match.fact.id)?.push(requirement.id);
-    const factIds = matches.map((item) => item.fact.id);
-    const answerBasisTypes = [...new Set(factIds.flatMap((factId) =>
-      (pointMap.get(factId)?.citations || [])
-        .filter((citation) => citation.answerBasis === true)
-        .map((citation) => citation.sourceClass)
-    ))];
-    return {
-      ...requirement,
-      status,
-      factIds,
-      knowledgePointCount: factIds.length,
-      answerBasisTypes,
-      matchScores: matches.map((item) => Number(item.score.toFixed(2)))
-    };
-  });
-
-  const summarize = (items) => ({
-    requirements: items.length,
-    mapped: items.filter((item) => item.status === "mapped").length,
-    partial: items.filter((item) => item.status === "partial").length,
-    unmapped: items.filter((item) => item.status === "unmapped").length,
-    mappedOrPartialRate: items.length ? Number((items.filter((item) => item.status !== "unmapped").length * 100 / items.length).toFixed(1)) : 0
-  });
-  const bySubject = Object.fromEntries(subjects.map((subject) => [subject.id, summarize(mappedRequirements.filter((item) => item.subjectId === subject.id))]));
-  const byChapter = Object.fromEntries(chapters.map((chapter) => [chapter.id, {
-    title: chapter.title,
-    ...summarize(mappedRequirements.filter((item) => item.chapterId === chapter.id))
-  }]));
-  return {
-    meta: {
-      generatedFromContentCutoff: "2026-08-18",
-      outlineVersion: "一般业务大纲2025 + 纪法大纲2026",
-      mappingMethod: "大纲要求按分号和句号自动拆分；先用事实的 citationSearch/supplementSearch 精确锚定，再用同科同章文本二元组相似度给出近似关联。",
-      limitation: "这是用于发现扩题缺口的自动近似映射，不等于协会确认、专家逐条审定或真实考试命中率。partial 不能视为完整覆盖。",
-      statusMeaning: {
-        mapped: "题组检索锚点与该大纲要求直接匹配",
-        partial: "仅有同章文本相似关联，需要人工复核或继续扩题",
-        unmapped: "未找到达到阈值的题组"
-      },
-      factCount: facts.length,
-      knowledgePointCount: knowledgePoints.length,
-      summary: summarize(mappedRequirements),
-      bySubject,
-      byChapter
-    },
-    requirements: mappedRequirements,
-    facts: facts.map((fact) => ({
-      factId: fact.id,
-      subjectId: fact.subjectId,
-      chapterId: fact.chapterId,
-      topic: fact.topic,
-      requirementIds: factMappings.get(fact.id) || []
-    }))
-  };
-}
-
-const coverageReport = buildCoverageReport();
-const outline = {
-  meta: { title: "证券行业专业人员一般业务水平评价测试大纲（2025）", pageCount: pages.length, effectiveFrom: "2026-01-01" },
-  toc: makeToc(pages), pages,
-  supplementToc: [{ title: "纪法知识大纲（2026）", page: 1, level: "chapter" }],
-  supplements: [{ page: 1, title: "证券行业专业人员水平评价测试纪法知识大纲（2026）", text: disciplineText }]
-};
 function parsePagedSource(text) {
   const parts = text.split(/^===== PDF 第 (\d+) 页 =====\s*$/m);
   const list = [];
@@ -510,64 +108,107 @@ function parsePagedSource(text) {
   return list;
 }
 
-// 用户提供的 2026 新大纲三色笔记：题库里每道题都要能回查到这里的页码。
+const outline = {
+  meta: { title: "证券行业专业人员一般业务水平评价测试大纲（2025）", pageCount: pages.length, effectiveFrom: "2026-01-01" },
+  toc: makeToc(pages), pages,
+  supplementToc: [{ title: "纪法知识大纲（2026）", page: 1, level: "chapter" }],
+  supplements: [{ page: 1, title: "证券行业专业人员水平评价测试纪法知识大纲（2026）", text: disciplineText }]
+};
+
+// 三色笔记：既生成可翻阅的本地全文，也解析成讲义知识点。
 const noteSources = NOTE_SOURCES.map((source) => {
   const text = readFileSync(join(docsDir, source.textName), "utf8");
-  const sourcePages = parsePagedSource(text);
-  if (!sourcePages.length) throw new Error(`${source.textName}: no pages parsed`);
-  writeFileSync(join(docsDir, source.viewerName), buildTextbookViewer(sourcePages, {
+  const pageList = parsePagedSource(text);
+  if (!pageList.length) throw new Error(`${source.textName}: no pages parsed`);
+  writeFileSync(join(docsDir, source.viewerName), buildTextbookViewer(pageList, {
     title: `${source.title} 本地全文`,
     heading: `${source.title} 本地全文`,
     notice: "用户提供的 2026 新大纲备考笔记 · 识别文字可能有误，请以原文件为准 · 可使用浏览器“在页面中查找”",
     internalPage: () => ""
   }));
-  return { ...source, pageCount: sourcePages.length, localTextPath: `./docs/${source.textName}`, localViewerPath: `./docs/${source.viewerName}` };
+  const pageMap = new Map(pageList.map((page) => [page.page, page.text]));
+  const sections = parseNotesSections({ pages: pageMap, chapters, subjectId: source.subjectId, idPrefix: source.id === "notes-finance" ? "K-F" : "K-L" });
+  if (!sections.length) throw new Error(`${source.textName}: no knowledge sections parsed`);
+  return { ...source, pages: pageMap, sections, pageCount: pageList.length, localTextPath: `./docs/${source.textName}`, localViewerPath: `./docs/${source.viewerName}` };
 });
 
-const materialContext = createMaterialContext({ docsDir, chapters, knowledgePoints });
-// 知识讲义同样逐条绑定内部资料页码，保证讲义内容也能回查到出处。
-const pointBindingStats = { bound: 0 };
+const materialContext = createMaterialContext({ docsDir });
+materialContext.indexes = createNoteIndexes(materialContext, chapters);
+
+const knowledgePoints = [];
+for (const entry of noteSources) {
+  for (const section of entry.sections) {
+    knowledgePoints.push({
+      id: section.id,
+      subjectId: section.subjectId,
+      chapterId: section.chapterId,
+      topic: section.topic,
+      number: section.number,
+      page: section.page,
+      pageEnd: section.pageEnd,
+      points: section.lines,
+      bookLinks: section.bookLinks.map((link) => ({
+        sourceId: entry.id,
+        sourceLabel: entry.label,
+        sourceTitle: entry.title,
+        kind: "notes",
+        page: link.page,
+        quote: link.quote,
+        localPath: `./docs/${entry.viewerName}`,
+        method: "section",
+        reviewStatus: "verified"
+      }))
+    });
+  }
+}
 for (const point of knowledgePoints) {
-  point.bookLinks = bindKnowledgePoint(point, materialContext);
-  if (point.bookLinks.length) pointBindingStats.bound += 1;
+  const textbook = bindTextbook(point, materialContext);
+  if (textbook) point.bookLinks.push(textbook);
 }
-if (pointBindingStats.bound !== knowledgePoints.length) {
-  throw new Error(`知识讲义出处缺失：${knowledgePoints.length - pointBindingStats.bound} 个知识点没有绑定到备考笔记页码`);
-}
+
 const importedPath = join(root, "content/imported-exams.json");
 const imported = existsSync(importedPath) ? JSON.parse(readFileSync(importedPath, "utf8")) : null;
 const importedQuestions = imported?.questions || [];
-const bindingStats = { bound: 0, withNotes: 0, withVerifiedTextbook: 0, crossSubjectNotes: 0 };
+const bindingStats = { bound: 0, notes: 0, textbook: 0, knowledgeWithTextbook: knowledgePoints.filter((point) => point.bookLinks.some((link) => link.kind === "textbook")).length };
 for (const question of importedQuestions) {
-  const links = bindQuestion(question, materialContext);
-  question.bookLinks = links;
-  if (links.length) bindingStats.bound += 1;
-  if (links.some((link) => link.kind === "notes" && !link.crossSubject)) bindingStats.withNotes += 1;
-  if (links.some((link) => link.kind === "notes" && link.crossSubject)) bindingStats.crossSubjectNotes += 1;
-  if (links.some((link) => link.reviewStatus === "verified")) bindingStats.withVerifiedTextbook += 1;
+  const entry = noteSources.find((source) => source.subjectId === question.subjectId);
+  if (!entry) throw new Error(`${question.id}: 缺少对应科目的笔记`);
+  // 第一遍整本检索定位，第二遍在推导出的章节内收紧一次。
+  const first = bindQuestion(question, materialContext);
+  if (!first.length) throw new Error(`${question.id}: 无法绑定备考笔记出处`);
+  const firstSection = locateSection(entry.sections, first[0].page, first[0].quote, entry.pages.get(first[0].page) || "") || entry.sections[0];
+  const second = bindQuestion(question, materialContext, firstSection.chapterId);
+  const link = second[0] || first[0];
+  const section = locateSection(entry.sections, link.page, link.quote, entry.pages.get(link.page) || "") || firstSection;
+  const point = knowledgePoints.find((item) => item.id === section.id);
+  delete question.factId;
+  question.chapterId = point.chapterId;
+  question.knowledgeLinks = [{ knowledgeId: point.id, topic: point.topic, page: point.page, score: link.score, method: "notes_section", reviewStatus: "verified" }];
+  question.bookLinks = [link, ...point.bookLinks.filter((item) => item.kind === "textbook").map((item) => ({ ...item, method: "knowledge_point" }))];
+  bindingStats.bound += 1;
+  if (question.bookLinks.some((item) => item.kind === "notes")) bindingStats.notes += 1;
+  if (question.bookLinks.some((item) => item.kind === "textbook")) bindingStats.textbook += 1;
 }
-if (bindingStats.bound !== importedQuestions.length) {
-  throw new Error(`题库教材出处缺失：${importedQuestions.length - bindingStats.bound} 道题没有绑定到任何资料页码`);
-}
+
 const allQuestions = [...importedQuestions];
 const questionPayload = {
   meta: {
-    title: "证券从业历年整理题库",
+    title: "证券从业内部资料题库",
     questionCount: allQuestions.length,
     importedQuestionCount: importedQuestions.length,
     eligibleQuestionCount: allQuestions.filter((question) => question.examEligible !== false).length,
     importedSourceCount: imported?.sources?.length || 0,
     importedHeldCount: imported?.meta?.heldCount || 0,
-    factCount: facts.length,
+    knowledgePointCount: knowledgePoints.length,
     caseGroupCount: new Set(allQuestions.filter((question) => question.type === "case").map((question) => question.caseGroupId || question.id)).size,
     caseQuestionCount: allQuestions.filter((question) => question.type === "case").length,
     conditionalCaseQuestionCount: allQuestions.filter((question) => question.type === "judgment" && question.caseGroupId).length,
     materialBinding: {
       boundQuestionCount: bindingStats.bound,
-      boundKnowledgePointCount: pointBindingStats.bound,
-      notesBoundQuestionCount: bindingStats.withNotes + bindingStats.crossSubjectNotes,
-      crossSubjectNotesQuestionCount: bindingStats.crossSubjectNotes,
-      verifiedTextbookQuestionCount: bindingStats.withVerifiedTextbook
+      notesBoundQuestionCount: bindingStats.notes,
+      textbookBoundQuestionCount: bindingStats.textbook,
+      boundKnowledgePointCount: knowledgePoints.length,
+      textbookBoundKnowledgePointCount: bindingStats.knowledgeWithTextbook
     },
     materialSources: [
       ...noteSources.map((source) => ({
@@ -580,64 +221,22 @@ const questionPayload = {
         localViewerPath: source.localViewerPath,
         notice: source.notice
       })),
-      {
-        id: "base-knowledge",
+      ...TEXTBOOK_SOURCES.map((source) => ({
+        id: source.id,
         kind: "textbook",
-        subjectId: "finance",
-        title: "证券行业专业人员一般业务水平评价测试统编教材（2025）《金融市场基础知识》",
-        pageCount: officialTextbookPages.length,
-        localTextPath: `./docs/${officialTextbookName}`,
-        localViewerPath: `./docs/${officialTextbookViewerName}`,
-        notice: "中国证券业协会统编教材，扫描版识别文本可能存在误差，请以原书页面为准。"
-      },
-      {
-        id: "law-regulations",
-        kind: "textbook",
-        subjectId: "law",
-        title: "《证券市场基本法律法规》（2020 商业备考教材）",
-        pageCount: historicalLawTextbookPages.length,
-        localTextPath: `./docs/${historicalLawTextbookName}`,
-        localViewerPath: `./docs/${historicalLawTextbookViewerName}`,
-        notice: "2020 历史辅助教材，仅用于定位复习，涉及规则必须核对最新官方文本。"
-      }
+        subjectId: source.subjectId,
+        title: source.title,
+        pageCount: source.id === "base-knowledge" ? officialTextbookPages.length : historicalLawTextbookPages.length,
+        localTextPath: `./docs/${source.textName}`,
+        localViewerPath: source.viewerPath,
+        notice: source.id === "base-knowledge"
+          ? "中国证券业协会统编教材，扫描版识别文本可能存在误差，请以原书页面为准。"
+          : "2020 历史辅助教材，仅用于定位复习，涉及规则必须核对最新官方文本。"
+      }))
     ],
     outlineVersion: "一般业务大纲2025 + 纪法大纲2026",
     contentCutoff: "2026-08-18",
-    financeIndependentReferenceCoverage: sourceCoverage((citation) => citation.kind !== "scope"),
-    financeChinaAuthorityCoverage: sourceCoverage((citation) => citation.sourceClass === "china_law" || citation.sourceClass === "china_official" || citation.sourceClass === "china_official_textbook"),
-    financeOfficialTextbookCoverage: sourceCoverage((citation) => citation.sourceClass === "china_official_textbook"),
-    financeInternationalStandardCoverage: sourceCoverage((citation) => citation.sourceClass === "international_standard"),
-    financeGeneralTextbookCoverage: sourceCoverage((citation) => citation.sourceClass === "general_textbook"),
-    lawHistoricalTextbookCoverage: lawSourceCoverage((citation) => citation.sourceClass === "historical_exam_textbook"),
-    lawCurrentAuthorityCoverage: lawSourceCoverage((citation) => citation.answerBasis === true && (citation.sourceClass === "china_law" || citation.sourceClass === "china_official")),
-    subjectFactCounts: Object.fromEntries(subjects.map((subject) => [subject.id, knowledgePoints.filter((point) => point.subjectId === subject.id).length])),
-    outlineRequirementCoverage: coverageReport.meta.bySubject,
-    officialFinanceTextbook: {
-      title: "证券行业专业人员一般业务水平评价测试统编教材（2025）《金融市场基础知识》",
-      compiler: "中国证券业协会",
-      publisher: "中国财政经济出版社",
-      noticeUrl: "https://www.sac.net.cn/fwdt/ksfw/jcdg/202512/t20251231_70825.html",
-      fullTextIntegrated: true,
-      sourceFormat: "扫描版 PDF 的 UTF-8 识别文本",
-      pageCount: officialTextbookPages.length,
-      localTextPath: `./docs/${officialTextbookName}`,
-      localViewerPath: `./docs/${officialTextbookViewerName}`,
-      textNotice: "识别文本可能存在同形字、标点及表格识别误差，请以原书页面为准。"
-    },
-    historicalLawTextbook: {
-      title: "《证券市场基本法律法规》（2020 商业备考教材）",
-      compiler: "证券业从业人员一般从业资格考试专用教材编写组",
-      publisher: "中国铁道出版社有限公司",
-      isbn: "978-7-113-26419-2",
-      fullTextIntegrated: true,
-      sourceFormat: "扫描版 PDF 的 UTF-8 识别文本",
-      pageCount: historicalLawTextbookPages.length,
-      localTextPath: `./docs/${historicalLawTextbookName}`,
-      localViewerPath: `./docs/${historicalLawTextbookViewerName}`,
-      answerBasis: false,
-      textNotice: "仅作2020历史辅助参考，不是协会统编教材或现行规则依据；识别文字可能有误。"
-    },
-    disclaimer: "题库来自本地历年试题整理资料，答案与解析按原资料保存，不是官方题库、真题或押题；每道题都标注可回查的复习资料页码。"
+    disclaimer: "讲义与题目均来自本地内部资料：讲义按 2026 新大纲三色笔记的「知识点」原文整理，题目为历年试题整理资料，答案与解析按原资料保存；不是官方题库，也不代表官方答案。"
   },
   subjects, chapters, knowledgePoints, questions: allQuestions,
   importedSources: imported?.sources || [],
@@ -646,7 +245,6 @@ const questionPayload = {
 
 writeFileSync(join(dataDir, "outline.json"), JSON.stringify(outline, null, 2));
 writeFileSync(join(dataDir, "questions.json"), JSON.stringify(questionPayload, null, 2));
-writeFileSync(join(dataDir, "coverage-report.json"), JSON.stringify(coverageReport, null, 2));
 writeFileSync(join(dataDir, "outline.js"), `window.OUTLINE_DATA = ${JSON.stringify(outline)};\n`);
 writeFileSync(join(dataDir, "questions.js"), `window.QUESTION_DATA = ${JSON.stringify(questionPayload)};\n`);
 copyFileSync(join(root, "node_modules/sql.js/dist/sql-wasm.js"), join(vendorDir, "sql-wasm.js"));
@@ -656,4 +254,4 @@ const katexDistDir = join(root, "node_modules/katex/dist");
 copyFileSync(join(katexDistDir, "katex.min.js"), join(katexVendorDir, "katex.min.js"));
 copyFileSync(join(katexDistDir, "katex.min.css"), join(katexVendorDir, "katex.min.css"));
 cpSync(join(katexDistDir, "fonts"), join(katexVendorDir, "fonts"), { recursive: true });
-console.log(`Built ${allQuestions.length} imported questions bound to ${noteSources.length} note sources and ${facts.length} knowledge points; outline ${pages.length} pages.`);
+console.log(`Built ${allQuestions.length} imported questions, ${knowledgePoints.length} note knowledge points (${bindingStats.knowledgeWithTextbook} with textbook page), ${bindingStats.notes} questions bound to notes; outline ${pages.length} pages.`);

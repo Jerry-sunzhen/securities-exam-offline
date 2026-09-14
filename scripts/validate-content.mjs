@@ -5,20 +5,20 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const payload = JSON.parse(readFileSync(resolve(root, "data/questions.json"), "utf8"));
 const outline = JSON.parse(readFileSync(resolve(root, "data/outline.json"), "utf8"));
-const coverageReport = JSON.parse(readFileSync(resolve(root, "data/coverage-report.json"), "utf8"));
 const officialTextbookText = readFileSync(resolve(root, "docs/base-knowledge.txt"), "utf8");
 const historicalLawTextbookText = readFileSync(resolve(root, "docs/law-regulations.txt"), "utf8");
-const officialTextbookParts = officialTextbookText.split(/^===== PDF 第 (\d+) 页 =====\s*$/m);
-const officialTextbookPages = new Map();
-for (let index = 1; index < officialTextbookParts.length; index += 2) {
-  officialTextbookPages.set(Number(officialTextbookParts[index]), officialTextbookParts[index + 1].trim());
-}
-const historicalLawTextbookParts = historicalLawTextbookText.split(/^===== PDF 第 (\d+) 页 =====\s*$/m);
-const historicalLawTextbookPages = new Map();
-for (let index = 1; index < historicalLawTextbookParts.length; index += 2) {
-  historicalLawTextbookPages.set(Number(historicalLawTextbookParts[index]), historicalLawTextbookParts[index + 1].trim());
-}
+const errors = [];
+const warnings = [];
+
+const countPages = (text) => {
+  const parts = text.split(/^===== PDF 第 (\d+) 页 =====\s*$/m);
+  return (parts.length - 1) / 2;
+};
+if (countPages(officialTextbookText) !== 568) errors.push("official finance textbook text must contain 568 pages");
+if (countPages(historicalLawTextbookText) !== 274) errors.push("historical law textbook text must contain 274 pages");
+
 const chapterIds = new Set(payload.chapters.map((item) => item.id));
+const subjectIds = new Set(payload.subjects.map((item) => item.id));
 const materialPages = new Map();
 for (const source of payload.meta?.materialSources || []) {
   const text = readFileSync(resolve(root, source.localTextPath.replace(/^\.\//, "")), "utf8");
@@ -27,19 +27,9 @@ for (const source of payload.meta?.materialSources || []) {
   for (let index = 1; index < parts.length; index += 2) pages.set(Number(parts[index]), parts[index + 1]);
   materialPages.set(source.id, { source, pages });
 }
-const errors = [];
-const warnings = [];
-const ids = new Set();
-const importedQuestions = payload.questions.filter((question) => question.verificationStatus === "source_transcribed");
-if (importedQuestions.length !== payload.questions.length) errors.push("题库中不应再包含非历年整理的原创题");
-const multiCombinations = new Map();
-const factIdSet = new Set(payload.knowledgePoints.map((point) => point.id));
-const caseGroups = new Map();
-const allowedCitationKinds = new Set(["scope", "authority", "textbook"]);
-const allowedSourceClasses = new Set(["china_law", "china_official", "china_official_textbook", "international_standard", "general_textbook", "historical_exam_textbook"]);
 
 function validateBookLinks(links, owner, { requireNotes = false } = {}) {
-  if (!links?.length) { errors.push(`${owner}: 缺少教材／笔记出处绑定`); return; }
+  if (!links?.length) { errors.push(`${owner}: 缺少材料出处绑定`); return; }
   for (const link of links) {
     if (!link.sourceId || !link.localPath) errors.push(`${owner}: 出处绑定缺少来源信息`);
     const material = materialPages.get(link.sourceId);
@@ -52,117 +42,75 @@ function validateBookLinks(links, owner, { requireNotes = false } = {}) {
     if (!new Set(["notes", "textbook"]).has(link.kind)) errors.push(`${owner}: 出处绑定类型无效`);
     if (!existsSync(resolve(root, link.localPath.replace(/^\.\//, "")))) errors.push(`${owner}: 出处阅读文件不存在 ${link.localPath}`);
   }
-  if (requireNotes && !links.some((link) => link.kind === "notes")) errors.push(`${owner}: 缺少备考笔记出处`);
+  if (requireNotes && !links.some((link) => link.kind === "notes")) errors.push(`${owner}: 缺少三色笔记出处`);
 }
 
-function validateCitation(citation, owner) {
-  if (!allowedCitationKinds.has(citation.kind)) errors.push(`${owner}: invalid citation kind ${citation.kind}`);
-  if (!citation.title || !citation.quote || !citation.locator) errors.push(`${owner}: incomplete citation`);
-  if (citation.kind !== "scope" && citation.sourceClass !== "historical_exam_textbook" && !citation.url) errors.push(`${owner}: reference citation needs a URL`);
-  if (citation.kind !== "scope" && !allowedSourceClasses.has(citation.sourceClass)) errors.push(`${owner}: invalid source class ${citation.sourceClass}`);
-  if (citation.kind !== "scope" && typeof citation.answerBasis !== "boolean") errors.push(`${owner}: reference must declare whether it is an answer basis`);
-  if ((citation.sourceClass === "china_law" || citation.sourceClass === "china_official" || citation.sourceClass === "china_official_textbook") && (citation.kind !== "authority" || citation.answerBasis !== true)) {
-    errors.push(`${owner}: Chinese law/official source must be an authority answer basis`);
+// 讲义必须完全来自内部材料：只允许笔记原文与教材页码，不允许第一版的人工归纳字段。
+const knowledgeIds = new Set();
+if (payload.knowledgePoints?.length !== payload.meta.knowledgePointCount) errors.push("knowledge point count metadata is stale");
+for (const point of payload.knowledgePoints || []) {
+  if (knowledgeIds.has(point.id)) errors.push(`duplicate knowledge point ${point.id}`);
+  knowledgeIds.add(point.id);
+  if (!/^K-[FL]-\d{3}$/.test(point.id)) errors.push(`${point.id}: invalid knowledge point id`);
+  if (!subjectIds.has(point.subjectId)) errors.push(`${point.id}: unknown subject`);
+  if (!chapterIds.has(point.chapterId)) errors.push(`${point.id}: unknown chapter`);
+  if (!point.topic) errors.push(`${point.id}: missing topic`);
+  if (!Array.isArray(point.points) || point.points.length < 1) errors.push(`${point.id}: missing note text`);
+  if (!Number.isInteger(point.page) || point.page < 1) errors.push(`${point.id}: missing note page`);
+  for (const legacy of ["statement", "explanation", "keyPoints", "commonMistakes", "memoryHook", "detailSections", "examTips", "citations", "level"]) {
+    if (point[legacy] !== undefined) errors.push(`${point.id}: 讲义不应再包含第一版字段 ${legacy}`);
   }
-  if (citation.sourceClass === "china_official_textbook") {
-    const sourcePage = officialTextbookPages.get(citation.page);
-    if (!sourcePage) errors.push(`${owner}: official textbook page ${citation.page} missing`);
-    if (!citation.textNotice || !citation.fullTextPath) errors.push(`${owner}: official textbook citation needs text provenance`);
-    if (sourcePage && !sourcePage.replace(/\s+/g, "").includes(citation.quote.replace(/\s+/g, ""))) {
-      errors.push(`${owner}: official textbook quote does not match source page ${citation.page}`);
-    }
-  }
-  if (citation.sourceClass === "historical_exam_textbook") {
-    const sourcePage = historicalLawTextbookPages.get(citation.page);
-    if (citation.kind !== "textbook" || citation.answerBasis !== false) errors.push(`${owner}: historical exam textbook must be a non-answer textbook reference`);
-    if (!sourcePage) errors.push(`${owner}: historical law textbook page ${citation.page} missing`);
-    if (!citation.textNotice || !citation.fullTextPath || !citation.publisher || !citation.effectiveDate) errors.push(`${owner}: historical law textbook citation needs provenance and version warnings`);
-    if (citation.quote.replace(/\s+/g, "").length > 360) errors.push(`${owner}: historical law textbook quote exceeds 360 characters`);
-    if (sourcePage && !sourcePage.replace(/\s+/g, "").includes(citation.quote.replace(/\s+/g, ""))) {
-      errors.push(`${owner}: historical law textbook quote does not match source page ${citation.page}`);
-    }
-  }
-  if (citation.sourceClass === "international_standard" && (citation.kind !== "authority" || citation.answerBasis !== false || !citation.originalQuote)) {
-    errors.push(`${owner}: international standard must be a non-China supporting authority with original text`);
-  }
-  if (citation.kind === "textbook" && citation.sourceClass === "general_textbook") {
-    if (citation.sourceClass !== "general_textbook" || citation.answerBasis !== false) errors.push(`${owner}: open textbook must be classified as non-official supplementary material`);
-    if (!citation.originalQuote || !citation.publisher || !citation.license || !citation.jurisdiction) errors.push(`${owner}: incomplete textbook citation`);
-    if (!/^https:\/\//.test(citation.url || "")) errors.push(`${owner}: textbook citation URL must use HTTPS`);
-  } else if (citation.kind === "textbook" && citation.sourceClass !== "historical_exam_textbook") {
-    errors.push(`${owner}: unsupported textbook source class ${citation.sourceClass}`);
-  }
-  if (citation.kind !== "scope" && citation.url && !/^https:\/\//.test(citation.url)) errors.push(`${owner}: reference citation URL must use HTTPS`);
-  if (citation.localPath) {
-    const local = citation.localPath.replace(/^\.\//, "").split("#")[0];
-    if (!existsSync(resolve(root, local))) errors.push(`${owner}: missing local citation file ${local}`);
-  }
-  if (citation.title.includes("一般业务水平评价测试大纲") && citation.page) {
-    const page = outline.pages.find((item) => item.page === citation.page);
-    if (!page || !page.text.replace(/\s+/g, "").includes(citation.quote.replace(/\s+/g, ""))) {
-      errors.push(`${owner}: outline quote does not match page ${citation.page}`);
-    }
-  }
+  validateBookLinks(point.bookLinks, point.id, { requireNotes: true });
 }
 
-if (!Array.isArray(payload.knowledgePoints) || payload.knowledgePoints.length !== payload.meta.factCount) {
-  errors.push(`knowledge point count must equal fact count ${payload.meta.factCount}`);
-} else {
-  const knowledgeIds = new Set();
-  for (const point of payload.knowledgePoints) {
-    if (knowledgeIds.has(point.id)) errors.push(`duplicate knowledge point ${point.id}`);
-    knowledgeIds.add(point.id);
-    if (!chapterIds.has(point.chapterId)) errors.push(`${point.id}: unknown knowledge chapter`);
-    if (!point.topic || !point.statement || !point.explanation) errors.push(`${point.id}: incomplete knowledge content`);
-    if (!point.keyPoints?.length || !point.commonMistakes?.length) errors.push(`${point.id}: missing knowledge lists`);
-    if (point.detailSections && !Array.isArray(point.detailSections)) errors.push(`${point.id}: invalid detail sections`);
-    for (const section of point.detailSections || []) {
-      if (!section.title || !Array.isArray(section.points) || !section.points.length) errors.push(`${point.id}: incomplete detail section`);
-    }
-    if (point.examTips && !Array.isArray(point.examTips)) errors.push(`${point.id}: invalid exam tips`);
-    if (!point.citations?.length) errors.push(`${point.id}: missing knowledge citation`);
-    for (const citation of point.citations || []) validateCitation(citation, point.id);
-    validateBookLinks(point.bookLinks, point.id, { requireNotes: true });
-    if (point.subjectId === "finance" && !(point.citations || []).some((citation) => citation.kind === "authority" || citation.kind === "textbook")) {
-      errors.push(`${point.id}: finance knowledge point needs a non-syllabus reference`);
-    }
-    if (point.subjectId === "finance" && !(point.citations || []).some((citation) => citation.sourceClass === "china_official_textbook")) {
-      errors.push(`${point.id}: finance knowledge point needs an official textbook citation`);
-    }
-    const lawNumber = point.subjectId === "law" ? Number(point.id.replace(/\D/g, "")) : 0;
-    if (point.subjectId === "law" && lawNumber >= 71 && !(point.citations || []).some((citation) =>
-      citation.answerBasis === true && (citation.sourceClass === "china_law" || citation.sourceClass === "china_official")
-    )) {
-      errors.push(`${point.id}: expanded law knowledge point needs a current Chinese authority answer basis`);
-    }
-  }
-}
-
-for (const question of importedQuestions) {
-  if (ids.has(question.id)) errors.push(`duplicate imported id ${question.id}`);
+const knownKnowledge = new Map((payload.knowledgePoints || []).map((point) => [point.id, point]));
+const ids = new Set();
+const multiCombination = new Map();
+const caseGroups = new Map();
+for (const question of payload.questions) {
+  if (ids.has(question.id)) errors.push(`duplicate id ${question.id}`);
   ids.add(question.id);
-  if (!/^IMP-[FL]-[a-f0-9]{16}$/.test(question.id)) errors.push(`${question.id}: invalid imported id`);
-  if (!["finance", "law"].includes(question.subjectId)) errors.push(`${question.id}: imported subject outside general business scope`);
-  if (!["single", "multiple", "judgment", "case"].includes(question.type)) errors.push(`${question.id}: invalid imported type`);
-  if (!question.stem || !Array.isArray(question.options) || question.options.length < 2) errors.push(`${question.id}: incomplete imported question`);
-  if (!Array.isArray(question.correctOptionIds) || !question.correctOptionIds.length) errors.push(`${question.id}: imported answer missing`);
-  if (question.examEligible !== false && question.correctOptionIds.some((id) => !question.options.some((option) => option.id === id))) errors.push(`${question.id}: imported answer not in options`);
-  if (!question.origins?.length || !question.origins[0].sourceId) errors.push(`${question.id}: imported source provenance missing`);
+  if (!/^IMP-[FL]-[a-f0-9]{16}$/.test(question.id)) errors.push(`${question.id}: invalid id`);
+  for (const legacy of ["factId", "level", "citations", "difficulty", "statement", "keyPoints"]) {
+    if (question[legacy] !== undefined) errors.push(`${question.id}: 题目不应再保留第一版字段 ${legacy}`);
+  }
+  if (!subjectIds.has(question.subjectId)) errors.push(`${question.id}: unknown subject`);
+  if (!chapterIds.has(question.chapterId)) errors.push(`${question.id}: unknown chapter`);
+  if (!["single", "multiple", "judgment", "case"].includes(question.type)) errors.push(`${question.id}: invalid type`);
+  if (!question.stem || !Array.isArray(question.options) || question.options.length < 2) errors.push(`${question.id}: incomplete question`);
+  if (!Array.isArray(question.correctOptionIds) || !question.correctOptionIds.length) errors.push(`${question.id}: answer missing`);
+  if (question.examEligible !== false && question.correctOptionIds.some((id) => !question.options.some((option) => option.id === id))) errors.push(`${question.id}: answer not in options`);
+  if (!question.origins?.length || !question.origins[0].sourceId) errors.push(`${question.id}: source provenance missing`);
+  if (question.type === "multiple" && question.examEligible !== false) {
+    const key = [...question.correctOptionIds].sort().join("");
+    multiCombination.set(key, (multiCombination.get(key) || 0) + 1);
+  }
   if (question.type === "case") {
     if (!question.caseMaterial || !question.caseGroupId || !question.caseOrder || !question.caseGroupSize) errors.push(`${question.id}: incomplete case metadata`);
     const group = caseGroups.get(question.caseGroupId) || [];
     group.push(question);
     caseGroups.set(question.caseGroupId, group);
-  } else if (question.caseGroupId && question.caseMaterial) {
-    errors.push(`${question.id}: non-case question carries case metadata`);
   }
-  if (!question.knowledgeLinks?.length) warnings.push(`${question.id}: knowledge point mapping missing`);
+  const links = question.knowledgeLinks || [];
+  if (links.length !== 1) errors.push(`${question.id}: 每道题应绑定到唯一一条笔记知识点`);
+  for (const link of links) {
+    const point = knownKnowledge.get(link.knowledgeId);
+    if (!point) errors.push(`${question.id}: 知识点 ${link.knowledgeId} 不存在`);
+    else if (point.subjectId !== question.subjectId) errors.push(`${question.id}: 知识点与题目科目不一致`);
+  }
   validateBookLinks(question.bookLinks, question.id, { requireNotes: true });
 }
 
-const multipleTotal = payload.questions.filter((q) => q.type === "multiple").length;
-if (multiCombinations.size < 6) warnings.push("multiple choice answer combinations are concentrated");
-if (multipleTotal && Math.max(...multiCombinations.values()) > multipleTotal * 0.3) warnings.push("one multiple answer combination exceeds 30%");
+if (caseGroups.size) {
+  for (const [groupId, items] of caseGroups) {
+    const expectedSize = items[0].caseGroupSize;
+    if (expectedSize !== items.length) errors.push(`${groupId}: case group size ${items.length} does not match ${expectedSize}`);
+    if (new Set(items.map((item) => item.caseMaterial)).size !== 1) errors.push(`${groupId}: case group must share one material`);
+    if (new Set(items.map((item) => item.subjectId)).size !== 1) errors.push(`${groupId}: case group crosses subjects`);
+    const orders = items.map((item) => item.caseOrder).sort((left, right) => left - right);
+    if (orders.join(",") !== [...orders.keys()].map((index) => index + 1).join(",")) errors.push(`${groupId}: case question order is not consecutive`);
+  }
+}
 
 const normalized = new Map();
 for (const question of payload.questions) {
@@ -171,91 +119,43 @@ for (const question of payload.questions) {
   else normalized.set(key, question.id);
 }
 
-const counts = Object.groupBy(payload.questions, (question) => question.subjectId);
-const typeCounts = Object.groupBy(payload.questions, (question) => question.type);
+const bySubject = Object.groupBy(payload.questions, (question) => question.subjectId);
+const byType = Object.groupBy(payload.questions, (question) => question.type);
 console.log(`Questions: ${payload.questions.length}`);
-for (const [subject, items] of Object.entries(counts)) console.log(`  ${subject}: ${items.length}`);
-for (const [type, items] of Object.entries(typeCounts)) console.log(`  type ${type}: ${items.length}`);
-console.log(`Outline pages: ${outline.pages.length}; TOC items: ${outline.toc.length}`);
-console.log(`Warnings: ${warnings.length}`);
-if (warnings.length) console.log(warnings.slice(0, 20).map((item) => `  WARN ${item}`).join("\n"));
+for (const [subject, items] of Object.entries(bySubject)) console.log(`  ${subject}: ${items.length}`);
+for (const [type, items] of Object.entries(byType)) console.log(`  type ${type}: ${items.length}`);
+console.log(`Knowledge points: ${payload.knowledgePoints.length}`);
+
 if (payload.meta.questionCount !== payload.questions.length || payload.meta.importedQuestionCount !== payload.questions.length) errors.push("question count metadata is stale");
 if (payload.meta.eligibleQuestionCount !== payload.questions.filter((q) => q.examEligible !== false).length) errors.push("eligible question metadata is stale");
-if (payload.questions.length < 2000) errors.push("question bank must keep the imported past-exam records");
 if (payload.meta.materialBinding?.boundQuestionCount !== payload.questions.length) errors.push("material binding metadata is stale");
-if (payload.meta.materialBinding?.notesBoundQuestionCount !== payload.questions.length) errors.push("every question must bind to a study-note page");
-if (payload.meta.materialBinding?.boundKnowledgePointCount !== payload.knowledgePoints.length) errors.push("知识讲义绑定统计与知识点数量不一致");
+if (payload.meta.materialBinding?.notesBoundQuestionCount !== payload.questions.length) errors.push("every question must bind to a note page");
+if (payload.meta.materialBinding?.boundKnowledgePointCount !== payload.knowledgePoints.length) errors.push("knowledge point binding metadata is stale");
+if (payload.questions.length < 2000) errors.push("question bank must keep the imported past-exam records");
+if (!outline.pages?.length) errors.push("outline pages missing");
+
 for (const subject of payload.subjects) {
-  const eligible = payload.questions.filter((q) => q.subjectId === subject.id && q.examEligible !== false);
-  const subjectFacts = new Set(eligible.map((q) => q.factId));
-  const needed = { single: 40, multiple: 40, judgment: 30, case: 10 };
-  for (const [type, count] of Object.entries(needed)) {
+  const eligible = (bySubject[subject.id] || []).filter((q) => q.examEligible !== false);
+  for (const [type, count] of Object.entries({ single: 40, multiple: 40, judgment: 30, case: 10 })) {
     const stems = new Set(eligible.filter((q) => q.type === type).map((q) => q.stem));
     if (stems.size < count) errors.push(`${subject.id}: ${type} 可用题量不足（${stems.size}/${count}），无法生成模考`);
   }
-  if (subjectFacts.size < 120) warnings.push(`${subject.id}: 知识点组数 ${subjectFacts.size}，模考去重会更激进`);
-}
-if ((typeCounts.case || []).length < 20) errors.push("case question coverage is below 20");
-if (payload.meta.caseQuestionCount !== (typeCounts.case || []).length || payload.meta.caseGroupCount !== caseGroups.size) errors.push("case metadata counts are stale");
-for (const [groupId, items] of caseGroups) {
-  const expectedSize = items[0].caseGroupSize;
-  if (expectedSize !== items.length) errors.push(`${groupId}: case group size ${items.length} does not match ${expectedSize}`);
-  if (new Set(items.map((item) => item.caseMaterial)).size !== 1) errors.push(`${groupId}: case group must share one material`);
-  if (new Set(items.map((item) => item.subjectId)).size !== 1) errors.push(`${groupId}: case group crosses subjects`);
-  const orders = items.map((item) => item.caseOrder).sort((left, right) => left - right);
-  if (orders.join(",") !== [...orders.keys()].map((index) => index + 1).join(",")) errors.push(`${groupId}: case question order is not consecutive`);
-}
-for (const subject of payload.subjects) {
+  const groups = new Set(eligible.map((q) => q.knowledgeLinks?.[0]?.knowledgeId).filter(Boolean));
+  if (groups.size < 120) warnings.push(`${subject.id}: 知识点组数 ${groups.size}，模考去重会更激进`);
   const subjectGroups = [...caseGroups.values()].filter((items) => items[0].subjectId === subject.id);
   if (subjectGroups.length < 5) errors.push(`${subject.id}: needs at least five complete case groups`);
+  if (payload.meta.caseGroupCount !== caseGroups.size) errors.push("case group metadata is stale");
 }
-if (officialTextbookPages.size !== 568) errors.push(`official textbook text must contain 568 pages, got ${officialTextbookPages.size}`);
-if (historicalLawTextbookPages.size !== 274) errors.push(`historical law textbook text must contain 274 pages, got ${historicalLawTextbookPages.size}`);
-const financeFactCount = payload.knowledgePoints.filter((point) => point.subjectId === "finance").length;
-const expectedFinanceCoverage = `${financeFactCount}/${financeFactCount}`;
-if (payload.meta.financeOfficialTextbookCoverage !== expectedFinanceCoverage || payload.meta.financeChinaAuthorityCoverage !== expectedFinanceCoverage || payload.meta.officialFinanceTextbook?.fullTextIntegrated !== true) {
-  errors.push("official finance textbook integration metadata is incomplete");
-}
-const lawPoints = payload.knowledgePoints.filter((point) => point.subjectId === "law");
-const historicalLawCount = lawPoints.filter((point) => point.citations.some((citation) => citation.sourceClass === "historical_exam_textbook")).length;
-const currentLawAuthorityCount = lawPoints.filter((point) => point.citations.some((citation) =>
-  citation.answerBasis === true && (citation.sourceClass === "china_law" || citation.sourceClass === "china_official")
-)).length;
-if (payload.meta.lawHistoricalTextbookCoverage !== `${historicalLawCount}/${lawPoints.length}` || payload.meta.historicalLawTextbook?.fullTextIntegrated !== true || payload.meta.historicalLawTextbook?.answerBasis !== false) {
-  errors.push("historical law textbook integration metadata is incomplete or misclassified");
-}
-if (payload.meta.lawCurrentAuthorityCoverage !== `${currentLawAuthorityCount}/${lawPoints.length}`) errors.push("current law authority coverage metadata is stale");
+if (payload.meta.caseQuestionCount !== (byType.case || []).length) errors.push("case question metadata is stale");
+if ((byType.case || []).length < 20) errors.push("case question coverage is below 20");
+if (multiCombination.size < 6) warnings.push("multiple choice answer combinations are concentrated");
+const multipleTotal = (byType.multiple || []).length;
+if (multipleTotal && Math.max(...multiCombination.values()) > multipleTotal * 0.3) warnings.push("one multiple answer combination exceeds 30%");
 
-if (coverageReport.meta?.factCount !== payload.meta.factCount || coverageReport.meta?.knowledgePointCount !== payload.knowledgePoints.length) {
-  errors.push("coverage report content counts are stale");
-}
-if (!coverageReport.meta?.limitation?.includes("自动近似映射") || !Array.isArray(coverageReport.requirements)) {
-  errors.push("coverage report must disclose its approximate mapping limitation");
-} else {
-  const requirementIds = new Set();
-  for (const requirement of coverageReport.requirements) {
-    if (requirementIds.has(requirement.id)) errors.push(`coverage report duplicate requirement ${requirement.id}`);
-    requirementIds.add(requirement.id);
-    if (!chapterIds.has(requirement.chapterId)) errors.push(`${requirement.id}: coverage report has unknown chapter`);
-    if (!new Set(["mapped", "partial", "unmapped"]).has(requirement.status)) errors.push(`${requirement.id}: invalid coverage status`);
-    if (requirement.status === "unmapped" && requirement.factIds.length) errors.push(`${requirement.id}: unmapped requirement must not list facts`);
-    if (requirement.factIds.some((factId) => !factIdSet.has(factId))) errors.push(`${requirement.id}: coverage report references an unknown fact`);
-    if (requirement.knowledgePointCount !== requirement.factIds.length) errors.push(`${requirement.id}: coverage knowledge point count is stale`);
-  }
-  for (const subject of payload.subjects) {
-    const summary = coverageReport.meta.bySubject?.[subject.id];
-    const items = coverageReport.requirements.filter((item) => item.subjectId === subject.id);
-    const mappedOrPartial = items.filter((item) => item.status !== "unmapped").length;
-    if (!summary || summary.requirements !== items.length || summary.mapped + summary.partial + summary.unmapped !== items.length) {
-      errors.push(`${subject.id}: coverage report summary is inconsistent`);
-    }
-    if (!summary || mappedOrPartial / items.length < 0.8) errors.push(`${subject.id}: approximate outline mapping fell below 80%`);
-  }
-  const reportFactIds = new Set((coverageReport.facts || []).map((item) => item.factId));
-  if (reportFactIds.size !== payload.meta.factCount || [...factIdSet].some((factId) => !reportFactIds.has(factId))) errors.push("coverage report must list every fact");
-}
 if (errors.length) {
   console.error(errors.map((item) => `ERROR ${item}`).join("\n"));
   process.exit(1);
 }
+console.log(`Warnings: ${warnings.length}`);
+if (warnings.length) console.log(warnings.slice(0, 20).map((item) => `  WARN ${item}`).join("\n"));
 console.log("Validation passed.");

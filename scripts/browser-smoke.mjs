@@ -124,51 +124,24 @@ const chatScrollAfter = await page.evaluate(() => window.scrollY);
 if (!chatScrollProbe.messagesAtBottom || chatScrollProbe.overscrollBehaviorY !== "contain" || chatScrollAfter !== chatScrollProbe.pageScrollBefore) {
   throw new Error(`Chat scroll isolation invalid: ${JSON.stringify({ ...chatScrollProbe, pageScrollAfter: chatScrollAfter })}`);
 }
-const knowledgeSections = await page.$eval(".knowledge-card", (node) => ({
-  hasCore: Boolean(node.querySelector(".knowledge-core")),
-  panels: node.querySelectorAll(".knowledge-panel").length,
-  hasSources: Boolean(node.querySelector(".knowledge-sources")),
-  labelsMistakesAsWrong: node.querySelector(".knowledge-panel.mistake")?.textContent.includes("以下内容均错误")
-}));
-if (!knowledgeSections.hasCore || knowledgeSections.panels !== 2 || !knowledgeSections.hasSources || !knowledgeSections.labelsMistakesAsWrong) throw new Error(`Incomplete knowledge card: ${JSON.stringify(knowledgeSections)}`);
-const detailedKnowledge = await page.$eval("#knowledge-F005", (node) => ({
-  hasMemoryHook: Boolean(node.querySelector(".knowledge-memory")),
-  detailSections: node.querySelectorAll(".knowledge-detail").length,
-  hasExamTips: Boolean(node.querySelector(".knowledge-exam-tips")),
-  hasOfficialTextbookSource: Boolean(node.querySelector(".source-official-textbook")),
-  hasAuthoritySource: Boolean(node.querySelector(".source-authority")),
-  hasTextbookSource: Boolean(node.querySelector(".source-textbook")),
-  hasOriginalQuote: Boolean(node.querySelector(".citation-original"))
-}));
-if (!detailedKnowledge.hasMemoryHook || detailedKnowledge.detailSections < 2 || !detailedKnowledge.hasExamTips || !detailedKnowledge.hasOfficialTextbookSource || !detailedKnowledge.hasAuthoritySource || !detailedKnowledge.hasTextbookSource || !detailedKnowledge.hasOriginalQuote) {
-  throw new Error(`Detailed knowledge missing: ${JSON.stringify(detailedKnowledge)}`);
-}
-const knowledgeNoteBinding = await page.$$eval(".knowledge-card", (nodes) => {
-  const cards = nodes.filter((node) => node.querySelector(".knowledge-source"));
-  const first = cards[0]?.querySelector(".knowledge-source");
+const knowledgeCardsShape = await page.$$eval(".knowledge-card", (nodes) => {
+  const withPoints = nodes.filter((node) => node.querySelectorAll(".knowledge-points li").length > 0);
+  const withNotes = nodes.filter((node) => node.querySelector('.imported-links a[href*="notes-finance.html#page-"]'));
+  const withTextbook = nodes.filter((node) => node.querySelector('.imported-links a[href*="base-knowledge.html#page-"]'));
+  const first = nodes[0];
   return {
-    boundCards: cards.length,
-    totalCards: nodes.length,
-    label: first?.querySelector(".tag")?.textContent || "",
-    href: first?.querySelector("a")?.getAttribute("href") || "",
-    hasQuote: Boolean(first?.querySelector("blockquote")?.textContent.trim())
+    total: nodes.length,
+    withPoints: withPoints.length,
+    withNotes: withNotes.length,
+    withTextbook: withTextbook.length,
+    badge: first?.querySelector(".source-tag")?.textContent || "",
+    hasQuote: Boolean(first?.querySelector(".binding-quote blockquote")?.textContent.trim()),
+    hasFrequencyBlock: Boolean(first?.querySelector(".knowledge-exam-frequency, .knowledge-panel-note")),
+    legacyFields: nodes.filter((node) => /理解与边界|记忆钩子|正确说法|错误说法|考试提示/.test(node.textContent)).length
   };
 });
-if (knowledgeNoteBinding.boundCards !== knowledgeNoteBinding.totalCards || knowledgeNoteBinding.label !== "内部笔记出处" || !/#page-\d+$/.test(knowledgeNoteBinding.href) || !knowledgeNoteBinding.hasQuote) {
-  throw new Error(`Knowledge note binding missing: ${JSON.stringify(knowledgeNoteBinding)}`);
-}
-const textbookIntegration = await page.$eval("#knowledge-F001", (node) => {
-  node.querySelector(".knowledge-sources")?.setAttribute("open", "");
-  return {
-    badge: node.querySelector(".source-tag")?.textContent || "",
-    sourceLabel: node.querySelector(".source-official-textbook")?.textContent || "",
-    status: node.querySelector(".source-status")?.textContent || "",
-    localHref: node.querySelector(".official-textbook-citation .citation-links a")?.getAttribute("href") || "",
-    hasTextNotice: Boolean(node.querySelector(".citation-text-notice"))
-  };
-});
-if (!textbookIntegration.badge.includes("协会统编教材") || !textbookIntegration.sourceLabel.includes("请核对原书") || !textbookIntegration.status.includes("协会统编教材摘录") || !textbookIntegration.localHref.includes("base-knowledge.html#page-") || !textbookIntegration.hasTextNotice) {
-  throw new Error(`Official textbook integration missing: ${JSON.stringify(textbookIntegration)}`);
+if (knowledgeCardsShape.withPoints !== knowledgeCardsShape.total || knowledgeCardsShape.withNotes !== knowledgeCardsShape.total || knowledgeCardsShape.withTextbook < knowledgeCardsShape.total * 0.9 || knowledgeCardsShape.badge !== "三色笔记原文" || !knowledgeCardsShape.hasQuote || !knowledgeCardsShape.hasFrequencyBlock || knowledgeCardsShape.legacyFields !== 0) {
+  throw new Error(`Knowledge cards are not note-sourced: ${JSON.stringify(knowledgeCardsShape)}`);
 }
 const textbookPage = await browser.newPage();
 await textbookPage.setViewport({ width: 1280, height: 900, deviceScaleFactor: 1 });
@@ -182,53 +155,56 @@ if (textbookViewer.pages !== 568 || !textbookViewer.targetText.includes("货币�
 await textbookPage.screenshot({ path: resolve(screenshotDir, "smoke-textbook.png"), fullPage: false });
 await textbookPage.close();
 await page.screenshot({ path: resolve(screenshotDir, "smoke-knowledge.png"), fullPage: false });
-await page.$eval("#knowledge-F005", (node) => node.scrollIntoView({ block: "start" }));
+await page.$eval("#knowledge-K-F-010", (node) => node.scrollIntoView({ block: "start" }));
 await new Promise((resolveWait) => setTimeout(resolveWait, 450));
 const savedReadingPosition = await page.evaluate(() => window.ExamApp.getLastReadingPosition());
-if (savedReadingPosition?.nodeId !== "knowledge-F005" || savedReadingPosition?.outlineMode !== "guide" || savedReadingPosition?.knowledgeSubject !== "finance") {
-  throw new Error(`Reading position was not saved at F005: ${JSON.stringify(savedReadingPosition)}`);
+if (savedReadingPosition?.nodeId !== "knowledge-K-F-010" || savedReadingPosition?.outlineMode !== "guide" || savedReadingPosition?.knowledgeSubject !== "finance") {
+  throw new Error(`Reading position was not saved at K-F-010: ${JSON.stringify(savedReadingPosition)}`);
 }
 await page.reload({ waitUntil: "load" });
-await page.waitForSelector("#knowledge-F005", { timeout: 15000 });
+await page.waitForSelector("#knowledge-K-F-010", { timeout: 15000 });
 await page.waitForFunction(() => {
-  const node = document.querySelector("#knowledge-F005");
+  const node = document.querySelector("#knowledge-K-F-010");
   return node && Math.abs(node.getBoundingClientRect().top - 18) <= 2;
 });
 const readingPositionRestore = await page.evaluate(() => ({
   position: window.ExamApp.getLastReadingPosition(),
   subject: document.querySelector("#knowledge-subject")?.value || "",
   guideActive: document.querySelector('[data-action="outline-mode"][data-mode="guide"]')?.classList.contains("active"),
-  nodeTop: Math.round(document.querySelector("#knowledge-F005")?.getBoundingClientRect().top || 0),
+  nodeTop: Math.round(document.querySelector("#knowledge-K-F-010")?.getBoundingClientRect().top || 0),
   activeChapter: document.querySelector(".toc-button.active")?.dataset.anchor || ""
 }));
-if (readingPositionRestore.position?.nodeId !== "knowledge-F005" || readingPositionRestore.subject !== "finance" || !readingPositionRestore.guideActive || readingPositionRestore.nodeTop !== 18 || readingPositionRestore.activeChapter !== "knowledge-chapter-finance-2") {
+if (readingPositionRestore.position?.nodeId !== "knowledge-K-F-010" || readingPositionRestore.subject !== "finance" || !readingPositionRestore.guideActive || readingPositionRestore.nodeTop !== 18 || readingPositionRestore.activeChapter !== "knowledge-chapter-finance-2") {
   throw new Error(`Reading position did not restore: ${JSON.stringify(readingPositionRestore)}`);
 }
 await page.click('[data-action="start-memory"][data-chapter="finance-2"]');
 await page.waitForSelector(".memory-card");
 await page.click('[data-action="reveal-memory"]');
-await page.waitForSelector(".memory-answer .knowledge-memory");
+await page.waitForSelector(".memory-answer .knowledge-points li");
 await page.click('[data-action="grade-memory"][data-grade="known"]');
-const memoryReviewSaved = await page.evaluate(() => window.StudyDb.getKnowledgeReviews().some((row) => row.knowledge_id === "F005" && row.grade === "known"));
+const memoryReviewSaved = await page.evaluate(() => window.StudyDb.getKnowledgeReviews().some((row) => row.knowledge_id === "K-F-008" && row.grade === "known"));
 if (!memoryReviewSaved) throw new Error("Knowledge memory review was not saved");
 await page.click('[data-action="exit-memory"]');
 await page.waitForSelector(".knowledge-card");
 await page.select("#knowledge-subject", "law");
 await page.waitForFunction((expected) => document.querySelectorAll(".knowledge-card").length === expected, {}, expectedLawKnowledge);
 const lawKnowledgeCards = await page.$$eval(".knowledge-card", (nodes) => nodes.length);
-const historicalTextbookIntegration = await page.$eval("#knowledge-L001", (node) => {
-  node.querySelector(".knowledge-sources")?.setAttribute("open", "");
+const lawKnowledgeShape = await page.$$eval(".knowledge-card", (nodes) => {
+  const withTextbook = nodes.filter((node) => node.querySelector('.imported-links a[href*="law-regulations.html#page-"]'));
+  const first = withTextbook[0];
   return {
-    intro: document.querySelector(".knowledge-intro")?.textContent || "",
-    sourceLabel: node.querySelector(".source-historical-textbook")?.textContent || "",
-    localHref: node.querySelector(".historical-textbook-citation .citation-links a")?.getAttribute("href") || "",
-    notice: node.querySelector(".historical-textbook-citation .citation-text-notice")?.textContent || ""
+    total: nodes.length,
+    withNotes: nodes.filter((node) => node.querySelector('.imported-links a[href*="notes-law.html#page-"]')).length,
+    withTextbook: withTextbook.length,
+    badge: first?.querySelector(".tag.binding-suggested")?.textContent || "",
+    href: first?.querySelector('.imported-links a[href*="law-regulations.html"]')?.getAttribute("href") || "",
+    intro: document.querySelector(".knowledge-intro")?.textContent || ""
   };
 });
-if (!historicalTextbookIntegration.intro.includes("不是协会统编教材") || !historicalTextbookIntegration.intro.includes("不作为现行规则或考试答案依据") || !historicalTextbookIntegration.sourceLabel.includes("历史辅助 · 非答案依据") || historicalTextbookIntegration.localHref !== "./docs/law-regulations.html#page-14" || !historicalTextbookIntegration.notice.includes("必须核对最新官方文本")) {
-  throw new Error(`Historical textbook integration missing: ${JSON.stringify(historicalTextbookIntegration)}`);
+if (lawKnowledgeShape.withNotes !== lawKnowledgeShape.total || lawKnowledgeShape.withTextbook < lawKnowledgeShape.total * 0.5 || lawKnowledgeShape.badge !== "教材参考" || !/law-regulations\.html#page-\d+$/.test(lawKnowledgeShape.href) || !lawKnowledgeShape.intro.includes("历史辅助教材")) {
+  throw new Error(`Law knowledge guide is not note-sourced: ${JSON.stringify(lawKnowledgeShape)}`);
 }
-await page.$eval("#knowledge-L001", (node) => node.scrollIntoView({ block: "start" }));
+await page.$eval(".knowledge-card", (node) => node.scrollIntoView({ block: "start" }));
 await page.screenshot({ path: resolve(screenshotDir, "smoke-law-knowledge.png"), fullPage: false });
 const historicalTextbookPage = await browser.newPage();
 await historicalTextbookPage.setViewport({ width: 1280, height: 900, deviceScaleFactor: 1 });
@@ -273,9 +249,10 @@ if (!submittedChatContext.question?.submitted || !submittedChatContext.question.
 const sourceBlocks = await page.evaluate(() => ({
   status: document.querySelector(".source-status")?.textContent || "",
   scope: document.querySelector(".scope-reference")?.textContent || "",
-  referenceLabel: document.querySelector(".source-official-textbook, .source-textbook, .source-international, .source-authority")?.textContent || ""
+  noteLink: document.querySelector('.imported-links a[href*="notes-"][href*="#page-"]')?.getAttribute("href") || "",
+  hasQuote: Boolean(document.querySelector(".imported-links .binding-quote blockquote")?.textContent.trim())
 }));
-if (!/(协会统编教材|中国法规\/官方资料|国际标准参考|非官方原理补充|历年整理题)/.test(sourceBlocks.status) || !sourceBlocks.scope.includes("非答案出处") || (!sourceBlocks.referenceLabel && !sourceBlocks.status.includes("历年整理题"))) throw new Error(`Question source classification missing: ${JSON.stringify(sourceBlocks)}`);
+if (!sourceBlocks.status.includes("历年整理题") || sourceBlocks.scope || !/#page-\d+$/.test(sourceBlocks.noteLink) || !sourceBlocks.hasQuote) throw new Error(`Question source block missing: ${JSON.stringify(sourceBlocks)}`);
 await page.click('[data-action="bookmark-question"]');
 
 const dataChecks = await page.evaluate(async () => {
@@ -340,7 +317,7 @@ const examBlueprint = await page.evaluate(() => {
   const factCounts = new Map();
   for (const id of active.questionIds) {
     const question = map.get(id);
-    const factId = question?.factId;
+    const factId = question?.knowledgeLinks?.[0]?.knowledgeId;
     factCounts.set(factId, (factCounts.get(factId) || 0) + 1);
   }
   const caseEntries = active.questionIds.map((id, index) => ({ question: map.get(id), index })).filter((entry) => entry.question?.type === "case");
@@ -382,7 +359,8 @@ await page.waitForFunction(() => document.body.textContent.includes("查看全�
 await page.click('[data-action="review-exam-all"]');
 await page.waitForSelector(".source-status");
 const resultReviewHasSource = await page.evaluate(() => Boolean(
-  document.querySelector(".source-status") && document.querySelector(".scope-reference")?.textContent.includes("非答案出处")
+  document.querySelector(".source-status")?.textContent.includes("历年整理题") &&
+  document.querySelector('.imported-links a[href*="notes-"][href*="#page-"]')
 ));
 if (!resultReviewHasSource) throw new Error("Exam review does not show source classification");
 await page.screenshot({ path: resolve(screenshotDir, "smoke-review.png"), fullPage: true });
@@ -489,10 +467,9 @@ console.log(JSON.stringify({
   outlinePages,
   knowledgeCards,
   lawKnowledgeCards,
-  detailedKnowledge,
-  textbookIntegration,
+  knowledgeCardsShape,
   textbookViewer,
-  historicalTextbookIntegration,
+  lawKnowledgeShape,
   historicalTextbookViewer,
   memoryReviewSaved,
   casePracticeHeader,

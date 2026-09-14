@@ -133,6 +133,8 @@
   .binding-points { @apply list-none; }
   .binding-point-list { @apply flex flex-wrap gap-1.5; }
   .binding-point-list span { @apply rounded-[6px] bg-white px-2 py-0.5 text-[11px] text-[#4a5a73]; }
+  .knowledge-points { @apply my-3 list-none space-y-1.5 p-0 text-[13px] leading-[1.75] text-ink; }
+  .knowledge-points li { @apply rounded-[6px] bg-[#f8fafd] px-2.5 py-1.5; }
   .knowledge-source { @apply mt-3 flex flex-wrap items-center gap-2 rounded-[8px] border border-[#dbe4f1] bg-[#f7faff] px-2.5 py-2 text-[11px] text-muted; }
   .knowledge-source a { @apply text-[11px] font-[650] text-primary; }
   .knowledge-source details { @apply w-full; }
@@ -184,38 +186,8 @@
   .knowledge-card-header h3 { @apply m-0 text-lg text-[#18253a]; }
   .knowledge-card-tags { @apply flex-wrap justify-end; }
   .source-tag.verified { @apply bg-[#e7f8f1] text-[#197657]; }
-  .source-tag.international { @apply bg-[#f1ebff] text-[#6843a8]; }
-  .source-tag.supplement { @apply bg-primary-soft text-[#285fa8]; }
-  .source-tag.summary { @apply bg-[#eef2f6] text-[#667085]; }
   .knowledge-index { @apply inline-flex rounded-md bg-[#edf3f9] px-[7px] py-1 text-[10px] font-[750] text-[#59708a]; }
-  .knowledge-core { @apply grid gap-[7px] rounded-r-[10px] border-l-4 border-primary bg-[#f1f6ff] px-4 py-3.5 text-[#173158]; }
-  .knowledge-core span { @apply text-[11px] font-[750] text-primary; }
-  .knowledge-core strong { @apply text-[15px] leading-7; }
-  .knowledge-explanation { @apply mt-[17px]; }
-  .knowledge-explanation h4, .knowledge-panel h4 { @apply mt-0 mb-2 text-[13px]; }
-  .knowledge-explanation p { @apply m-0 text-sm leading-[1.8] text-[#445066]; }
-  .knowledge-memory { @apply mt-4 grid gap-[5px] rounded-[10px] border border-[#e9d08b] bg-[#fff9e8] px-[15px] py-[13px] text-[#6d4b0a]; }
-  .knowledge-memory span { @apply text-[11px] font-[750]; }
-  .knowledge-memory strong { @apply text-sm leading-[1.7]; }
-  .knowledge-detail-grid { @apply mt-[17px] grid gap-[11px]; }
-  .knowledge-detail { @apply rounded-[10px] border border-[#d9e3ef] bg-panel-soft px-4 py-[15px]; }
-  .knowledge-detail h4 { @apply mt-0 mb-2 text-[13px] text-[#23344d]; }
-  .knowledge-detail ul, .knowledge-exam-tips ul { @apply m-0 pl-[19px] text-[13px] leading-7 text-[#445066]; }
-  .knowledge-detail li + li, .knowledge-exam-tips li + li { @apply mt-[5px]; }
-  .knowledge-columns { @apply mt-[17px] grid grid-cols-2 gap-3; }
-  .knowledge-panel { @apply rounded-[10px] border border-line px-[15px] py-3.5; }
-  .knowledge-panel.key { @apply border-[#bfe4d7] bg-[#f1fbf7]; }
-  .knowledge-panel.mistake { @apply border-[#f0cbd1] bg-[#fff6f7]; }
-  .knowledge-panel.key h4 { @apply text-[#197657]; }
-  .knowledge-panel.mistake h4 { @apply text-[#ad4050]; }
   .knowledge-panel-note { @apply mt-[-2px] mb-[9px] text-[11px] text-muted; }
-  .knowledge-panel ul { @apply m-0 list-none p-0 text-[13px] leading-7 text-[#445066]; }
-  .knowledge-panel li { @apply relative pl-[22px]; }
-  .knowledge-panel li::before { @apply absolute top-0 left-0 font-[850]; }
-  .knowledge-panel.key li::before { content: "✓"; @apply text-[#197657]; }
-  .knowledge-panel.mistake li::before { content: "×"; @apply text-base text-[#c43f52]; }
-  .knowledge-panel li + li { @apply mt-[5px]; }
-  .knowledge-exam-tips { @apply mt-[13px] rounded-[10px] bg-[#f4f0ff] px-[15px] py-[13px]; }
   .exam-tag { @apply bg-[#eef4ff] text-[#2f5fa8]; }
   .knowledge-exam-frequency { @apply mt-[13px] rounded-[10px] border border-[#f0d79a] bg-[#fffdf3] px-[15px] py-[13px]; }
   .knowledge-exam-frequency summary { @apply cursor-pointer text-[13px] font-[700] text-[#8a5a06]; }
@@ -224,32 +196,15 @@
   .knowledge-exam-frequency .knowledge-panel-note { @apply mb-2 text-[12px] text-muted; }
   .exam-year { @apply mr-1.5 inline-flex rounded bg-[#fdf0cc] px-1.5 py-px text-[11px] font-[700] text-[#8a5a06]; }
   .exam-repeat { @apply ml-1.5 text-[11px] text-[#a9700d]; }
-  .knowledge-exam-tips h4 { @apply mt-0 mb-[7px] text-[13px] text-[#6044a5]; }
-  .knowledge-sources { @apply mt-4 border-t border-line; }
-  .knowledge-sources summary { @apply cursor-pointer pt-3.5 text-xs font-bold text-primary; }
-  .knowledge-sources .citation, .knowledge-sources .source-status { @apply mt-3; }
   .source-status { @apply grid gap-1 rounded-[10px] px-3.5 py-3 text-xs leading-[1.6]; }
   .source-status strong { @apply text-xs; }
   .source-status span { @apply text-[#58657a]; }
   .source-status.verified { @apply border border-[#bfe4d7] bg-[#f1fbf7]; }
   .source-status.verified strong { @apply text-[#197657]; }
-  .source-status.international { @apply border border-[#d9c9f4] bg-[#faf7ff]; }
-  .source-status.international strong { @apply text-[#6843a8]; }
   .source-status.supplement { @apply border border-[#cbdcf4] bg-[#f8fbff]; }
   .source-status.supplement strong { @apply text-[#285fa8]; }
   .source-status.summary { @apply border border-[#e5d49f] bg-[#fffaf0]; }
   .source-status.summary strong { @apply text-[#7a570d]; }
-  .scope-reference-list { @apply mt-[13px] grid gap-2; }
-  .scope-reference-list > span { @apply text-[11px] text-muted; }
-  .scope-reference { @apply flex items-center justify-between gap-3 rounded-[9px] border border-dashed border-[#d5deea] bg-[#fafbfd] px-3 py-2.5; }
-  .scope-reference > div:first-child { @apply flex min-w-0 flex-wrap items-center gap-2; }
-  .scope-reference strong { @apply text-[11px] font-semibold text-[#617086]; }
-  .scope-reference .tag { @apply bg-[#edf1f6] text-[10px] text-[#65758a]; }
-  .source-authority { @apply bg-[#e7f8f1] text-[#197657]; }
-  .source-official-textbook { @apply bg-[#fff1c7] text-[#815400]; }
-  .source-international { @apply bg-[#f1ebff] text-[#6843a8]; }
-  .source-textbook { @apply bg-primary-soft text-[#285fa8]; }
-  .source-historical-textbook, .source-tag.historical { @apply bg-[#fff0e9] text-[#9a4028]; }
 
   .memory-shell { @apply pt-[34px]; }
   .memory-progress { @apply mb-3.5 h-[7px] overflow-hidden rounded-full bg-[#dfe8f3]; }
@@ -263,7 +218,6 @@
   .memory-source-note { @apply mt-2.5 rounded-[9px] px-3 py-2.5 text-xs leading-[1.6]; }
   .memory-source-note.verified { @apply border border-[#bfe4d7] bg-[#f1fbf7] text-[#197657]; }
   .memory-source-note.warning { @apply border border-[#e5d49f] bg-[#fffaf0] text-[#7a570d]; }
-  .memory-answer > .knowledge-detail { @apply mt-[11px]; }
   .memory-grades { @apply mt-[22px] flex flex-wrap items-center justify-end gap-[9px] border-t border-line pt-[18px]; }
   .memory-grades > span { @apply mr-auto text-xs text-muted; }
   .memory-summary { @apply mx-auto mt-20 max-w-[720px] text-center; }
@@ -283,7 +237,8 @@
   .question-card { @apply p-[27px]; }
   .question-tags { @apply mb-[15px] flex flex-wrap gap-[7px]; }
   .tag { @apply rounded-[7px] bg-[#eef3f8] px-2 py-[5px] text-xs text-[#496074]; }
-  .tag.level-master { @apply bg-[#fff0dc] text-[#8c3e00]; }
+  .tag.exam-origin { @apply bg-[#fff0dc] text-[#8c3e00]; }
+  .tag.exam-mock { @apply bg-[#eef0f4] text-[#5b6a7d]; }
   .tag.negative { @apply bg-danger-soft text-danger; }
   .question-stem { @apply text-[17px] leading-[1.85] text-[#233047]; }
   .stem-lead { @apply m-0 font-semibold; }
@@ -498,7 +453,6 @@
   .outline-result-count { @apply ml-0 w-full; }
   .outline-page { @apply px-[22px] pt-[25px] pb-[29px]; }
   .outline-text { @apply text-[15px] leading-[1.85]; }
-  .knowledge-columns { @apply grid-cols-1; }
   .knowledge-card { @apply p-5; }
   .memory-shell { @apply pt-5; }
   .codex-chat-panel { @apply w-full max-w-full border-l-0; }
@@ -515,7 +469,6 @@
   .knowledge-chapter-actions { @apply w-full justify-between; }
   .knowledge-card-header { @apply flex-col items-start; }
   .knowledge-card-tags { @apply justify-start; }
-  .scope-reference { @apply flex-col items-start; }
   .memory-card { @apply px-[19px] py-[22px]; }
   .memory-card h2 { @apply text-[23px]; }
   .memory-grades { @apply flex-col items-stretch; }
