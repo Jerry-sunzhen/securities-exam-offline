@@ -133,6 +133,11 @@
   .binding-points { @apply list-none; }
   .binding-point-list { @apply flex flex-wrap gap-1.5; }
   .binding-point-list span { @apply rounded-[6px] bg-white px-2 py-0.5 text-[11px] text-[#4a5a73]; }
+  .knowledge-source { @apply mt-3 flex flex-wrap items-center gap-2 rounded-[8px] border border-[#dbe4f1] bg-[#f7faff] px-2.5 py-2 text-[11px] text-muted; }
+  .knowledge-source a { @apply text-[11px] font-[650] text-primary; }
+  .knowledge-source details { @apply w-full; }
+  .knowledge-source summary { @apply cursor-pointer text-[11px] text-muted; }
+  .knowledge-source blockquote { @apply mt-1.5 mb-0 rounded-md border-l-[3px] border-[#c3d5ee] bg-white/70 px-2.5 py-2 text-[11px] leading-[1.7] text-[#4a5a73]; }
   .outline-back-to-top { @apply fixed right-5 bottom-20 z-40 inline-flex min-h-11 items-center gap-1.5 rounded-full shadow-panel; }
   .outline-back-to-top:focus-visible { @apply outline-2 outline-offset-4 outline-primary; }
   .outline-layout { @apply mx-auto grid max-w-[1230px] grid-cols-[260px_minmax(0,940px)] items-start gap-[22px]; }

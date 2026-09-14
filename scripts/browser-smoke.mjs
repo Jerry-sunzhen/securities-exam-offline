@@ -143,6 +143,20 @@ const detailedKnowledge = await page.$eval("#knowledge-F005", (node) => ({
 if (!detailedKnowledge.hasMemoryHook || detailedKnowledge.detailSections < 2 || !detailedKnowledge.hasExamTips || !detailedKnowledge.hasOfficialTextbookSource || !detailedKnowledge.hasAuthoritySource || !detailedKnowledge.hasTextbookSource || !detailedKnowledge.hasOriginalQuote) {
   throw new Error(`Detailed knowledge missing: ${JSON.stringify(detailedKnowledge)}`);
 }
+const knowledgeNoteBinding = await page.$$eval(".knowledge-card", (nodes) => {
+  const cards = nodes.filter((node) => node.querySelector(".knowledge-source"));
+  const first = cards[0]?.querySelector(".knowledge-source");
+  return {
+    boundCards: cards.length,
+    totalCards: nodes.length,
+    label: first?.querySelector(".tag")?.textContent || "",
+    href: first?.querySelector("a")?.getAttribute("href") || "",
+    hasQuote: Boolean(first?.querySelector("blockquote")?.textContent.trim())
+  };
+});
+if (knowledgeNoteBinding.boundCards !== knowledgeNoteBinding.totalCards || knowledgeNoteBinding.label !== "内部笔记出处" || !/#page-\d+$/.test(knowledgeNoteBinding.href) || !knowledgeNoteBinding.hasQuote) {
+  throw new Error(`Knowledge note binding missing: ${JSON.stringify(knowledgeNoteBinding)}`);
+}
 const textbookIntegration = await page.$eval("#knowledge-F001", (node) => {
   node.querySelector(".knowledge-sources")?.setAttribute("open", "");
   return {

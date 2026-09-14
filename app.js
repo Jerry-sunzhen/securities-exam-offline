@@ -478,6 +478,10 @@
           ? { className: "supplement", label: "非官方原理补充", coreLabel: "通用金融原理 · 非中国官方答案" }
           : { className: "summary", label: "讲义归纳", coreLabel: "项目讲义归纳" };
     const frequency = examFrequencyMap.get(point.id);
+    const noteLink = (point.bookLinks || []).find((link) => link.kind === "notes");
+    const noteSource = noteLink
+      ? `<div class="knowledge-source"><span class="tag binding-suggested">内部笔记出处</span><a href="${escapeHtml(noteLink.localPath)}#page-${escapeHtml(String(noteLink.page))}" target="_blank">${escapeHtml(noteLink.sourceTitle || "备考笔记")} 第 ${escapeHtml(String(noteLink.page))} 页</a><details><summary>查看笔记原文</summary><blockquote>${escapeHtml((noteLink.quote || "").slice(0, 300))}${(noteLink.quote || "").length > 300 ? "…" : ""}</blockquote></details></div>`
+      : "";
     return `<article class="card knowledge-card" id="knowledge-${point.id}">
       <header class="knowledge-card-header">
         <div><span class="knowledge-index">${escapeHtml(point.id)}</span><h3>${highlightText(point.topic, query)}</h3></div>
@@ -487,6 +491,7 @@
       <div class="knowledge-explanation"><h4>理解与边界</h4><p>${highlightText(point.explanation, query)}</p></div>
       ${point.memoryHook ? `<div class="knowledge-memory"><span>记忆钩子</span><strong>${highlightText(point.memoryHook, query)}</strong></div>` : ""}
       ${(point.detailSections || []).length ? `<div class="knowledge-detail-grid">${point.detailSections.map((section) => `<section class="knowledge-detail"><h4>${highlightText(section.title, query)}</h4><ul>${(section.points || []).map((item) => `<li>${highlightText(item, query)}</li>`).join("")}</ul></section>`).join("")}</div>` : ""}
+      ${noteSource}
       <div class="knowledge-columns">
         <section class="knowledge-panel key"><h4>正确说法（需要记住）</h4><p class="knowledge-panel-note">以下内容均正确。</p><ul>${(point.keyPoints || []).map((item) => `<li>${highlightText(item, query)}</li>`).join("")}</ul></section>
         <section class="knowledge-panel mistake"><h4>错误说法（不要这样记）</h4><p class="knowledge-panel-note">以下内容均错误，是常见干扰项。</p><ul>${(point.commonMistakes || []).map((item) => `<li>${highlightText(item, query)}</li>`).join("")}</ul></section>

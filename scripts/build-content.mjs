@@ -4,7 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { subjects, chapters } from "../content/catalog.mjs";
 import { facts } from "../content/facts.mjs";
-import { NOTE_SOURCES, createMaterialContext, bindQuestion } from "./material-binding.mjs";
+import { NOTE_SOURCES, createMaterialContext, bindQuestion, bindKnowledgePoint } from "./material-binding.mjs";
 import { financeReferenceMap } from "../content/finance-references.mjs";
 import { officialFinanceTextbookNeedles } from "../content/official-finance-textbook.mjs";
 import { historicalLawTextbookLocators } from "../content/historical-law-textbook.mjs";
@@ -525,6 +525,15 @@ const noteSources = NOTE_SOURCES.map((source) => {
 });
 
 const materialContext = createMaterialContext({ docsDir, chapters, knowledgePoints });
+// 知识讲义同样逐条绑定内部资料页码，保证讲义内容也能回查到出处。
+const pointBindingStats = { bound: 0 };
+for (const point of knowledgePoints) {
+  point.bookLinks = bindKnowledgePoint(point, materialContext);
+  if (point.bookLinks.length) pointBindingStats.bound += 1;
+}
+if (pointBindingStats.bound !== knowledgePoints.length) {
+  throw new Error(`知识讲义出处缺失：${knowledgePoints.length - pointBindingStats.bound} 个知识点没有绑定到备考笔记页码`);
+}
 const importedPath = join(root, "content/imported-exams.json");
 const imported = existsSync(importedPath) ? JSON.parse(readFileSync(importedPath, "utf8")) : null;
 const importedQuestions = imported?.questions || [];
@@ -555,6 +564,7 @@ const questionPayload = {
     conditionalCaseQuestionCount: allQuestions.filter((question) => question.type === "judgment" && question.caseGroupId).length,
     materialBinding: {
       boundQuestionCount: bindingStats.bound,
+      boundKnowledgePointCount: pointBindingStats.bound,
       notesBoundQuestionCount: bindingStats.withNotes + bindingStats.crossSubjectNotes,
       crossSubjectNotesQuestionCount: bindingStats.crossSubjectNotes,
       verifiedTextbookQuestionCount: bindingStats.withVerifiedTextbook

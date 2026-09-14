@@ -250,3 +250,24 @@ export function bindQuestion(question, context) {
   return links;
 }
 
+function buildPointQuery(point) {
+  return [
+    point.topic, point.topic,
+    point.statement,
+    point.explanation,
+    (point.keyPoints || []).join(""),
+    (point.detailSections || []).map((section) => [section.title, ...(section.points || [])].join("")).join("")
+  ].join("");
+}
+
+// 知识讲义也要能回查内部材料：先在该知识点所属章节内检索，差距明显时再退回整本笔记。
+export function bindKnowledgePoint(point, context) {
+  const own = context.indexes.find((entry) => entry.source.subjectId === point.subjectId);
+  if (!own) return [];
+  const query = buildPointQuery(point);
+  const scoped = point.chapterId ? own.scoped.get(point.chapterId) : null;
+  const scopedBest = scoped ? searchIndex(scoped, query, 1)[0] : null;
+  const fullBest = searchIndex(own.index, query, 1)[0];
+  const best = scopedBest && (!fullBest || scopedBest.score * 1.15 >= fullBest.score) ? scopedBest : fullBest || scopedBest;
+  return best ? [notesLink(own, best, false)] : [];
+}

@@ -27,16 +27,33 @@ for (const source of payload.meta?.materialSources || []) {
   for (let index = 1; index < parts.length; index += 2) pages.set(Number(parts[index]), parts[index + 1]);
   materialPages.set(source.id, { source, pages });
 }
+const errors = [];
+const warnings = [];
 const ids = new Set();
 const importedQuestions = payload.questions.filter((question) => question.verificationStatus === "source_transcribed");
 if (importedQuestions.length !== payload.questions.length) errors.push("题库中不应再包含非历年整理的原创题");
-const errors = [];
-const warnings = [];
 const multiCombinations = new Map();
 const factIdSet = new Set(payload.knowledgePoints.map((point) => point.id));
 const caseGroups = new Map();
 const allowedCitationKinds = new Set(["scope", "authority", "textbook"]);
 const allowedSourceClasses = new Set(["china_law", "china_official", "china_official_textbook", "international_standard", "general_textbook", "historical_exam_textbook"]);
+
+function validateBookLinks(links, owner, { requireNotes = false } = {}) {
+  if (!links?.length) { errors.push(`${owner}: 缺少教材／笔记出处绑定`); return; }
+  for (const link of links) {
+    if (!link.sourceId || !link.localPath) errors.push(`${owner}: 出处绑定缺少来源信息`);
+    const material = materialPages.get(link.sourceId);
+    if (!material) { errors.push(`${owner}: 出处绑定引用了未知来源 ${link.sourceId}`); continue; }
+    if (!Number.isInteger(link.page) || link.page < 1 || link.page > material.source.pageCount) errors.push(`${owner}: 出处页码 ${link.page} 超出 ${link.sourceId} 范围`);
+    if (!link.quote || link.quote.replace(/\s+/g, "").length < 20) errors.push(`${owner}: 出处绑定缺少可核对原文`);
+    const pageText = material.pages.get(link.page) || "";
+    if (link.quote && !pageText.replace(/\s+/g, "").includes(link.quote.replace(/\s+/g, ""))) errors.push(`${owner}: 出处原文与 ${link.sourceId} 第 ${link.page} 页不一致`);
+    if (!new Set(["verified", "suggested"]).has(link.reviewStatus)) errors.push(`${owner}: 出处绑定核验状态无效`);
+    if (!new Set(["notes", "textbook"]).has(link.kind)) errors.push(`${owner}: 出处绑定类型无效`);
+    if (!existsSync(resolve(root, link.localPath.replace(/^\.\//, "")))) errors.push(`${owner}: 出处阅读文件不存在 ${link.localPath}`);
+  }
+  if (requireNotes && !links.some((link) => link.kind === "notes")) errors.push(`${owner}: 缺少备考笔记出处`);
+}
 
 function validateCitation(citation, owner) {
   if (!allowedCitationKinds.has(citation.kind)) errors.push(`${owner}: invalid citation kind ${citation.kind}`);
@@ -105,6 +122,7 @@ if (!Array.isArray(payload.knowledgePoints) || payload.knowledgePoints.length !=
     if (point.examTips && !Array.isArray(point.examTips)) errors.push(`${point.id}: invalid exam tips`);
     if (!point.citations?.length) errors.push(`${point.id}: missing knowledge citation`);
     for (const citation of point.citations || []) validateCitation(citation, point.id);
+    validateBookLinks(point.bookLinks, point.id, { requireNotes: true });
     if (point.subjectId === "finance" && !(point.citations || []).some((citation) => citation.kind === "authority" || citation.kind === "textbook")) {
       errors.push(`${point.id}: finance knowledge point needs a non-syllabus reference`);
     }
@@ -139,20 +157,7 @@ for (const question of importedQuestions) {
     errors.push(`${question.id}: non-case question carries case metadata`);
   }
   if (!question.knowledgeLinks?.length) warnings.push(`${question.id}: knowledge point mapping missing`);
-  if (!question.bookLinks?.length) errors.push(`${question.id}: 缺少教材／笔记出处绑定`);
-  for (const link of question.bookLinks || []) {
-    if (!link.sourceId || !link.localPath) errors.push(`${question.id}: 出处绑定缺少来源信息`);
-    const material = materialPages.get(link.sourceId);
-    if (!material) { errors.push(`${question.id}: 出处绑定引用了未知来源 ${link.sourceId}`); continue; }
-    if (!Number.isInteger(link.page) || link.page < 1 || link.page > material.source.pageCount) errors.push(`${question.id}: 出处页码 ${link.page} 超出 ${link.sourceId} 范围`);
-    if (!link.quote || link.quote.replace(/\s+/g, "").length < 20) errors.push(`${question.id}: 出处绑定缺少可核对原文`);
-    const pageText = material.pages.get(link.page) || "";
-    if (link.quote && !pageText.replace(/\s+/g, "").includes(link.quote.replace(/\s+/g, ""))) errors.push(`${question.id}: 出处原文与 ${link.sourceId} 第 ${link.page} 页不一致`);
-    if (!new Set(["verified", "suggested"]).has(link.reviewStatus)) errors.push(`${question.id}: 出处绑定核验状态无效`);
-    if (!new Set(["notes", "textbook"]).has(link.kind)) errors.push(`${question.id}: 出处绑定类型无效`);
-    if (!existsSync(resolve(root, link.localPath.replace(/^\.\//, "")))) errors.push(`${question.id}: 出处阅读文件不存在 ${link.localPath}`);
-  }
-  if (!(question.bookLinks || []).some((link) => link.kind === "notes")) errors.push(`${question.id}: 缺少备考笔记出处`);
+  validateBookLinks(question.bookLinks, question.id, { requireNotes: true });
 }
 
 const multipleTotal = payload.questions.filter((q) => q.type === "multiple").length;
@@ -179,6 +184,7 @@ if (payload.meta.eligibleQuestionCount !== payload.questions.filter((q) => q.exa
 if (payload.questions.length < 2000) errors.push("question bank must keep the imported past-exam records");
 if (payload.meta.materialBinding?.boundQuestionCount !== payload.questions.length) errors.push("material binding metadata is stale");
 if (payload.meta.materialBinding?.notesBoundQuestionCount !== payload.questions.length) errors.push("every question must bind to a study-note page");
+if (payload.meta.materialBinding?.boundKnowledgePointCount !== payload.knowledgePoints.length) errors.push("知识讲义绑定统计与知识点数量不一致");
 for (const subject of payload.subjects) {
   const eligible = payload.questions.filter((q) => q.subjectId === subject.id && q.examEligible !== false);
   const subjectFacts = new Set(eligible.map((q) => q.factId));
