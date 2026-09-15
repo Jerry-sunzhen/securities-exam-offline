@@ -314,6 +314,48 @@ if (!Object.values(dataChecks).every(Boolean)) throw new Error(`Data checks fail
 
 await page.click('[data-action="exit-session"]');
 await page.waitForSelector('[data-action="start-exam"]');
+
+// 章节练习结束时给出当次看板：正确率、用时、章节/题型明细与错题清单。
+await page.click('[data-nav="practice"]');
+await page.waitForSelector("#practice-count");
+await page.select("#practice-count", "10");
+await page.click('[data-action="start-practice"]');
+await page.waitForSelector(".question-card");
+for (let index = 0; index < 10; index += 1) {
+  await page.click(".question-card .option");
+  await page.click('[data-action="submit-question"]');
+  await page.waitForSelector(".explanation");
+  await page.click('[data-action="next-question"]');
+  if (index < 9) await page.waitForFunction((next) => document.querySelector(".session-meta")?.textContent.includes(`第 ${next}/10 题`), {}, index + 2);
+}
+await page.waitForSelector(".practice-result");
+const practiceBoard = await page.evaluate(() => {
+  const board = document.querySelector(".practice-result");
+  const text = board.textContent.replace(/\s+/g, " ");
+  return {
+    score: board.querySelector(".practice-result-score")?.textContent || "",
+    metrics: board.querySelectorAll(".practice-result-metrics > div").length,
+    tables: document.querySelectorAll(".session-shell .table").length,
+    hasPace: text.includes("建议用时") && text.includes("用时"),
+    hasRetry: Boolean(board.querySelector('[data-action="retry-practice-all"]')),
+    hasWrongBlock: Boolean(document.querySelector(".practice-result-wrong"))
+  };
+});
+if (!/^\d+%$/.test(practiceBoard.score) || practiceBoard.metrics !== 4 || practiceBoard.tables < 3 || !practiceBoard.hasPace || !practiceBoard.hasRetry || !practiceBoard.hasWrongBlock) {
+  throw new Error(`Practice result board is incomplete: ${JSON.stringify(practiceBoard)}`);
+}
+await page.click('[data-action="review-practice-all"]');
+await page.waitForSelector(".question-card");
+const practiceReviewHeader = await page.$eval(".session-meta", (node) => node.textContent);
+if (!/练习复盘 · 第 1\/10 题/.test(practiceReviewHeader)) throw new Error(`Practice review header invalid: ${practiceReviewHeader}`);
+await page.click('[data-action="exit-session"]');
+await page.waitForSelector(".practice-result");
+await page.click('[data-action="retry-practice-all"]');
+await page.waitForSelector(".question-card");
+const practiceRetryHeader = await page.$eval(".session-meta", (node) => node.textContent);
+if (!/章节练习 · 第 1\/10 题/.test(practiceRetryHeader)) throw new Error(`Practice retry header invalid: ${practiceRetryHeader}`);
+await page.click('[data-action="exit-session"]');
+await page.waitForSelector('[data-action="start-exam"]');
 await page.click('[data-action="start-exam"]');
 await page.waitForSelector(".question-card");
 

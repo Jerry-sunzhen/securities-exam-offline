@@ -883,7 +883,7 @@
 
   function renderSession() {
     const session = state.session;
-    if (session.finished) return renderExamResult(session);
+    if (session.finished) return session.mode === "exam" ? renderExamResult(session) : renderPracticeResult(session);
     const question = session.questions[session.index];
     const selected = new Set(session.answers[question.id] || []);
     const submitted = Boolean(session.submitted[question.id]);
@@ -893,7 +893,7 @@
     return `
       <main class="main session-shell">
         <div class="session-header">
-          <div><button class="button secondary small" data-action="exit-session">退出</button> <span class="session-meta">${session.mode === "exam" ? "模拟考试" : session.mode === "review" ? "模考复盘" : "章节练习"} · 第 ${session.index + 1}/${session.questions.length} 题${session.mode === "practice" ? ` · 已完成 ${Object.keys(session.submitted).length} 题` : ""}</span></div>
+          <div><button class="button secondary small" data-action="exit-session">退出</button> <span class="session-meta">${session.mode === "exam" ? "模拟考试" : session.mode === "review" ? (session.reviewKind === "practice" ? "练习复盘" : "模考复盘") : "章节练习"} · 第 ${session.index + 1}/${session.questions.length} 题${session.mode === "practice" ? ` · 已完成 ${Object.keys(session.submitted).length} 题` : ""}</span></div>
           ${session.deadlineAt ? `<div id="session-timer" class="timer ${timerTone(session)}">${timerLabel(session)}</div>` : `<div class="session-meta">已完成 ${Object.keys(session.submitted).length} 题</div>`}
         </div>
         <div class="progress session-progress"><span style="width:${Math.round((session.index + 1) * 100 / session.questions.length)}%"></span></div>
@@ -924,7 +924,7 @@
             </div>
             <div class="action-group">
               ${session.mode === "practice" && !submitted ? `<button class="button" data-action="submit-question" ${selected.size ? "" : "disabled"}>提交答案</button>` : ""}
-              ${session.mode === "exam" ? `<button class="button" data-action="next-question">${session.index === session.questions.length - 1 ? "交卷" : "下一题"}</button>` : submitted ? `<button class="button" data-action="next-question">${session.index === session.questions.length - 1 ? "完成练习" : "下一题"}</button>` : ""}
+              ${session.mode === "exam" ? `<button class="button" data-action="next-question">${session.index === session.questions.length - 1 ? "交卷" : "下一题"}</button>` : submitted ? `<button class="button" data-action="next-question">${session.index === session.questions.length - 1 ? (session.mode === "review" ? "结束复盘" : "完成练习") : "下一题"}</button>` : ""}
             </div>
           </div>
           ${submitted ? renderExplanation(question, correct) : ""}
@@ -1080,14 +1080,139 @@
     const session = state.session;
     if (session.mode === "exam" && session.index === session.questions.length - 1) return finishExam();
     if (session.mode === "review" && session.index === session.questions.length - 1) {
-      state.session = null; state.view = "stats"; render(); return;
+      exitReview(); return;
     }
     if (session.mode === "practice" && session.index === session.questions.length - 1) {
-      toast("本组练习已完成", "success");
-      state.session = null; state.view = "stats"; render(); return;
+      finishPractice(); return;
     }
     session.index = Math.min(session.index + 1, session.questions.length - 1);
     render();
+  }
+
+  // 练习不计成绩，但结束后给出当次看板：正确率、用时、章节与题型明细、错题清单。
+  function finishPractice() {
+    const session = state.session;
+    if (!session || session.finished) return;
+    clearInterval(state.sessionTimer);
+    session.elapsedSeconds = Math.max(0, Math.round((Date.now() - session.startedAt) / 1000));
+    session.finished = true;
+    render();
+  }
+
+  function practiceResultStats(session) {
+    const rows = (session?.questions || []).map((question) => {
+      const selected = session.answers[question.id] || [];
+      const correct = sameAnswer(new Set(selected), new Set(question.correctOptionIds));
+      return { question, selected, answered: selected.length > 0, correct };
+    });
+    const answered = rows.filter((row) => row.answered);
+    const correct = rows.filter((row) => row.correct);
+    const wrong = rows.filter((row) => row.answered && !row.correct);
+    return {
+      rows, answered, correct, wrong,
+      skipped: rows.filter((row) => !row.answered),
+      rate: answered.length ? Math.round(correct.length * 100 / answered.length) : 0
+    };
+  }
+
+  function formatDuration(seconds) {
+    const total = Math.max(0, Math.round(Number(seconds) || 0));
+    const minutes = Math.floor(total / 60);
+    if (minutes >= 60) return `${Math.floor(minutes / 60)} 小时 ${minutes % 60} 分`;
+    return `${minutes} 分 ${total % 60} 秒`;
+  }
+
+  function groupedResultRows(rows, keyOf, labelOf, order) {
+    const groups = new Map();
+    for (const row of rows) {
+      const key = keyOf(row.question);
+      const current = groups.get(key) || { key, label: labelOf(key), total: 0, correct: 0 };
+      current.total += 1;
+      current.correct += row.correct ? 1 : 0;
+      groups.set(key, current);
+    }
+    const list = [...groups.values()];
+    if (order) list.sort((left, right) => order.indexOf(left.key) - order.indexOf(right.key));
+    else list.sort((left, right) => (left.correct / left.total) - (right.correct / right.total) || right.total - left.total);
+    return list;
+  }
+
+  function renderResultTable(title, items, label) {
+    return `<section class="card card-body"><h3 class="card-title">${escapeHtml(title)}</h3>${items.length ? `<div class="table-wrap"><table class="table"><thead><tr><th>${escapeHtml(label)}</th><th>题量</th><th>正确</th><th>正确率</th></tr></thead><tbody>${items.map((item) => `<tr><td>${escapeHtml(item.label)}</td><td>${item.total}</td><td>${item.correct}</td><td>${Math.round(item.correct * 100 / item.total)}%</td></tr>`).join("")}</tbody></table></div>` : '<div class="empty">本次没有可统计的作答。</div>'}</section>`;
+  }
+
+  function renderPracticeResult(session) {
+    const stats = practiceResultStats(session);
+    const elapsed = Number(session.elapsedSeconds || 0) || Math.round((Date.now() - session.startedAt) / 1000);
+    const budget = Number(session.budgetSeconds || 0);
+    const pace = budget
+      ? (elapsed > budget ? `超出建议用时 ${formatDuration(elapsed - budget)}` : `比建议用时快 ${formatDuration(budget - elapsed)}`)
+      : "本次没有建议用时";
+    const chapters = groupedResultRows(stats.answered, (question) => question.chapterId, (id) => chapterTitle(id));
+    const types = groupedResultRows(stats.answered, (question) => question.type, (type) => typeLabel(type), ["single", "multiple", "judgment", "case"]);
+    return `<main class="main session-shell">
+      <section class="card card-body practice-result">
+        <span class="metric-label">本次章节练习</span>
+        <div class="practice-result-head">
+          <div class="practice-result-score-line"><strong class="practice-result-score">${stats.rate}%</strong><span class="practice-result-fraction">答对 ${stats.correct.length} / 已作答 ${stats.answered.length} 题</span></div>
+          <div class="practice-result-pace"><strong>用时 ${formatDuration(elapsed)}</strong><span>${budget ? `建议用时 ${formatDuration(budget)} · ${pace}` : escapeHtml(pace)}</span></div>
+        </div>
+        <div class="practice-result-metrics">
+          <div><strong>${stats.rows.length}</strong><span>本组题量</span></div>
+          <div><strong>${stats.correct.length}</strong><span>答对</span></div>
+          <div><strong>${stats.wrong.length}</strong><span>答错</span></div>
+          <div><strong>${stats.skipped.length}</strong><span>未作答</span></div>
+        </div>
+        <div class="action-group mt-4-safe">
+          <button class="button" data-action="retry-practice-all">重做本组 ${stats.rows.length} 题</button>
+          <button class="button secondary" data-action="retry-practice-wrong" ${stats.wrong.length ? "" : "disabled"}>只重做 ${stats.wrong.length} 道错题</button>
+          <button class="button secondary" data-action="review-practice-all">逐题看解析</button>
+          <button class="button ghost" data-action="exit-session">返回总览</button>
+        </div>
+        <div class="notice">本次 ${stats.answered.length} 道作答已写入学习档案，学习统计会累计；正确率只按已作答的题计算。</div>
+      </section>
+      <div class="grid two mt-4-safe">
+        ${renderResultTable("章节正确率", chapters, "章节")}
+        ${renderResultTable("题型正确率", types, "题型")}
+      </div>
+      <section class="card card-body practice-result-wrong mt-4-safe">
+        <h3 class="card-title">本次错题${stats.wrong.length ? `（${stats.wrong.length}）` : ""}</h3>
+        ${stats.wrong.length ? `<div class="table-wrap"><table class="table"><thead><tr><th>题目</th><th>章节</th><th>你的答案</th><th>正确答案</th></tr></thead><tbody>${stats.wrong.map((row) => `<tr><td>${escapeHtml(normalizeExamText(row.question.stem).replace(/\\n/g, " ")).slice(0, 70)}${row.question.stem.length > 70 ? "…" : ""}</td><td>${escapeHtml(chapterTitle(row.question.chapterId))}</td><td class="wrong-answer">${escapeHtml(row.selected.join("、") || "未作答")}</td><td class="right-answer">${escapeHtml(row.question.correctOptionIds.join("、"))}</td></tr>`).join("")}</tbody></table></div>` : `<div class="empty"><strong>这组全部答对</strong>可以换一批题，或者回去背这一章的笔记要点。</div>`}
+      </section>
+    </main>`;
+  }
+
+  function beginPracticeReview(scope) {
+    const previous = state.session;
+    const stats = practiceResultStats(previous);
+    const list = (scope === "wrong" ? stats.wrong : stats.rows).map((row) => row.question);
+    if (!list.length) return toast(scope === "wrong" ? "本次没有错题" : "本次没有可查看的题目", "error");
+    state.reviewReturn = previous;
+    state.session = {
+      ...previous,
+      mode: "review",
+      reviewKind: "practice",
+      questions: list,
+      index: 0,
+      finished: false,
+      submitted: Object.fromEntries(list.map((question) => [question.id, true])),
+      remainingSeconds: null,
+      deadlineAt: null
+    };
+    render();
+  }
+
+  function startPracticeFrom(questions, subjectId) {
+    if (!questions.length) return toast("没有可练习的题目", "error");
+    state.reviewReturn = null;
+    startSession({ mode: "practice", questions: shuffle(questions), subjectId: subjectId || questions[0]?.subjectId || state.practiceSubject });
+  }
+
+  function exitReview() {
+    const back = state.reviewReturn || null;
+    state.reviewReturn = null;
+    if (back) { state.session = back; render(); return; }
+    state.session = null; state.view = "stats"; render();
   }
 
   async function finishExam() {
@@ -1122,6 +1247,7 @@
     state.session = {
       ...previous,
       mode: "review",
+      reviewKind: "exam",
       questions,
       index: 0,
       finished: false,
@@ -1265,7 +1391,9 @@
       if (action === "bookmark-question") { const q = state.session.questions[state.session.index]; const enabled = StudyDb.toggleBookmark(q.id); toast(enabled ? "已收藏" : "已取消收藏", "success"); render(); }
       if (action === "save-note") { const q = state.session.questions[state.session.index]; StudyDb.saveNote(q.id, document.getElementById("question-note")?.value || ""); toast("笔记已保存", "success"); }
       if (action === "exit-session") {
+        if (state.session?.mode === "review" && state.reviewReturn) { exitReview(); return; }
         clearInterval(state.sessionTimer);
+        state.reviewReturn = null;
         const wasUnfinishedExam = state.session?.mode === "exam" && !state.session.finished;
         state.session = null;
         if (wasUnfinishedExam) state.activeExam = StudyDb.getActiveExam();
@@ -1274,6 +1402,10 @@
       }
       if (action === "review-exam-wrong") beginExamReview(true);
       if (action === "review-exam-all") beginExamReview(false);
+      if (action === "retry-practice-all") startPracticeFrom(state.session.questions.map((question) => question), state.session.subjectId);
+      if (action === "retry-practice-wrong") startPracticeFrom(practiceResultStats(state.session).wrong.map((row) => row.question), state.session.subjectId);
+      if (action === "review-practice-wrong") beginPracticeReview("wrong");
+      if (action === "review-practice-all") beginPracticeReview("all");
       if (action === "new-profile") { await StudyDb.createBoundProfile(); toast("学习档案已创建并绑定", "success"); render(); }
       if (action === "open-profile") { await StudyDb.openBoundProfile(); toast("学习档案已打开", "success"); render(); }
       if (action === "import-profile") document.getElementById("profile-file-input").click();

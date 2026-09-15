@@ -298,6 +298,18 @@
   .empty strong { @apply mb-[7px] block text-ink; }
   .exam-score { @apply text-[28px]; }
   .exam-result-summary { @apply mt-[9px] mb-[18px]; }
+  .practice-result-head { @apply mt-2 mb-[18px] flex flex-wrap items-end justify-between gap-4; }
+  .practice-result-score-line { @apply flex items-baseline gap-3; }
+  .practice-result-score { @apply text-[38px] font-[800] leading-none tracking-[-.02em] text-primary-dark; }
+  .practice-result-fraction { @apply text-[13px] text-muted; }
+  .practice-result-pace { @apply grid gap-1 text-right text-xs text-muted; }
+  .practice-result-pace strong { @apply text-sm text-ink; }
+  .practice-result-metrics { @apply grid grid-cols-4 gap-2.5; }
+  .practice-result-metrics > div { @apply grid gap-0.5 rounded-[10px] bg-panel-soft px-3.5 py-3; }
+  .practice-result-metrics strong { @apply text-xl text-[#18253a]; }
+  .practice-result-metrics span { @apply text-[11px] text-muted; }
+  .wrong-answer { @apply text-danger; }
+  .right-answer { @apply font-[700] text-[#197657]; }
   .center-actions { @apply justify-center; }
   .profile-actions { @apply flex flex-wrap gap-2.5; }
   .profile-status { @apply mt-4 grid gap-2.5; }
