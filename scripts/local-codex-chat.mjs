@@ -17,7 +17,10 @@ const staticRoot = resolve(projectRoot, option("--static-root", "."));
 const codexBinary = process.env.SECURITIES_CODEX_BINARY || "codex";
 const requestedWebSearchMode = process.env.SECURITIES_CODEX_WEB_SEARCH || "live";
 const standaloneWebSearchProvider = (process.env.SECURITIES_CODEX_WEB_SEARCH_PROVIDER ?? "zycrafts").trim();
+const tutorModel = (process.env.SECURITIES_CODEX_MODEL ?? "deepseek-flash").trim();
+const tutorReasoningEffort = (process.env.SECURITIES_CODEX_REASONING_EFFORT ?? "medium").trim().toLowerCase();
 const webSearchModes = new Set(["disabled", "cached", "indexed", "live"]);
+const reasoningEfforts = new Set(["minimal", "low", "medium", "high", "xhigh"]);
 
 if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error("--port 必须是 1024—65535 之间的整数");
 if (!staticRoot.startsWith(`${projectRoot}${sep}`) && staticRoot !== projectRoot) throw new Error("--static-root 必须位于项目目录内");
@@ -26,9 +29,19 @@ if (!webSearchModes.has(requestedWebSearchMode)) throw new Error("SECURITIES_COD
 if (standaloneWebSearchProvider && !/^[A-Za-z0-9_-]+$/.test(standaloneWebSearchProvider)) {
   throw new Error("SECURITIES_CODEX_WEB_SEARCH_PROVIDER 只能包含字母、数字、下划线或连字符");
 }
+if (!/^[A-Za-z0-9._:-]+$/.test(tutorModel)) {
+  throw new Error("SECURITIES_CODEX_MODEL 只能包含字母、数字、点、下划线、冒号或连字符");
+}
+if (!reasoningEfforts.has(tutorReasoningEffort)) {
+  throw new Error("SECURITIES_CODEX_REASONING_EFFORT 必须是 minimal、low、medium、high 或 xhigh");
+}
 
 const codexArgs = [
-  "app-server", "-c", `web_search=${requestedWebSearchMode}`,
+  "app-server",
+  // 助教默认使用轻量模型和中等推理强度，只作用于本次聊天进程，不改动 ~/.codex/config.toml。
+  "-c", `model="${tutorModel}"`,
+  "-c", `model_reasoning_effort="${tutorReasoningEffort}"`,
+  "-c", `web_search=${requestedWebSearchMode}`,
   "-c", "features.apps=false",
   "-c", "features.multi_agent=false",
   "-c", "mcp_servers.playwright.enabled=false",
@@ -255,6 +268,8 @@ async function handleStatus(_req, res) {
       authenticated: Boolean(account) || result?.requiresOpenaiAuth === false,
       accountType: account?.type || null,
       planType: account?.planType || null,
+      model: config.model || tutorModel,
+      modelReasoningEffort: config.model_reasoning_effort || tutorReasoningEffort,
       modelProvider: config.model_provider || null,
       webSearchMode,
       webSearchAvailable,

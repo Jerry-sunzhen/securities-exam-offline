@@ -800,9 +800,17 @@
     return ExamBank.selectExam(questionData.questions, subjectId);
   }
 
+  // 练习不计入成绩，但同样按"120 题 / 120 分钟"的配速给出建议用时。
+  function sessionBudgetSeconds(mode, questionCount) {
+    if (mode === "exam") return 120 * 60;
+    if (mode === "practice") return Math.max(1, questionCount) * 60;
+    return null;
+  }
+
   function startSession({ mode, questions, subjectId = null, seconds = null, scoringScheme = "legacy" }) {
     if (!questions.length) return toast("没有符合条件的题目", "error");
     const id = crypto.randomUUID();
+    const budget = seconds ?? sessionBudgetSeconds(mode, questions.length);
     state.session = {
       id,
       mode,
@@ -814,8 +822,9 @@
       answers: {},
       submitted: {},
       startedAt: Date.now(),
-      remainingSeconds: seconds,
-      deadlineAt: seconds ? Date.now() + seconds * 1000 : null,
+      budgetSeconds: budget,
+      remainingSeconds: budget,
+      deadlineAt: budget ? Date.now() + budget * 1000 : null,
       finished: false,
       score: null
     };
@@ -831,16 +840,22 @@
 
   function bindSessionTimer() {
     clearInterval(state.sessionTimer);
-    if (!state.session || state.session.mode !== "exam" || state.session.finished) return;
+    const session = state.session;
+    if (!session || session.finished || !session.deadlineAt) return;
+    if (session.mode !== "exam" && session.mode !== "practice") return;
     state.sessionTimer = setInterval(() => {
-      if (!state.session) return clearInterval(state.sessionTimer);
-      state.session.remainingSeconds = Math.max(0, Math.ceil((state.session.deadlineAt - Date.now()) / 1000));
+      const active = state.session;
+      if (!active || active.finished || !active.deadlineAt) return clearInterval(state.sessionTimer);
+      active.remainingSeconds = Math.ceil((active.deadlineAt - Date.now()) / 1000);
       const timer = document.getElementById("session-timer");
       if (timer) {
-        timer.textContent = formatSeconds(state.session.remainingSeconds);
-        timer.classList.toggle("warning", state.session.remainingSeconds < 600);
+        const tone = timerTone(active);
+        timer.textContent = timerLabel(active);
+        timer.classList.toggle("warning", tone === "warning");
+        timer.classList.toggle("overtime", tone === "overtime");
       }
-      if (state.session.remainingSeconds <= 0) finishExam().catch((error) => toast(error.message, "error"));
+      // 只有模考到点自动交卷；练习超时继续计时，方便看完解析。
+      if (active.mode === "exam" && active.remainingSeconds <= 0) finishExam().catch((error) => toast(error.message, "error"));
     }, 1000);
   }
 
@@ -850,6 +865,20 @@
     const m = Math.floor((safe % 3600) / 60);
     const s = safe % 60;
     return [h, m, s].map((value) => String(value).padStart(2, "0")).join(":");
+  }
+
+  // 练习计时只做配速参考：按"120 题 / 120 分钟"换算成每题 1 分钟。
+  function timerLabel(session) {
+    const remaining = Number(session.remainingSeconds || 0);
+    if (session.mode === "exam") return formatSeconds(remaining);
+    return remaining > 0 ? `建议用时 ${formatSeconds(remaining)}` : `超时 ${formatSeconds(-remaining)}`;
+  }
+
+  function timerTone(session) {
+    const remaining = Number(session.remainingSeconds || 0);
+    if (session.mode === "exam") return remaining < 600 ? "warning" : "";
+    if (remaining <= 0) return "overtime";
+    return remaining < 60 ? "warning" : "";
   }
 
   function renderSession() {
@@ -864,8 +893,8 @@
     return `
       <main class="main session-shell">
         <div class="session-header">
-          <div><button class="button secondary small" data-action="exit-session">退出</button> <span class="session-meta">${session.mode === "exam" ? "模拟考试" : session.mode === "review" ? "模考复盘" : "章节练习"} · 第 ${session.index + 1}/${session.questions.length} 题</span></div>
-          ${session.mode === "exam" ? `<div id="session-timer" class="timer ${session.remainingSeconds < 600 ? "warning" : ""}">${formatSeconds(session.remainingSeconds)}</div>` : `<div class="session-meta">已完成 ${Object.keys(session.submitted).length} 题</div>`}
+          <div><button class="button secondary small" data-action="exit-session">退出</button> <span class="session-meta">${session.mode === "exam" ? "模拟考试" : session.mode === "review" ? "模考复盘" : "章节练习"} · 第 ${session.index + 1}/${session.questions.length} 题${session.mode === "practice" ? ` · 已完成 ${Object.keys(session.submitted).length} 题` : ""}</span></div>
+          ${session.deadlineAt ? `<div id="session-timer" class="timer ${timerTone(session)}">${timerLabel(session)}</div>` : `<div class="session-meta">已完成 ${Object.keys(session.submitted).length} 题</div>`}
         </div>
         <div class="progress session-progress"><span style="width:${Math.round((session.index + 1) * 100 / session.questions.length)}%"></span></div>
         <section class="card question-card">

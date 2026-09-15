@@ -229,12 +229,18 @@ await page.click('[data-action="start-case-practice"]');
 await page.waitForSelector(".case-material strong");
 const casePracticeHeader = await page.$eval(".case-material strong", (node) => node.textContent || "");
 if (!/第 1\/\d+ 问/.test(casePracticeHeader)) throw new Error(`Case practice did not start at a complete pack: ${casePracticeHeader}`);
+const casePracticeTimer = await page.$eval("#session-timer", (node) => node.textContent.trim());
+if (!/^建议用时 00:1[0-9]:\d{2}$/.test(casePracticeTimer)) throw new Error(`Case practice timer is not scaled to the selected count: ${casePracticeTimer}`);
 await page.click('[data-action="exit-session"]');
 await page.waitForSelector('[data-nav="practice"]');
 await page.click('[data-nav="practice"]');
 await page.waitForSelector('[data-action="start-practice"]');
 await page.click('[data-action="start-practice"]');
 await page.waitForSelector(".question-card");
+const practiceTimer = await page.$eval("#session-timer", (node) => node.textContent.trim());
+if (!/^建议用时 00:(19|20):\d{2}$/.test(practiceTimer)) throw new Error(`Practice timer is not scaled to the selected question count: ${practiceTimer}`);
+const practiceHeader = await page.$eval(".session-meta", (node) => node.textContent);
+if (!/章节练习 · 第 1\/\d+ 题 · 已完成 0 题/.test(practiceHeader)) throw new Error(`Practice header lost the answered count: ${practiceHeader}`);
 const chatQuestionContext = await page.evaluate(() => window.ExamApp.getChatContext());
 if (!chatQuestionContext.question?.id || chatQuestionContext.question.submitted || !chatQuestionContext.guidance?.includes("不直接揭晓答案")) {
   throw new Error(`Question chat context invalid: ${JSON.stringify(chatQuestionContext)}`);

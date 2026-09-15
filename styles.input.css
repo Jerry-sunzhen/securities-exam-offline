@@ -234,6 +234,7 @@
   .session-meta { @apply text-[13px] text-muted; }
   .timer { @apply font-[750] tabular-nums text-primary-dark; }
   .timer.warning { @apply text-danger; }
+  .timer.overtime { @apply rounded-md bg-danger-soft px-2 py-[3px] text-danger; }
   .question-card { @apply p-[27px]; }
   .question-tags { @apply mb-[15px] flex flex-wrap gap-[7px]; }
   .tag { @apply rounded-[7px] bg-[#eef3f8] px-2 py-[5px] text-xs text-[#496074]; }

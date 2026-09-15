@@ -30,7 +30,7 @@
     </button>
     <aside class="codex-chat-panel" id="codex-chat-panel" aria-label="本机 Codex 学习助教" aria-hidden="true">
       <header class="codex-chat-header">
-        <div class="codex-chat-title"><span class="codex-chat-logo">AI</span><div><strong>学习助教</strong><span>本机 Codex · 只读</span></div></div>
+        <div class="codex-chat-title"><span class="codex-chat-logo">AI</span><div><strong>学习助教</strong><span data-chat-model>本机 Codex · 只读</span></div></div>
         <div class="codex-chat-header-actions">
           <button type="button" data-chat-action="new" title="新对话">＋</button>
           <button type="button" data-chat-action="close" title="收起">×</button>
@@ -386,6 +386,12 @@
       state.available = true;
       state.authenticated = Boolean(result.authenticated);
       state.planType = result.planType || null;
+      const modelNode = root.querySelector("[data-chat-model]");
+      if (modelNode) {
+        modelNode.textContent = result.model
+          ? `${result.model} · ${result.modelReasoningEffort || "medium"} · 只读`
+          : "本机 Codex · 只读";
+      }
       state.webSearchAvailable = Boolean(result.webSearchAvailable);
       state.webSearchMessage = result.webSearchMessage || "";
       if (state.authenticated) setStatus("online", onlineStatusText());
