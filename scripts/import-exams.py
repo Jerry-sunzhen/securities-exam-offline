@@ -33,6 +33,11 @@ def normalize(value):
     return re.sub(r'[^\w\u4e00-\u9fff%≥≤<>=+−÷×]', '', value).lower()
 
 
+def option_key(value):
+    # 判重时保留分隔符："Ⅰ.Ⅱ.Ⅳ" 和 "Ⅲ.Ⅳ" 不是重复选项。
+    return re.sub(r'[\s\u3000]+', '', value).replace('，', ',').replace('。', '.').replace('．', '.').lower()
+
+
 def compact(value):
     # Keep paragraph/statement boundaries, join only PDF wrapping lines.
     value = re.sub(r'\n[ \t]*\n+', '\n', value.replace('\f', '\n')).strip()
@@ -47,8 +52,16 @@ def clean_text(raw, plain=False):
             if any(w in line for w in ['命中率', '老店铺加好友', '刷题软件', '精讲冲刺真题解析', 'haomingzi3388', '绝密押题', '全班次网课']):
                 continue
             line = re.sub(r'金融类押题微信\s*308252680[）)]?', '', line)
+            line = re.sub(r'证券从业\s*[-—－]?\s*(?:证券市场基本法律法规|金融市场基础知识)', '', line)
+            line = re.sub(r'\bJMYT\s*\d*\s*获取?\b', '', line, flags=re.I)
+            # 版心外的页码噪声常常粘在句尾，例如「…从业资格26 8」。
+            line = re.sub(r'(?<=[\u4e00-\u9fff])\s?\d{1,3}\s+\d{1,2}(?=\s*$|\s*[\u4e00-\u9fff])', '', line)
+            line = re.sub(r'(?<=[\u4e00-\u9fff])\.(?=[\u4e00-\u9fff])', '、', line)
+            line = line.replace('劵', '券').replace('胞资', '融资')
             line = re.sub(r'\s{3,}(?:[0-9 ]{1,10}|[金融类押题认准微信])\s*$', '', line)
             if re.fullmatch(r'\s*[金融类押题认准微信]\s*', line):
+                continue
+            if re.fullmatch(r'\s*(?:JMYT\s*\d*\s*获取?|证券从业\s*[-—－]?\s*(?:证券市场基本法律法规|金融市场基础知识))\s*', line, flags=re.I):
                 continue
             if not plain and re.fullmatch(r'\s*\d{1,3}(?:\s*/\s*\d+)?\s*', line):
                 continue
@@ -164,7 +177,7 @@ def parse_source(source, text):
         if not correct or not set(correct).issubset({o['id'] for o in options}): issues.append('答案与选项不匹配')
         if not judgment and len(options) != 4: issues.append('选项数量异常')
         if any(not o['text'] or len(o['text'])>750 for o in options): issues.append('选项缺失或疑似跨题')
-        if len({normalize(o['text']) for o in options}) != len(options): issues.append('选项文字重复')
+        if len({option_key(o['text']) for o in options}) != len(options): issues.append('选项文字重复')
         if len(stem)>1800 or '参考答案' in stem or '【解析】' in stem: issues.append('题干疑似混入其他内容')
         if is_case and not active_material: issues.append('综合题材料待恢复')
         if re.search(r'此题暂无解析|暂无解析', explanation): explanation = ''

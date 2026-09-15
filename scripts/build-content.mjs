@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { subjects, chapters } from "../content/catalog.mjs";
 import { NOTE_SOURCES, TEXTBOOK_SOURCES, createMaterialContext, createNoteIndexes, bindQuestion, bindTextbook } from "./material-binding.mjs";
 import { parseNotesSections, locateSection } from "./notes-sections.mjs";
+import { cleanQuestion } from "./question-text.mjs";
 
 // 内容全部来自内部材料：2026 新大纲三色笔记（讲义 + 题目定位）与两本教材（补充定位）。
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -169,6 +170,14 @@ for (const point of knowledgePoints) {
 const importedPath = join(root, "content/imported-exams.json");
 const imported = existsSync(importedPath) ? JSON.parse(readFileSync(importedPath, "utf8")) : null;
 const importedQuestions = imported?.questions || [];
+// 题目文本来自 PDF 识别，先统一清洗水印、断行、标点与混入的后续题目，再做材料绑定。
+const correctionsPath = join(root, "content/exam-corrections.json");
+const corrections = new Map((existsSync(correctionsPath) ? JSON.parse(readFileSync(correctionsPath, "utf8")) : []).map((item) => [item.id, item]));
+const textStats = { changed: 0 };
+for (const question of importedQuestions) {
+  const result = cleanQuestion(question, { corrections });
+  if (result.changed) textStats.changed += 1;
+}
 const bindingStats = { bound: 0, notes: 0, textbook: 0, knowledgeWithTextbook: knowledgePoints.filter((point) => point.bookLinks.some((link) => link.kind === "textbook")).length };
 for (const question of importedQuestions) {
   const entry = noteSources.find((source) => source.subjectId === question.subjectId);
@@ -198,7 +207,8 @@ const questionPayload = {
     importedQuestionCount: importedQuestions.length,
     eligibleQuestionCount: allQuestions.filter((question) => question.examEligible !== false).length,
     importedSourceCount: imported?.sources?.length || 0,
-    importedHeldCount: imported?.meta?.heldCount || 0,
+    importedHeldCount: allQuestions.filter((question) => question.examEligible === false).length,
+    cleanedQuestionCount: textStats.changed,
     knowledgePointCount: knowledgePoints.length,
     caseGroupCount: new Set(allQuestions.filter((question) => question.type === "case").map((question) => question.caseGroupId || question.id)).size,
     caseQuestionCount: allQuestions.filter((question) => question.type === "case").length,

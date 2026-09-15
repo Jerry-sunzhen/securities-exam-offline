@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { questionTextIssues } from "./question-text.mjs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -111,6 +112,17 @@ if (caseGroups.size) {
     if (orders.join(",") !== [...orders.keys()].map((index) => index + 1).join(",")) errors.push(`${groupId}: case question order is not consecutive`);
   }
 }
+
+// 题干、选项、解析必须是清洗后的文本：不能残留水印、页码、混入的后续题目或重复标点。
+let textIssueCount = 0;
+for (const question of payload.questions) {
+  for (const issue of questionTextIssues(question)) {
+    errors.push(`${question.id}: ${issue}`);
+    textIssueCount += 1;
+  }
+  if (question.examEligible === false && !question.issues?.length) errors.push(`${question.id}: 不可练习的题目必须写明原因`);
+}
+console.log(`Text cleanup issues: ${textIssueCount}`);
 
 const normalized = new Map();
 for (const question of payload.questions) {
