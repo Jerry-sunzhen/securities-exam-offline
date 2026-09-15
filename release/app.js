@@ -644,11 +644,13 @@
     const chapters = subjectChapters(state.practiceSubject);
     const caseOnly = state.practiceTypes.size === 1 && state.practiceTypes.has("case");
     const countChoices = caseOnly ? [8,16,24,32,40] : [10,20,30,50,100];
-    const available = questionData.questions.filter((question) => {
-      return question.subjectId === state.practiceSubject &&
-        (state.practiceChapter === "all" || question.chapterId === state.practiceChapter) &&
-        state.practiceTypes.has(question.type);
-    }).length;
+    const matchesPracticeFilter = (question) => question.subjectId === state.practiceSubject &&
+      (state.practiceChapter === "all" || question.chapterId === state.practiceChapter) &&
+      state.practiceTypes.has(question.type);
+    const matching = questionData.questions.filter(matchesPracticeFilter);
+    const available = matching.length;
+    const { attempted } = questionHistory();
+    const availableUnseen = matching.filter((question) => !attempted.has(question.id)).length;
     return `
       <div class="grid two">
         <section class="card card-body">
@@ -660,7 +662,7 @@
             </div>
             <div class="field"><label>题型</label><div class="checkbox-row">${[["single","单选"],["multiple","多选"],["judgment","判断"],["case","综合材料"]].map(([id,label]) => `<label class="check-chip"><input type="checkbox" data-practice-type="${id}" ${state.practiceTypes.has(id) ? "checked" : ""} />${label}</label>`).join("")}</div></div>
             <div class="field"><label>题目数量</label><select class="select" id="practice-count">${countChoices.map((count) => `<option value="${count}" ${state.practiceCount === count ? "selected" : ""}>${caseOnly ? `${count / 4} 组 · ` : ""}${count} 题</option>`).join("")}</select></div>
-            <div class="notice">当前条件共有 ${available} 道可用题。${caseOnly && state.practiceChapter === "all" ? "综合材料专项按完整材料出题，同一段材料下的小问会连续作答。" : "章节练习会即时显示答案、解析和笔记/教材出处。"}</div>
+            <div class="notice">当前条件共有 ${available} 道可用题，其中 ${availableUnseen} 道还没做过。${caseOnly && state.practiceChapter === "all" ? "综合材料专项按完整材料出题，同一段材料下的小问会连续作答，并优先出没做过的材料。" : "抽题顺序为没做过 → 做错过 → 已做对，同一档内随机；答完即时显示答案、解析和笔记/教材出处。"}</div>
             <div class="action-group"><button class="button" data-action="start-practice" ${available ? "" : "disabled"}>开始章节练习</button><button class="button secondary" data-action="start-case-practice">综合案例专项 · 按材料出题</button></div>
           </div>
         </section>
@@ -769,14 +771,44 @@
       </div>`;
   }
 
+  // 章节练习的抽题顺序：没做过 → 做过且最近做错 → 做过且最近做对。
+  function questionHistory() {
+    const attempted = new Set();
+    for (const row of StudyDb.getAttemptRows()) attempted.add(row.question_id);
+    return { attempted, wrong: new Set(StudyDb.getWrongQuestionIds()) };
+  }
+
+  function questionTier(question, history) {
+    if (!history.attempted.has(question.id)) return 0;
+    return history.wrong.has(question.id) ? 1 : 2;
+  }
+
+  function prioritizeQuestions(pool, history) {
+    const tiers = [[], [], []];
+    for (const question of pool) tiers[questionTier(question, history)].push(question);
+    return tiers.flatMap((tier) => shuffle(tier));
+  }
+
+  function prioritizeGroups(groups, history) {
+    const buckets = new Map();
+    for (const group of groups) {
+      const tier = Math.min(...group.map((question) => questionTier(question, history)));
+      if (!buckets.has(tier)) buckets.set(tier, []);
+      buckets.get(tier).push(group);
+    }
+    return [...buckets.keys()].sort((left, right) => left - right).flatMap((tier) => shuffle(buckets.get(tier)));
+  }
+
   function selectQuestions({ subjectId, chapterId = "all", count = 20, types = null, ids = null }) {
     let pool = ids ? ids.map((id) => questionMap.get(id)).filter((question) => question && question.examEligible !== false) : questionData.questions.filter((question) => {
       return (!subjectId || question.subjectId === subjectId) &&
         (chapterId === "all" || question.chapterId === chapterId) &&
         (!types || types.has(question.type)) && question.examEligible !== false;
     });
+    // 练习本列表来自用户自己的错题/收藏，保持随机即可；按条件抽题时优先出没做过的题。
+    const history = ids ? null : questionHistory();
     if (types?.size === 1 && types.has("case")) {
-      const importedCaseSelection = ExamBank.selectCases(pool, count);
+      const importedCaseSelection = ExamBank.selectCases(pool, count, history ? (question) => questionTier(question, history) : null);
       if (importedCaseSelection.length) return importedCaseSelection;
       const groups = new Map();
       for (const question of pool) {
@@ -784,7 +816,8 @@
         const list = groups.get(key) || [];
         list.push(question); groups.set(key, list);
       }
-      const orderedGroups = shuffle([...groups.values()]).map((group) => group.sort((left, right) => (left.caseOrder || 1) - (right.caseOrder || 1)));
+      const rawGroups = [...groups.values()];
+      const orderedGroups = (history ? prioritizeGroups(rawGroups, history) : shuffle(rawGroups)).map((group) => group.sort((left, right) => (left.caseOrder || 1) - (right.caseOrder || 1)));
       const result = [];
       for (const group of orderedGroups) {
         if (result.length + group.length > count) continue;
@@ -793,7 +826,8 @@
       }
       return result.length ? result : orderedGroups.flat().slice(0, Math.min(count, pool.length));
     }
-    return shuffle(pool).slice(0, Math.min(count, pool.length));
+    const ordered = history ? prioritizeQuestions(pool, history) : shuffle(pool);
+    return ordered.slice(0, Math.min(count, pool.length));
   }
 
   function selectExamQuestions(subjectId) {
@@ -1355,7 +1389,8 @@
         const knowledgeId = target.dataset.knowledge;
         const related = (questionData.questions || []).filter((question) => question.knowledgeLinks?.[0]?.knowledgeId === knowledgeId && question.examEligible !== false && question.verificationStatus === "source_transcribed");
         if (!related.length) { toast("这个知识点暂无可用历年题", "error"); return; }
-        startSession({ mode: "practice", questions: shuffle(related).slice(0, Math.min(20, related.length)), subjectId: related[0].subjectId });
+        const relatedOrdered = prioritizeQuestions(related, questionHistory());
+        startSession({ mode: "practice", questions: relatedOrdered.slice(0, Math.min(20, related.length)), subjectId: related[0].subjectId });
       }
       if (action === "outline-mode") { captureReadingPosition(); state.outlineMode = target.dataset.mode; state.outlineSearch = ""; render(); resetReadingPositionAfterRender(); }
       if (action === "back-to-top") {

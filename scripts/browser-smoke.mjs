@@ -318,6 +318,11 @@ await page.waitForSelector('[data-action="start-exam"]');
 // 章节练习结束时给出当次看板：正确率、用时、章节/题型明细与错题清单。
 await page.click('[data-nav="practice"]');
 await page.waitForSelector("#practice-count");
+const practiceNotice = await page.$eval(".form-grid .notice", (node) => node.textContent.replace(/\s+/g, " "));
+const unseenBefore = Number(practiceNotice.match(/其中 (\d+) 道还没做过/)?.[1]);
+if (!Number.isFinite(unseenBefore) || !practiceNotice.includes("没做过 → 做错过 → 已做对")) {
+  throw new Error(`Practice panel does not advertise unseen-first selection: ${practiceNotice}`);
+}
 await page.select("#practice-count", "10");
 await page.click('[data-action="start-practice"]');
 await page.waitForSelector(".question-card");
@@ -355,6 +360,16 @@ await page.waitForSelector(".question-card");
 const practiceRetryHeader = await page.$eval(".session-meta", (node) => node.textContent);
 if (!/章节练习 · 第 1\/10 题/.test(practiceRetryHeader)) throw new Error(`Practice retry header invalid: ${practiceRetryHeader}`);
 await page.click('[data-action="exit-session"]');
+await page.waitForSelector('[data-action="start-exam"]');
+
+// 未做题优先：这一轮 10 题此前都没做过，完成后未做题数应恰好减少 10。
+await page.click('[data-nav="practice"]');
+await page.waitForSelector("#practice-count");
+const unseenAfter = Number((await page.$eval(".form-grid .notice", (node) => node.textContent)).match(/其中 (\d+) 道还没做过/)?.[1]);
+if (!Number.isFinite(unseenAfter) || unseenBefore - unseenAfter !== 10) {
+  throw new Error(`Practice did not prefer unseen questions: before=${unseenBefore} after=${unseenAfter}`);
+}
+await page.click('[data-nav="dashboard"]');
 await page.waitForSelector('[data-action="start-exam"]');
 await page.click('[data-action="start-exam"]');
 await page.waitForSelector(".question-card");

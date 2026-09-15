@@ -26,10 +26,21 @@
     }
     return [...groups.values()].map((g) => g.sort((a,b) => (a.caseOrder || 0)-(b.caseOrder || 0)));
   }
-  function selectCases(pool, count) {
+  // rankOf 可选：返回每题优先级（越小越优先），同一段材料取组内最高优先级，用于练习时先出没做过的材料。
+  function selectCases(pool, count, rankOf = null) {
     const groups = grouped(pool.filter((q) => q.type === "case" && q.caseMaterial));
     const complete = groups.filter((g) => g.length === g[0].caseGroupSize);
-    const preferred = [...shuffled(complete.filter((g) => imported(g[0]))), ...shuffled(complete.filter((g) => !imported(g[0])))];
+    const rank = typeof rankOf === "function" ? (group) => Math.min(...group.map(rankOf)) : () => 0;
+    const buckets = new Map();
+    for (const group of complete) {
+      const key = rank(group);
+      if (!buckets.has(key)) buckets.set(key, []);
+      buckets.get(key).push(group);
+    }
+    const preferred = [...buckets.keys()].sort((left, right) => left - right).flatMap((key) => {
+      const bucket = buckets.get(key);
+      return [...shuffled(bucket.filter((g) => imported(g[0]))), ...shuffled(bucket.filter((g) => !imported(g[0])))];
+    });
     const choices = new Map([[0, []]]);
     for (const group of preferred) {
       for (const [size, units] of [...choices].reverse()) {
