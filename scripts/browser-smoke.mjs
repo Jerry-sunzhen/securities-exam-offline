@@ -238,7 +238,7 @@ await page.waitForSelector('[data-action="start-practice"]');
 await page.click('[data-action="start-practice"]');
 await page.waitForSelector(".question-card");
 const practiceTimer = await page.$eval("#session-timer", (node) => node.textContent.trim());
-if (!/^建议用时 00:(19|20):\d{2}$/.test(practiceTimer)) throw new Error(`Practice timer is not scaled to the selected question count: ${practiceTimer}`);
+if (!/^建议用时 00:(29|30):\d{2}$/.test(practiceTimer)) throw new Error(`Practice timer is not scaled to the selected question count: ${practiceTimer}`);
 const practiceHeader = await page.$eval(".session-meta", (node) => node.textContent);
 if (!/章节练习 · 第 1\/\d+ 题 · 已完成 0 题/.test(practiceHeader)) throw new Error(`Practice header lost the answered count: ${practiceHeader}`);
 const chatQuestionContext = await page.evaluate(() => window.ExamApp.getChatContext());
@@ -323,15 +323,15 @@ const unseenBefore = Number(practiceNotice.match(/其中 (\d+) 道还没做过/)
 if (!Number.isFinite(unseenBefore) || !practiceNotice.includes("没做过 → 做错过 → 已做对")) {
   throw new Error(`Practice panel does not advertise unseen-first selection: ${practiceNotice}`);
 }
-await page.select("#practice-count", "10");
+await page.select("#practice-count", "30");
 await page.click('[data-action="start-practice"]');
 await page.waitForSelector(".question-card");
-for (let index = 0; index < 10; index += 1) {
+for (let index = 0; index < 30; index += 1) {
   await page.click(".question-card .option");
   await page.click('[data-action="submit-question"]');
   await page.waitForSelector(".explanation");
   await page.click('[data-action="next-question"]');
-  if (index < 9) await page.waitForFunction((next) => document.querySelector(".session-meta")?.textContent.includes(`第 ${next}/10 题`), {}, index + 2);
+  if (index < 29) await page.waitForFunction((next) => document.querySelector(".session-meta")?.textContent.includes(`第 ${next}/30 题`), {}, index + 2);
 }
 await page.waitForSelector(".practice-result");
 const practiceBoard = await page.evaluate(() => {
@@ -352,21 +352,21 @@ if (!/^\d+%$/.test(practiceBoard.score) || practiceBoard.metrics !== 4 || practi
 await page.click('[data-action="review-practice-all"]');
 await page.waitForSelector(".question-card");
 const practiceReviewHeader = await page.$eval(".session-meta", (node) => node.textContent);
-if (!/练习复盘 · 第 1\/10 题/.test(practiceReviewHeader)) throw new Error(`Practice review header invalid: ${practiceReviewHeader}`);
+if (!/练习复盘 · 第 1\/30 题/.test(practiceReviewHeader)) throw new Error(`Practice review header invalid: ${practiceReviewHeader}`);
 await page.click('[data-action="exit-session"]');
 await page.waitForSelector(".practice-result");
 await page.click('[data-action="retry-practice-all"]');
 await page.waitForSelector(".question-card");
 const practiceRetryHeader = await page.$eval(".session-meta", (node) => node.textContent);
-if (!/章节练习 · 第 1\/10 题/.test(practiceRetryHeader)) throw new Error(`Practice retry header invalid: ${practiceRetryHeader}`);
+if (!/章节练习 · 第 1\/30 题/.test(practiceRetryHeader)) throw new Error(`Practice retry header invalid: ${practiceRetryHeader}`);
 await page.click('[data-action="exit-session"]');
 await page.waitForSelector('[data-action="start-exam"]');
 
-// 未做题优先：这一轮 10 题此前都没做过，完成后未做题数应恰好减少 10。
+// 未做题优先：这一轮 30 题此前都没做过，完成后未做题数应恰好减少 30。
 await page.click('[data-nav="practice"]');
 await page.waitForSelector("#practice-count");
 const unseenAfter = Number((await page.$eval(".form-grid .notice", (node) => node.textContent)).match(/其中 (\d+) 道还没做过/)?.[1]);
-if (!Number.isFinite(unseenAfter) || unseenBefore - unseenAfter !== 10) {
+if (!Number.isFinite(unseenAfter) || unseenBefore - unseenAfter !== 30) {
   throw new Error(`Practice did not prefer unseen questions: before=${unseenBefore} after=${unseenAfter}`);
 }
 await page.click('[data-nav="dashboard"]');

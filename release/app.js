@@ -72,7 +72,7 @@
     knowledgeSubject: "finance",
     practiceSubject: "finance",
     practiceChapter: "all",
-    practiceCount: 20,
+    practiceCount: 30,
     practiceTypes: new Set(["single", "multiple", "judgment", "case"]),
     listTab: "wrong",
     session: null,
@@ -328,7 +328,7 @@
           <p>讲义按 2026 新大纲三色笔记的原文整理。答完题可以跳到对应笔记页和教材参考页核对原文；时间紧时优先刷带「★ 多年考点」标记的题。</p>
           <div class="hero-actions">
             <button class="button secondary" data-nav="outline">开始阅读知识讲义</button>
-            <button class="button" data-action="quick-practice">随机练习 20 题</button>
+            <button class="button" data-action="quick-practice">随机练习 30 题</button>
             <button class="button ghost" data-action="start-exam">120 题限时模考</button>
             ${state.activeExam ? '<button class="button secondary" data-action="resume-exam">恢复未完成模考</button>' : ""}
           </div>
@@ -643,7 +643,8 @@
   function renderPractice() {
     const chapters = subjectChapters(state.practiceSubject);
     const caseOnly = state.practiceTypes.size === 1 && state.practiceTypes.has("case");
-    const countChoices = caseOnly ? [8,16,24,32,40] : [10,20,30,50,100];
+    // 综合材料题全库只有 19~21 道，材料专项沿用小题量档位；常规练习是 30/60/120。
+    const countChoices = caseOnly ? [8, 16, 24, 32, 40] : [30, 60, 120];
     const matchesPracticeFilter = (question) => question.subjectId === state.practiceSubject &&
       (state.practiceChapter === "all" || question.chapterId === state.practiceChapter) &&
       state.practiceTypes.has(question.type);
@@ -799,7 +800,7 @@
     return [...buckets.keys()].sort((left, right) => left - right).flatMap((tier) => shuffle(buckets.get(tier)));
   }
 
-  function selectQuestions({ subjectId, chapterId = "all", count = 20, types = null, ids = null }) {
+  function selectQuestions({ subjectId, chapterId = "all", count = 30, types = null, ids = null }) {
     let pool = ids ? ids.map((id) => questionMap.get(id)).filter((question) => question && question.examEligible !== false) : questionData.questions.filter((question) => {
       return (!subjectId || question.subjectId === subjectId) &&
         (chapterId === "all" || question.chapterId === chapterId) &&
@@ -1380,7 +1381,7 @@
 
   async function handleAction(action, target) {
     try {
-      if (action === "quick-practice") startSession({ mode: "practice", questions: selectQuestions({ count: 20 }) });
+      if (action === "quick-practice") startSession({ mode: "practice", questions: selectQuestions({ count: 30 }) });
       if (action === "practice-subject") { captureReadingPosition(); state.practiceSubject = target.dataset.subject; state.practiceChapter = "all"; state.view = "practice"; render(); }
       if (action === "start-exam") startExam(state.practiceSubject || "finance");
       if (action === "resume-exam") resumeExam();
@@ -1481,7 +1482,7 @@
       if (target.checked) state.practiceTypes.add(target.dataset.practiceType); else state.practiceTypes.delete(target.dataset.practiceType);
       const caseOnly = state.practiceTypes.size === 1 && state.practiceTypes.has("case");
       if (caseOnly && ![8,16,24,32,40].includes(state.practiceCount)) state.practiceCount = 16;
-      if (!caseOnly && ![10,20,30,50,100].includes(state.practiceCount)) state.practiceCount = 20;
+      if (!caseOnly && ![30, 60, 120].includes(state.practiceCount)) state.practiceCount = 30;
       render();
     }
   });
