@@ -351,7 +351,7 @@
           </section>
           <section class="card card-body">
             <h3 class="card-title">本版本说明</h3>
-            <div class="notice">讲义与题目都来自本地内部资料：讲义为 2026 新大纲三色笔记原文，第一版自拟内容已全部移除。题库由本地历年试题整理资料迁移而来，共 ${questionData.meta?.importedQuestionCount || 0} 道（去重后），其中 ${questionData.meta?.eligibleQuestionCount || 0} 道进入练习与模考；待核验题不会进入默认练习。每道题都绑定到具体笔记页码，答完题可以在解析区直接打开对应页。多选题采用“全部选对才得分”的本地规则。</div>
+            <div class="notice">讲义与题目都来自本地内部资料：讲义为 2026 新大纲三色笔记原文，第一版自拟内容已全部移除。题库由本地历年试题整理资料迁移而来，共 ${questionData.meta?.importedQuestionCount || 0} 道（去重后），其中 ${questionData.meta?.eligibleQuestionCount || 0} 道进入练习与模考；待核验题不会进入默认练习。每道题都绑定到具体笔记页码，答完题可以在解析区直接打开对应页。原资料解析过短的题目，会由本地三色笔记与教材原文辅助补写逐项解析并标注「AI 补充」，原解析仍可在解析区展开对比。多选题采用“全部选对才得分”的本地规则。</div>
             <div class="profile-status">
               <div class="status-row"><span>讲义来源</span><strong>2026 新大纲三色笔记</strong></div>
               <div class="status-row"><span>主大纲</span><strong>2025 版，24 页</strong></div>
@@ -766,7 +766,7 @@
             <li>如果两边都产生了记录，使用“合并另一份档案”，不要直接覆盖。</li>
           </ol>
           <h3 class="card-title mt-22-safe">内容与版权</h3>
-          <p class="content-note">本工具仅供个人非商业学习。内置大纲原件、统编教材与备考笔记版权归原发布机构；题目来自本地历年试题整理资料，按原资料保存答案与解析，不宣称官方题库或真题。</p>
+          <p class="content-note">本工具仅供个人非商业学习。内置大纲原件、统编教材与备考笔记版权归原发布机构；题目来自本地历年试题整理资料，答案按原资料保存；解析除原资料内容外，还包含依据本地三色笔记与教材原文辅助补写并标注「AI 补充」的部分，均不宣称官方题库或真题。</p>
         </section>
       </div>`;
   }
@@ -1042,13 +1042,16 @@
   }
 
   function renderExplanation(question, correct) {
+    const enriched = question.explanationSource === "local-materials-ai";
+    const sourceExplanation = String(question.sourceExplanation || "").trim();
     return `
       <div class="explanation">
         <div class="result-banner ${correct ? "correct" : "incorrect"}">${correct ? "回答正确" : `回答错误，正确答案：${question.correctOptionIds.join("、")}`}</div>
-        <h4>解析</h4><p>${escapeHtml(question.explanation)}</p>
+        <h4>解析${enriched ? ' <span class="tag binding-suggested">AI 补充</span>' : ""}</h4><p>${escapeHtml(question.explanation)}</p>
+        ${enriched && sourceExplanation ? `<details class="binding-quote"><summary>查看原资料解析（未改写）</summary><blockquote>${escapeHtml(sourceExplanation)}</blockquote></details>` : ""}
         ${question.optionExplanations ? `<h4>选项说明</h4>${question.options.map((option) => `<p><strong>${option.id}：</strong>${escapeHtml(question.optionExplanations[option.id] || "")}</p>`).join("")}` : ""}
         <h4>答案出处与核验说明</h4>
-        ${renderAnswerStatus()}${renderImportedLinks(question)}
+        ${renderAnswerStatus(question)}${renderImportedLinks(question)}
         <h4>个人笔记</h4>
         <textarea class="textarea" id="question-note" placeholder="记录自己的理解、易错点或记忆方法……">${escapeHtml(StudyDb.getNote(question.id))}</textarea>
         <button class="button small mt-2-safe" data-action="save-note">保存笔记</button>
@@ -1074,7 +1077,10 @@
     return `<div class="imported-links"><strong>教材与笔记出处</strong><ul>${items}${pointsHtml}</ul><small>每道题都会绑定到可回查的复习资料页码，点开即可核对原文；「教材定位」指按知识点在教材中的页码摘录原文，「自动匹配」由文本相似度给出。两者都只用于定位复习，不代表答案经官方核对。</small></div>`;
   }
 
-  function renderAnswerStatus() {
+  function renderAnswerStatus(question) {
+    if (question?.explanationSource === "local-materials-ai") {
+      return '<div class="source-status supplement"><strong>历年整理题 · 答案按原资料保存</strong><span>答案按原资料保存；原解析过短，本段解析由本地三色笔记与教材原文辅助补写，只有校验通过的题目才会替换，可能仍有个别表述偏差。原资料解析与可回查页码都在本页，涉及现行规则时以最新官方文本为准。</span></div>';
+    }
     return '<div class="source-status supplement"><strong>历年整理题 · 答案按原资料保存</strong><span>题目来自本地历年试题整理资料，答案与解析按原资料保存；涉及现行规则时以最新官方文本为准。可回查的笔记与教材页码见下方「教材与笔记出处」。</span></div>';
   }
 

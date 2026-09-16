@@ -128,6 +128,8 @@ function normalizeQuotes(text) {
 }
 
 // ①②③…列表里，第几项之间应该是分号；识别成冒号的（…2000户：④…）改回来。
+// 但「A项：①……」「选项B：②……」这类选项标注后的冒号是正常的，不能改成分号。
+const OPTION_LABEL_TAIL = /(?:选项\s*[A-D]|[A-D]\s*项)$/;
 function fixListColons(text) {
   const circled = /[\u2460-\u2473]/;
   return text.split("\n").map((line) => {
@@ -137,7 +139,7 @@ function fixListColons(text) {
       if (circled.test(char)) {
         seenItem = true;
         result += char;
-      } else if (char === "：" && seenItem) {
+      } else if (char === "：" && seenItem && !OPTION_LABEL_TAIL.test(result)) {
         result += "；";
       } else {
         result += char;
