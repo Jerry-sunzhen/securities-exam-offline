@@ -36,8 +36,7 @@ if (!reasoningEfforts.has(tutorReasoningEffort)) {
   throw new Error("SECURITIES_CODEX_REASONING_EFFORT 必须是 minimal、low、medium、high 或 xhigh");
 }
 
-const codexArgs = [
-  "app-server",
+const configOverrides = [
   // 助教默认使用轻量模型和中等推理强度，只作用于本次聊天进程，不改动 ~/.codex/config.toml。
   "-c", `model="${tutorModel}"`,
   "-c", `model_reasoning_effort="${tutorReasoningEffort}"`,
@@ -49,22 +48,30 @@ const codexArgs = [
   "-c", "mcp_servers.test-manage.enabled=false",
   "-c", "mcp_servers.figma.enabled=false",
   "-c", "mcp_servers.node_repl.enabled=false",
-  "-c", "mcp_servers.computer-use.enabled=false",
-  "--stdio"
+  "-c", "mcp_servers.computer-use.enabled=false"
 ];
 if (requestedWebSearchMode !== "disabled" && standaloneWebSearchProvider) {
-  codexArgs.splice(3, 0, "-c", `model_providers.${standaloneWebSearchProvider}.supports_standalone_web_search=true`);
+  configOverrides.push("-c", `model_providers.${standaloneWebSearchProvider}.supports_standalone_web_search=true`);
 }
+const codexArgs = ["app-server", ...configOverrides, "--stdio"];
 
-const tutorInstructions = `你是证券行业专业人员一般业务水平评价测试的本地学习助教。默认使用简洁、准确的中文回答。
+const tutorInstructionsBase = `你是证券行业专业人员一般业务水平评价测试的本地学习助教。默认使用简洁、准确的中文回答。
 你的主要任务是解释当前题目、金融基础概念、证券市场基本法律法规、案例材料和复习方法。
 项目目录包含题库、大纲、学习说明、三色笔记讲义摘录和教材参考页。需要核实时可以只读检索这些本地文件，但不得修改、创建或删除任何文件，不得执行外部操作。
-本地资料优先。用户询问“最新、截至目前、是否已上市、现行规则、近期公告、考试安排”等可能随时间变化的信息时，必须先使用内置 web search 进行只读核验，再根据搜索结果回答；不能在尚未尝试搜索时声称自己无法联网。普通概念和题目解析优先使用本地资料。
-联网时只使用 Codex 内置 web search，不要为了搜索执行 shell、curl、wget、浏览器、MCP 或任何其他外部工具。优先中国证券业协会、监管机关、政府网站、交易所和公司官网等一手来源；回答中列出关键来源 URL，并注明访问日期，区分官方公告、公司披露、新闻和搜索摘要。搜索不可用或失败时，明确说明并降级到本地资料及其核验截止日期。
-引用口径按优先级区分：中国现行有效法律法规和官方资料优先；讲义与题目出处来自个人整理的三色笔记，属于定位信息；教材参考页由文本相似度自动匹配，金融科为 2025 协会统编教材、法规科为 2020 商业教材，都需提示识别误差和时效边界。
+回答尽量快：概念解释、常识性公式和判断口径直接用你已有的知识回答；只有当用户问到具体题目、需要教材/讲义出处，或涉及必须核对的数字和法条时，才用一次检索定位，一次回答最多检索两处，不要为了“确认一下”反复翻文件。
+本地资料优先。`;
+const searchGuidance = `用户询问“最新、截至目前、是否已上市、现行规则、近期公告、考试安排”等可能随时间变化的信息时，必须先使用内置 web search 进行只读核验，再根据搜索结果回答；不能在尚未尝试搜索时声称自己无法联网。普通概念和题目解析优先使用本地资料。
+联网时只使用 Codex 内置 web search，不要为了搜索执行 shell、curl、wget、浏览器、MCP 或任何其他外部工具。优先中国证券业协会、监管机关、政府网站、交易所和公司官网等一手来源；回答中列出关键来源 URL，并注明访问日期，区分官方公告、公司披露、新闻和搜索摘要。搜索不可用或失败时，明确说明并降级到本地资料及其核验截止日期。`;
+const offlineGuidance = `本次会话没有可用的内置 web search 工具，不要在回答前尝试搜索。遇到“最新、截至目前、现行规则、近期公告、考试安排”等可能随时间变化的信息时，直接说明无法联网核验，只给本地资料口径和核验截止日期，并提醒以最新官方公告或有效规则为准；不要用 shell、curl、wget、浏览器、MCP 或其他外部工具假装完成了联网核验。`;
+const tutorInstructionsTail = `引用口径按优先级区分：中国现行有效法律法规和官方资料优先；讲义与题目出处来自个人整理的三色笔记，属于定位信息；教材参考页由文本相似度自动匹配，金融科为 2025 协会统编教材、法规科为 2020 商业教材，都需提示识别误差和时效边界。
 不要把本项目说成官方题库、真题或完整覆盖，不得保证通过考试。遇到可能随时间变化的法规、日期、比例、期限或考试安排，要说明资料核验截止日期，并提醒以最新官方公告或有效规则为准。
 题目尚未提交时，除非用户明确要求直接给答案，优先通过关键词、排除法和追问引导。涉及具体投资决策时，明确区分考试知识解释与个性化投资建议。
 这是问答面板，不是代码开发会话。不要提议编辑项目，不要启动子代理，不要请求执行权限。`;
+const buildTutorInstructions = (webSearchAvailable) => [
+  tutorInstructionsBase,
+  webSearchAvailable ? searchGuidance : offlineGuidance,
+  tutorInstructionsTail
+].join("\n");
 
 class CodexConnection extends EventEmitter {
   constructor() {
@@ -166,6 +173,7 @@ class CodexConnection extends EventEmitter {
 
   async thread(requestedThreadId) {
     if (requestedThreadId && this.loadedThreads.has(requestedThreadId)) return requestedThreadId;
+    const developerInstructions = buildTutorInstructions((await webSearchReadiness()).available);
     if (requestedThreadId) {
       try {
         await this.call("thread/resume", {
@@ -173,7 +181,7 @@ class CodexConnection extends EventEmitter {
           cwd: projectRoot,
           sandbox: "read-only",
           approvalPolicy: "never",
-          developerInstructions: tutorInstructions
+          developerInstructions
         });
         this.loadedThreads.add(requestedThreadId);
         return requestedThreadId;
@@ -186,7 +194,7 @@ class CodexConnection extends EventEmitter {
       sandbox: "read-only",
       approvalPolicy: "never",
       personality: "friendly",
-      developerInstructions: tutorInstructions
+      developerInstructions
     });
     const threadId = result?.thread?.id;
     if (!threadId) throw new Error("Codex 没有返回对话线程 ID");
@@ -201,6 +209,58 @@ class CodexConnection extends EventEmitter {
 
 const codex = new CodexConnection();
 const busyThreads = new Set();
+
+// codex 只对开启 features.standalone_web_search 的第三方供应商暴露内置联网工具；供应商声明
+// supports_standalone_web_search 并不代表当前模型真的拿到了该工具，所以这里直接问 codex 生效值。
+const webSearchFeatureCache = { at: 0, value: null };
+function readWebSearchFeature(timeoutMs = 8_000) {
+  return new Promise((resolvePromise) => {
+    let child;
+    try { child = spawn(codexBinary, ["features", "list", ...configOverrides], { cwd: projectRoot, env: process.env, stdio: ["ignore", "pipe", "ignore"] }); }
+    catch { return resolvePromise(null); }
+    let stdout = "";
+    const finish = (value) => { clearTimeout(timer); resolvePromise(value); };
+    const timer = setTimeout(() => { child.kill("SIGKILL"); finish(null); }, timeoutMs);
+    child.stdout.setEncoding("utf8");
+    child.stdout.on("data", (chunk) => { stdout += chunk; });
+    child.once("error", () => finish(null));
+    child.once("close", () => {
+      // 形如：standalone_web_search   under development  false（阶段名本身可能含空格）
+      const matched = /^standalone_web_search\b[^\n]*?\b(true|false)\s*$/m.exec(stdout);
+      finish(matched ? matched[1] === "true" : null);
+    });
+  });
+}
+
+async function standaloneWebSearchFeature() {
+  if (webSearchFeatureCache.at && Date.now() - webSearchFeatureCache.at < 30_000) return webSearchFeatureCache.value;
+  const value = await readWebSearchFeature();
+  webSearchFeatureCache.value = value;
+  webSearchFeatureCache.at = Date.now();
+  return value;
+}
+
+async function webSearchReadiness() {
+  const [configResult, featureEnabled] = await Promise.all([
+    codex.call("config/read", {}, 20_000).catch(() => null),
+    standaloneWebSearchFeature()
+  ]);
+  const config = configResult?.config || {};
+  const mode = config.web_search || requestedWebSearchMode;
+  const provider = config.model_providers?.[config.model_provider] || null;
+  const providerSupported = provider?.supports_standalone_web_search !== false;
+  const available = mode === "live" && providerSupported && featureEnabled !== false;
+  const message = available
+    ? "可联网核验"
+    : mode === "disabled"
+      ? "联网搜索已关闭"
+      : !providerSupported
+        ? "当前模型供应商不支持联网搜索"
+        : featureEnabled === false
+          ? "当前模型未提供内置联网搜索"
+          : `联网搜索模式：${mode}`;
+  return { config, mode, providerSupported, featureEnabled, available, message };
+}
 
 const securityHeaders = {
   "Cache-Control": "no-store",
@@ -246,23 +306,12 @@ function promptWithContext(message, context) {
 async function handleStatus(_req, res) {
   try {
     await codex.start();
-    const [result, configResult] = await Promise.all([
+    const [result, readiness] = await Promise.all([
       codex.call("account/read", { refreshToken: false }, 20_000),
-      codex.call("config/read", {}, 20_000).catch(() => null)
+      webSearchReadiness()
     ]);
     const account = result?.account || null;
-    const config = configResult?.config || {};
-    const webSearchMode = config.web_search || requestedWebSearchMode;
-    const provider = config.model_providers?.[config.model_provider] || null;
-    const providerSupportsWebSearch = provider?.supports_standalone_web_search;
-    const webSearchAvailable = webSearchMode === "live" && providerSupportsWebSearch !== false;
-    const webSearchMessage = webSearchAvailable
-      ? "可联网核验"
-      : providerSupportsWebSearch === false
-        ? "当前模型供应商不支持联网搜索"
-        : webSearchMode === "disabled"
-          ? "联网搜索已关闭"
-          : `联网搜索模式：${webSearchMode}`;
+    const { config, mode: webSearchMode, providerSupported: providerSupportsWebSearch, available: webSearchAvailable, message: webSearchMessage } = readiness;
     json(res, 200, {
       available: true,
       authenticated: Boolean(account) || result?.requiresOpenaiAuth === false,
@@ -273,7 +322,7 @@ async function handleStatus(_req, res) {
       modelProvider: config.model_provider || null,
       webSearchMode,
       webSearchAvailable,
-      webSearchProviderSupported: providerSupportsWebSearch !== false,
+      webSearchProviderSupported: providerSupportsWebSearch,
       webSearchMessage
     });
   } catch (error) {
