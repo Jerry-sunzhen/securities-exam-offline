@@ -14,6 +14,7 @@
     authenticated: false,
     planType: null,
     webSearchAvailable: false,
+    webSearchLocal: false,
     webSearchMessage: "",
     statusText: "正在连接本机 Codex…",
     busy: false,
@@ -94,7 +95,9 @@
 
   function onlineStatusText() {
     const account = state.planType ? ` · ${state.planType}` : "";
-    const search = state.webSearchAvailable ? " · 可联网核验" : state.webSearchMessage ? ` · ${state.webSearchMessage}` : "";
+    const search = state.webSearchAvailable
+      ? state.webSearchLocal ? " · 可联网核验（本机检索）" : " · 可联网核验"
+      : state.webSearchMessage ? ` · ${state.webSearchMessage}` : "";
     return `已连接${account}${search}`;
   }
 
@@ -393,6 +396,7 @@
           : "本机 Codex · 只读";
       }
       state.webSearchAvailable = Boolean(result.webSearchAvailable);
+      state.webSearchLocal = Boolean(result.webSearchLocal);
       state.webSearchMessage = result.webSearchMessage || "";
       if (state.authenticated) setStatus("online", onlineStatusText());
       else setStatus("offline", "Codex 尚未登录，请先运行 codex login");

@@ -12,8 +12,9 @@
     "chat": "pnpm dev",
     "chat:release": "node scripts/local-codex-chat.mjs --static-root release",
     "test:chat": "node scripts/chat-bridge-smoke.mjs",
+    "test:web-lookup": "node scripts/web-lookup-smoke.mjs",
     "validate": "node scripts/validate-content.mjs",
-    "test": "npm run build:content && npm run validate && npm run build:release && npm run test:chat && node scripts/browser-smoke.mjs release",
+    "test": "npm run build:content && npm run validate && npm run build:release && npm run test:chat && npm run test:web-lookup && node scripts/browser-smoke.mjs release",
     "test:browser": "node scripts/browser-smoke.mjs"
   },
   "devDependencies": {
