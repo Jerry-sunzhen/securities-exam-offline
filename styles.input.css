@@ -304,6 +304,8 @@
   .practice-result-fraction { @apply text-[13px] text-muted; }
   .practice-result-pace { @apply grid gap-1 text-right text-xs text-muted; }
   .practice-result-pace strong { @apply text-sm text-ink; }
+  .practice-result-points { @apply grid gap-1 justify-items-end text-xs text-muted; }
+  .practice-result-points strong { @apply text-[22px] font-[800] leading-none tracking-[-.02em] text-primary-dark; }
   .practice-result-metrics { @apply grid grid-cols-4 gap-2.5; }
   .practice-result-metrics > div { @apply grid gap-0.5 rounded-[10px] bg-panel-soft px-3.5 py-3; }
   .practice-result-metrics strong { @apply text-xl text-[#18253a]; }

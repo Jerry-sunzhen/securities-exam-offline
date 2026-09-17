@@ -652,6 +652,12 @@
     const available = matching.length;
     const { attempted } = questionHistory();
     const availableUnseen = matching.filter((question) => !attempted.has(question.id)).length;
+    // 全部章节按官方卷题型比例出题，这里先把分配结果告诉用户。
+    const paperPlan = practiceUsesPaperMix() ? ExamBank.paperMix(state.practiceCount, state.practiceTypes) : [];
+    const paperMixNote = paperPlan.length > 1
+      ? `本题组按模拟卷题型比例分配：${paperPlan.map((item) => `${typeLabel(item.type)} ${item.count} 题`).join(" · ")}。`
+      : "";
+    const scoringNote = "计分方式：单选 0.5 分，多选、判断、综合每题 1 分。";
     return `
       <div class="grid two">
         <section class="card card-body">
@@ -663,7 +669,7 @@
             </div>
             <div class="field"><label>题型</label><div class="checkbox-row">${[["single","单选"],["multiple","多选"],["judgment","判断"],["case","综合材料"]].map(([id,label]) => `<label class="check-chip"><input type="checkbox" data-practice-type="${id}" ${state.practiceTypes.has(id) ? "checked" : ""} />${label}</label>`).join("")}</div></div>
             <div class="field"><label>题目数量</label><select class="select" id="practice-count">${countChoices.map((count) => `<option value="${count}" ${state.practiceCount === count ? "selected" : ""}>${caseOnly ? `${count / 4} 组 · ` : ""}${count} 题</option>`).join("")}</select></div>
-            <div class="notice">当前条件共有 ${available} 道可用题，其中 ${availableUnseen} 道还没做过。${caseOnly && state.practiceChapter === "all" ? "综合材料专项按完整材料出题，同一段材料下的小问会连续作答，并优先出没做过的材料。" : "抽题顺序为没做过 → 做错过 → 已做对，同一档内随机；答完即时显示答案、解析和笔记/教材出处。"}</div>
+            <div class="notice">当前条件共有 ${available} 道可用题，其中 ${availableUnseen} 道还没做过。${caseOnly && state.practiceChapter === "all" ? "综合材料专项按完整材料出题，同一段材料下的小问会连续作答，并优先出没做过的材料。" : "抽题顺序为没做过 → 做错过 → 已做对，同一档内随机；答完即时显示答案、解析和笔记/教材出处。"}${paperMixNote ? ` ${paperMixNote}` : ""} ${scoringNote}</div>
             <div class="action-group"><button class="button" data-action="start-practice" ${available ? "" : "disabled"}>开始章节练习</button><button class="button secondary" data-action="start-case-practice">综合案例专项 · 按材料出题</button></div>
           </div>
         </section>
@@ -800,6 +806,67 @@
     return [...buckets.keys()].sort((left, right) => left - right).flatMap((tier) => shuffle(buckets.get(tier)));
   }
 
+  // 综合材料题按整段材料出题：同一段材料下的小问保持连续。
+  function selectCaseQuestions(pool, count, history) {
+    const importedCaseSelection = ExamBank.selectCases(pool, count, history ? (question) => questionTier(question, history) : null);
+    if (importedCaseSelection.length) return importedCaseSelection;
+    const groups = new Map();
+    for (const question of pool) {
+      const key = question.caseGroupId || question.id;
+      const list = groups.get(key) || [];
+      list.push(question); groups.set(key, list);
+    }
+    const rawGroups = [...groups.values()];
+    const orderedGroups = (history ? prioritizeGroups(rawGroups, history) : shuffle(rawGroups)).map((group) => group.sort((left, right) => (left.caseOrder || 1) - (right.caseOrder || 1)));
+    const result = [];
+    for (const group of orderedGroups) {
+      if (result.length + group.length > count) continue;
+      result.push(...group);
+      if (result.length === count) break;
+    }
+    return result.length ? result : orderedGroups.flat().slice(0, Math.min(count, pool.length));
+  }
+
+  function selectTypedQuestions(pool, type, count, history) {
+    if (count <= 0) return [];
+    const typed = pool.filter((question) => question.type === type);
+    if (!typed.length) return [];
+    if (type === "case") return selectCaseQuestions(typed, count, history);
+    return (history ? prioritizeQuestions(typed, history) : shuffle(typed)).slice(0, Math.min(count, typed.length));
+  }
+
+  // 全部章节练习按本工具模拟卷的题型比例出题（单选 40 / 多选 40 / 判断 30 / 综合 10 折算），
+  // 每个题型内部仍然按没做过 → 做错过 → 已做对的优先级抽题。
+  function selectPaperPractice(pool, plan, count, history) {
+    const selected = [];
+    const used = new Set();
+    for (const item of plan) {
+      for (const question of selectTypedQuestions(pool, item.type, item.count, history)) {
+        if (used.has(question.id)) continue;
+        used.add(question.id);
+        selected.push(question);
+      }
+    }
+    // 某个题型题量不足（例如综合材料凑不满整段）时，用普通题按同样顺序补足总题量。
+    if (selected.length < count) {
+      const backfill = pool.filter((question) => question.type !== "case");
+      for (const question of (history ? prioritizeQuestions(backfill, history) : shuffle(backfill))) {
+        if (used.has(question.id)) continue;
+        used.add(question.id);
+        selected.push(question);
+        if (selected.length >= count) break;
+      }
+    }
+    return selected.slice(0, count);
+  }
+
+  // 全部章节练习与模考共用同一套结构：题型比例 + 单选 0.5 分、其余每题 1 分的计分。
+  function practiceUsesPaperMix() {
+    if (state.practiceChapter !== "all") return false;
+    if (state.practiceTypes.size === 1 && state.practiceTypes.has("case")) return false;
+    return ExamBank.paperMix(state.practiceCount, state.practiceTypes).length > 1;
+  }
+
   function selectQuestions({ subjectId, chapterId = "all", count = 30, types = null, ids = null }) {
     let pool = ids ? ids.map((id) => questionMap.get(id)).filter((question) => question && question.examEligible !== false) : questionData.questions.filter((question) => {
       return (!subjectId || question.subjectId === subjectId) &&
@@ -808,24 +875,10 @@
     });
     // 练习本列表来自用户自己的错题/收藏，保持随机即可；按条件抽题时优先出没做过的题。
     const history = ids ? null : questionHistory();
-    if (types?.size === 1 && types.has("case")) {
-      const importedCaseSelection = ExamBank.selectCases(pool, count, history ? (question) => questionTier(question, history) : null);
-      if (importedCaseSelection.length) return importedCaseSelection;
-      const groups = new Map();
-      for (const question of pool) {
-        const key = question.caseGroupId || question.id;
-        const list = groups.get(key) || [];
-        list.push(question); groups.set(key, list);
-      }
-      const rawGroups = [...groups.values()];
-      const orderedGroups = (history ? prioritizeGroups(rawGroups, history) : shuffle(rawGroups)).map((group) => group.sort((left, right) => (left.caseOrder || 1) - (right.caseOrder || 1)));
-      const result = [];
-      for (const group of orderedGroups) {
-        if (result.length + group.length > count) continue;
-        result.push(...group);
-        if (result.length === count) break;
-      }
-      return result.length ? result : orderedGroups.flat().slice(0, Math.min(count, pool.length));
+    if (types?.size === 1 && types.has("case")) return selectCaseQuestions(pool, count, history);
+    if (!ids && chapterId === "all") {
+      const plan = ExamBank.paperMix(count, types);
+      if (plan.length > 1) return selectPaperPractice(pool, plan, count, history);
     }
     const ordered = history ? prioritizeQuestions(pool, history) : shuffle(pool);
     return ordered.slice(0, Math.min(count, pool.length));
@@ -842,7 +895,9 @@
     return null;
   }
 
-  function startSession({ mode, questions, subjectId = null, seconds = null, scoringScheme = "legacy" }) {
+  // 练习与模考共用同一套计分：单选 0.5 分，多选、判断、综合每题 1 分。
+  // "legacy" 只用于旧档案里按每题 1 分记录的历史模考。
+  function startSession({ mode, questions, subjectId = null, seconds = null, scoringScheme = "paper-100-v1" }) {
     if (!questions.length) return toast("没有符合条件的题目", "error");
     const id = crypto.randomUUID();
     const budget = seconds ?? sessionBudgetSeconds(mode, questions.length);
@@ -1182,8 +1237,21 @@
     return `<section class="card card-body"><h3 class="card-title">${escapeHtml(title)}</h3>${items.length ? `<div class="table-wrap"><table class="table"><thead><tr><th>${escapeHtml(label)}</th><th>题量</th><th>正确</th><th>正确率</th></tr></thead><tbody>${items.map((item) => `<tr><td>${escapeHtml(item.label)}</td><td>${item.total}</td><td>${item.correct}</td><td>${Math.round(item.correct * 100 / item.total)}%</td></tr>`).join("")}</tbody></table></div>` : '<div class="empty">本次没有可统计的作答。</div>'}</section>`;
   }
 
+  // 按模拟卷结构生成的练习沿用模考计分，未作答按 0 分。
+  function practicePoints(session) {
+    let score = 0;
+    let total = 0;
+    for (const question of session.questions) {
+      const points = ExamBank.points(question, session.scoringScheme);
+      total += points;
+      if (sameAnswer(new Set(session.answers[question.id] || []), new Set(question.correctOptionIds))) score += points;
+    }
+    return { score: Math.round(score * 10) / 10, total: Math.round(total * 10) / 10 };
+  }
+
   function renderPracticeResult(session) {
     const stats = practiceResultStats(session);
+    const points = session.scoringScheme === "paper-100-v1" ? practicePoints(session) : null;
     const elapsed = Number(session.elapsedSeconds || 0) || Math.round((Date.now() - session.startedAt) / 1000);
     const budget = Number(session.budgetSeconds || 0);
     const pace = budget
@@ -1197,6 +1265,7 @@
         <div class="practice-result-head">
           <div class="practice-result-score-line"><strong class="practice-result-score">${stats.rate}%</strong><span class="practice-result-fraction">答对 ${stats.correct.length} / 已作答 ${stats.answered.length} 题</span></div>
           <div class="practice-result-pace"><strong>用时 ${formatDuration(elapsed)}</strong><span>${budget ? `建议用时 ${formatDuration(budget)} · ${pace}` : escapeHtml(pace)}</span></div>
+          ${points ? `<div class="practice-result-points"><strong>得分 ${points.score} / ${points.total} 分</strong><span>计分方式：单选 0.5 分，其余每题 1 分，未作答按 0 分</span></div>` : ""}
         </div>
         <div class="practice-result-metrics">
           <div><strong>${stats.rows.length}</strong><span>本组题量</span></div>
@@ -1243,10 +1312,10 @@
     render();
   }
 
-  function startPracticeFrom(questions, subjectId) {
+  function startPracticeFrom(questions, subjectId, scoringScheme = "paper-100-v1") {
     if (!questions.length) return toast("没有可练习的题目", "error");
     state.reviewReturn = null;
-    startSession({ mode: "practice", questions: shuffle(questions), subjectId: subjectId || questions[0]?.subjectId || state.practiceSubject });
+    startSession({ mode: "practice", questions: shuffle(questions), subjectId: subjectId || questions[0]?.subjectId || state.practiceSubject, scoringScheme });
   }
 
   function exitReview() {
@@ -1333,9 +1402,15 @@
       const session = state.session;
       const question = session.questions[session.index];
       const submitted = Boolean(session.submitted[question.id]) || session.mode === "review";
+      const composition = {};
+      for (const item of session.questions) composition[typeLabel(item.type)] = (composition[typeLabel(item.type)] || 0) + 1;
       Object.assign(context, {
         mode: session.mode,
         progress: `${session.index + 1}/${session.questions.length}`,
+        total: session.questions.length,
+        composition,
+        scoringScheme: session.scoringScheme,
+        totalPoints: session.totalPoints,
         question: {
           id: question.id,
           type: typeLabel(question.type),
@@ -1444,8 +1519,8 @@
       }
       if (action === "review-exam-wrong") beginExamReview(true);
       if (action === "review-exam-all") beginExamReview(false);
-      if (action === "retry-practice-all") startPracticeFrom(state.session.questions.map((question) => question), state.session.subjectId);
-      if (action === "retry-practice-wrong") startPracticeFrom(practiceResultStats(state.session).wrong.map((row) => row.question), state.session.subjectId);
+      if (action === "retry-practice-all") startPracticeFrom(state.session.questions.map((question) => question), state.session.subjectId, state.session.scoringScheme);
+      if (action === "retry-practice-wrong") startPracticeFrom(practiceResultStats(state.session).wrong.map((row) => row.question), state.session.subjectId, state.session.scoringScheme);
       if (action === "review-practice-wrong") beginPracticeReview("wrong");
       if (action === "review-practice-all") beginPracticeReview("all");
       if (action === "new-profile") { await StudyDb.createBoundProfile(); toast("学习档案已创建并绑定", "success"); render(); }

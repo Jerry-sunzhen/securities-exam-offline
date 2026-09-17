@@ -19,7 +19,9 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
 ANS = re.compile(r'(?:【\s*(?:参考|正确)?答案\s*】|(?:参考|正确)?答案\s*[:：])[ \t]*([A-EＡ-Ｅ][A-EＡ-Ｅ、,， \t]*|正确|错误|对|错|√|×)', re.M)
-START = re.compile(r'^[ \t]*(?:(?:第[ \t]*)?(\d{1,3})[ \t]*[.．、]|第[ \t]*(\d{1,3})[ \t]*题|[（(](?P<sub>\d{1,2})[）)]|(?P<plain>\d{1,3})[ \t]*(?:[（(]多选[）)]|多选题|判断题)?[ \t]*$)', re.M)
+# 题号后的点号若紧跟 1~3 位数字（如「10.40元」「1.5%」），那是金额或比例，不是题号；
+# 四位数年份（如「97.1995年以来」）仍按题号处理。
+START = re.compile(r'^[ \t]*(?:(?:第[ \t]*)?(\d{1,3})[ \t]*[.．、](?!\d{1,3}(?!\d))|第[ \t]*(\d{1,3})[ \t]*题|[（(](?P<sub>\d{1,2})[）)]|(?P<plain>\d{1,3})[ \t]*(?:[（(]多选[）)]|多选题|判断题)?[ \t]*$)', re.M)
 OPT = re.compile(r'(?<![A-Za-z])([A-E])[.．、]|^[ \t]*([A-E])[ \t]+', re.M)
 SECTION = re.compile(r'^[ \t]*(?:[一二三四五][、．.]\s*)?(单项选择题|单选题|多项选择题|多选题|判断题|共享题干题|综合题|不定项选择题|组合型选择题)[^\n]*', re.M)
 MATERIAL = re.compile(r'【题干】|\[题干\]|根据(?:以下|下列|下面)(?:资料|材料)[，,：:]?')
@@ -271,6 +273,7 @@ def main():
                 q.setdefault('corrections',[]).append(patch['reason'])
                 for field in ['stem','correctOptionIds','explanation']: 
                     if field in patch:q[field]=patch[field]
+                if patch.get('originNumber') and q.get('origins'):q['origins'][0]['number']=str(patch['originNumber'])
                 if patch.get('hold'):q['issues'].append(patch['reason'])
         q['reviewStatus']='held' if q['issues'] else 'source_answer'
         q['verificationStatus']='source_transcribed'

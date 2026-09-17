@@ -13,6 +13,13 @@ const questionPayload = JSON.parse(readFileSync(resolve(root, "data/questions.js
 const expectedQuestions = questionPayload.meta.questionCount;
 const expectedFinanceKnowledge = questionPayload.knowledgePoints.filter((item) => item.subjectId === "finance").length;
 const expectedLawKnowledge = questionPayload.knowledgePoints.filter((item) => item.subjectId === "law").length;
+// 题干不能只剩半句：导入时把行首的金额/比例当成题号，会留下「40元，时间是…」这类残句。
+const truncatedStem = questionPayload.questions.filter((item) => /^\d+(?:\.\d+)?\s*(?:元|%|％)/.test(item.stem.trim()));
+if (truncatedStem.length) throw new Error(`Questions lost their stem prefix: ${truncatedStem.map((item) => item.id).join(", ")}`);
+const repairedOrderQuestion = questionPayload.questions.find((item) => item.id === "IMP-F-b2725a8fdf98cc57");
+if (!repairedOrderQuestion?.stem.startsWith("有甲、乙、丙、丁四个投资者，均申报买进X股票")) {
+  throw new Error(`Repaired question stem is still truncated: ${repairedOrderQuestion?.stem || "missing"}`);
+}
 const outlinePayload = JSON.parse(readFileSync(resolve(root, "data/outline.json"), "utf8"));
 const expectedOutlinePages = outlinePayload.pages.filter((item) => item.page >= 4 && item.page !== 14).length;
 const browser = await puppeteer.launch({
@@ -231,6 +238,10 @@ const casePracticeHeader = await page.$eval(".case-material strong", (node) => n
 if (!/第 1\/\d+ 问/.test(casePracticeHeader)) throw new Error(`Case practice did not start at a complete pack: ${casePracticeHeader}`);
 const casePracticeTimer = await page.$eval("#session-timer", (node) => node.textContent.trim());
 if (!/^建议用时 00:1[0-9]:\d{2}$/.test(casePracticeTimer)) throw new Error(`Case practice timer is not scaled to the selected count: ${casePracticeTimer}`);
+const casePracticeContext = await page.evaluate(() => window.ExamApp.getChatContext());
+if (casePracticeContext.scoringScheme !== "paper-100-v1" || casePracticeContext.totalPoints !== casePracticeContext.total) {
+  throw new Error(`Case practice does not use the shared scoring rule: ${JSON.stringify({ scheme: casePracticeContext.scoringScheme, points: casePracticeContext.totalPoints, total: casePracticeContext.total })}`);
+}
 await page.click('[data-action="exit-session"]');
 await page.waitForSelector('[data-nav="practice"]');
 await page.click('[data-nav="practice"]');
@@ -244,6 +255,16 @@ if (!/章节练习 · 第 1\/\d+ 题 · 已完成 0 题/.test(practiceHeader)) t
 const chatQuestionContext = await page.evaluate(() => window.ExamApp.getChatContext());
 if (!chatQuestionContext.question?.id || chatQuestionContext.question.submitted || !chatQuestionContext.guidance?.includes("不直接揭晓答案")) {
   throw new Error(`Question chat context invalid: ${JSON.stringify(chatQuestionContext)}`);
+}
+// 全部章节练习按模拟卷题型比例抽题：30 题档位是 10 单选 / 10 多选 / 8 判断 / 2 综合。
+const expectedComposition = [["单选", 10], ["多选", 10], ["判断", 8], ["综合", 2]];
+const practiceComposition = chatQuestionContext.composition || {};
+if (chatQuestionContext.total !== 30 || Object.keys(practiceComposition).length !== expectedComposition.length ||
+  expectedComposition.some(([label, count]) => practiceComposition[label] !== count)) {
+  throw new Error(`Practice composition does not follow the exam ratio: ${JSON.stringify(practiceComposition)}`);
+}
+if (chatQuestionContext.scoringScheme !== "paper-100-v1" || chatQuestionContext.totalPoints !== 25) {
+  throw new Error(`Practice scoring does not follow the exam rule: ${JSON.stringify({ scheme: chatQuestionContext.scoringScheme, points: chatQuestionContext.totalPoints })}`);
 }
 await page.click(".option");
 await page.click('[data-action="submit-question"]');
@@ -323,6 +344,12 @@ const unseenBefore = Number(practiceNotice.match(/其中 (\d+) 道还没做过/)
 if (!Number.isFinite(unseenBefore) || !practiceNotice.includes("没做过 → 做错过 → 已做对")) {
   throw new Error(`Practice panel does not advertise unseen-first selection: ${practiceNotice}`);
 }
+// 题量档位切换后，面板要如实预告本组按模拟卷比例分配的结果。
+await page.select("#practice-count", "120");
+const ratioNotice = await page.$eval(".form-grid .notice", (node) => node.textContent.replace(/\s+/g, " "));
+if (!ratioNotice.includes("按模拟卷题型比例分配") || !ratioNotice.includes("单选 40 题 · 多选 40 题 · 判断 30 题 · 综合 10 题")) {
+  throw new Error(`Practice panel does not advertise the 120-question exam ratio: ${ratioNotice}`);
+}
 await page.select("#practice-count", "30");
 await page.click('[data-action="start-practice"]');
 await page.waitForSelector(".question-card");
@@ -343,11 +370,16 @@ const practiceBoard = await page.evaluate(() => {
     tables: document.querySelectorAll(".session-shell .table").length,
     hasPace: text.includes("建议用时") && text.includes("用时"),
     hasRetry: Boolean(board.querySelector('[data-action="retry-practice-all"]')),
-    hasWrongBlock: Boolean(document.querySelector(".practice-result-wrong"))
+    hasWrongBlock: Boolean(document.querySelector(".practice-result-wrong")),
+    points: board.querySelector(".practice-result-points")?.textContent.replace(/\s+/g, " ") || ""
   };
 });
 if (!/^\d+%$/.test(practiceBoard.score) || practiceBoard.metrics !== 4 || practiceBoard.tables < 3 || !practiceBoard.hasPace || !practiceBoard.hasRetry || !practiceBoard.hasWrongBlock) {
   throw new Error(`Practice result board is incomplete: ${JSON.stringify(practiceBoard)}`);
+}
+// 全部章节练习沿用模考计分：30 题档满分 25（单选 0.5 分，其余每题 1 分）。
+if (!/得分 [\d.]+ \/ 25 分/.test(practiceBoard.points) || !practiceBoard.points.includes("单选 0.5 分")) {
+  throw new Error(`Paper-style practice does not show the exam score: ${practiceBoard.points}`);
 }
 await page.click('[data-action="review-practice-all"]');
 await page.waitForSelector(".question-card");
@@ -369,6 +401,22 @@ const unseenAfter = Number((await page.$eval(".form-grid .notice", (node) => nod
 if (!Number.isFinite(unseenAfter) || unseenBefore - unseenAfter !== 30) {
   throw new Error(`Practice did not prefer unseen questions: before=${unseenBefore} after=${unseenAfter}`);
 }
+// 指定章节的练习也统一按同一套计分：满分等于本组题目的分数之和。
+await page.waitForSelector("#practice-chapter");
+const chapterValue = await page.$$eval("#practice-chapter option", (nodes) => nodes.find((node) => node.value !== "all")?.value || "");
+await page.select("#practice-chapter", chapterValue);
+await page.click('[data-action="start-practice"]');
+await page.waitForSelector(".question-card");
+const chapterPracticeContext = await page.evaluate(() => window.ExamApp.getChatContext());
+const chapterPracticePoints = Object.entries(chapterPracticeContext.composition).reduce((sum, [label, count]) => sum + (label === "单选" ? count * 0.5 : count), 0);
+if (chapterPracticeContext.scoringScheme !== "paper-100-v1" || chapterPracticeContext.totalPoints !== chapterPracticePoints) {
+  throw new Error(`Chapter practice scoring invalid: ${JSON.stringify({ scheme: chapterPracticeContext.scoringScheme, points: chapterPracticeContext.totalPoints, expected: chapterPracticePoints, composition: chapterPracticeContext.composition })}`);
+}
+await page.click('[data-action="exit-session"]');
+await page.waitForSelector('[data-nav="dashboard"]');
+await page.click('[data-nav="practice"]');
+await page.waitForSelector("#practice-chapter");
+await page.select("#practice-chapter", "all");
 await page.click('[data-nav="dashboard"]');
 await page.waitForSelector('[data-action="start-exam"]');
 await page.click('[data-action="start-exam"]');

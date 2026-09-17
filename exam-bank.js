@@ -3,6 +3,25 @@
   const available = (q) => q && q.examEligible !== false;
   const multiple = (q) => q.selectionMode === "multiple" || q.type === "multiple";
   const points = (q, scheme) => scheme === "paper-100-v1" && q.type === "single" ? 0.5 : 1;
+  // 模拟卷沿用的考试卷题型题量：单选 40、多选 40、判断 30、综合 10，共 120 题。
+  const PAPER_TYPES = [["single", 40], ["multiple", 40], ["judgment", 30], ["case", 10]];
+  // 把样卷比例折算到任意题量：先按权重取整，余数按小数部分从大到小补足。
+  function paperMix(count, types = null) {
+    const active = PAPER_TYPES.filter(([type]) => !types || types.has(type));
+    const totalWeight = active.reduce((sum, [, weight]) => sum + weight, 0);
+    if (!active.length || count <= 0) return [];
+    const plan = active.map(([type, weight]) => {
+      const exact = count * weight / totalWeight;
+      return { type, exact, count: Math.floor(exact) };
+    });
+    let remaining = count - plan.reduce((sum, item) => sum + item.count, 0);
+    for (const item of [...plan].sort((left, right) => (right.exact - right.count) - (left.exact - left.count))) {
+      if (remaining <= 0) break;
+      item.count += 1;
+      remaining -= 1;
+    }
+    return plan;
+  }
   const normalizedStem = (q) => q.subjectId + ":" + q.stem.replace(/[\s，。、“”：（）()【】.．]/g, "");
   function matches(q, { bank = "all", year = "all", source = "all" } = {}) {
     return available(q) && (bank === "all" || (bank === "imported" ? imported(q) : !imported(q))) &&
@@ -80,5 +99,5 @@
     }
     return [...result, ...cases];
   }
-  globalThis.ExamBank = Object.freeze({ imported, available, multiple, points, matches, selectCases, selectExam });
+  globalThis.ExamBank = Object.freeze({ imported, available, multiple, points, paperMix, matches, selectCases, selectExam });
 })();

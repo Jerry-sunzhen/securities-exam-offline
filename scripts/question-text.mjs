@@ -546,6 +546,8 @@ export function applyCorrection(question, correction) {
       }
     }
   }
+  // 原资料题号被识别噪声带偏时，允许逐题写回真实题号。
+  if (correction.originNumber !== undefined && question.origins?.[0]) question.origins[0].number = String(correction.originNumber);
   question.corrections = [...new Set([...(question.corrections || []), correction.reason].filter(Boolean))];
   if (correction.resolveIssues) {
     question.issues = (question.issues || []).filter((issue) => !correction.resolveIssues.includes(issue));

@@ -21640,7 +21640,7 @@
       "origins": [
         {
           "sourceId": "law-634d902fcc40",
-          "number": "1",
+          "number": "65",
           "page": 17,
           "section": "单项选择题",
           "answer": [
@@ -57973,7 +57973,7 @@
       "origins": [
         {
           "sourceId": "law-21cf97b1ed8a",
-          "number": "1",
+          "number": "28",
           "page": 15,
           "section": "多选题",
           "answer": [
@@ -72691,7 +72691,7 @@
       "subjectId": "finance",
       "type": "single",
       "selectionMode": "single",
-      "stem": "40元，时间是13：58，则四位投资者的撮合成交顺序为（ ）",
+      "stem": "有甲、乙、丙、丁四个投资者，均申报买进X股票，申报价格和申报时间分别为：甲的买进价为10.75元，时间为13：55；乙的买进价为10.40元，时间是13：55；丙的买进价为10.80元，时间是13：58；丁的买进价为10.40元，时间是13：58，则四位投资者的撮合成交顺序为（ ）",
       "options": [
         {
           "id": "A",
@@ -72719,7 +72719,7 @@
       "origins": [
         {
           "sourceId": "finance-14fa0c8d47ee",
-          "number": "10",
+          "number": "31",
           "page": 7,
           "section": "单项选择题",
           "answer": [
@@ -72742,7 +72742,10 @@
         2019
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "corrections": [
+        "原 PDF 换行后行首的金额「10.40元」被当成第 10 题题号，题干只剩下半句，按原页原文补回完整题干（并补上甲买入价后漏掉的「元」）"
+      ]
     },
     {
       "subjectId": "finance",
