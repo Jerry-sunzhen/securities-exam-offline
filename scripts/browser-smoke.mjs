@@ -16,9 +16,18 @@ const expectedLawKnowledge = questionPayload.knowledgePoints.filter((item) => it
 // 题干不能只剩半句：导入时把行首的金额/比例当成题号，会留下「40元，时间是…」这类残句。
 const truncatedStem = questionPayload.questions.filter((item) => /^\d+(?:\.\d+)?\s*(?:元|%|％)/.test(item.stem.trim()));
 if (truncatedStem.length) throw new Error(`Questions lost their stem prefix: ${truncatedStem.map((item) => item.id).join(", ")}`);
-const repairedOrderQuestion = questionPayload.questions.find((item) => item.id === "IMP-F-b2725a8fdf98cc57");
-if (!repairedOrderQuestion?.stem.startsWith("有甲、乙、丙、丁四个投资者，均申报买进X股票")) {
+const repairedOrderQuestion = questionPayload.questions.find((item) => item.stem.includes("则四位投资者的撮合成交顺序"));
+if (!repairedOrderQuestion?.stem.startsWith("有甲、乙、丙、丁四个投资者，均申报买进X股票") || !repairedOrderQuestion.stem.includes("甲的买进价为10.75元")) {
   throw new Error(`Repaired question stem is still truncated: ${repairedOrderQuestion?.stem || "missing"}`);
+}
+// 综合材料题本身很少：来源里只有 11 份试卷带材料题，导入时要全部收进来。
+const usableCase = questionPayload.questions.filter((item) => item.type === "case" && item.examEligible !== false);
+const caseMaterials = new Set(usableCase.map((item) => `${item.subjectId}|${item.caseGroupId}`));
+if (usableCase.length < 44 || caseMaterials.size < 19) {
+  throw new Error(`综合材料题回收不全: ${usableCase.length} 题 / ${caseMaterials.size} 段材料`);
+}
+if (usableCase.some((item) => !item.caseMaterial || !item.caseGroupSize || item.caseOrder > item.caseGroupSize)) {
+  throw new Error("综合材料题的段落元数据不完整");
 }
 // 同一题干不会在同一组练习/同一张卷子里出现两次：直接对题库跑一遍组卷用的去重函数。
 await import(pathToFileURL(resolve(appRoot, "exam-bank.js")).href);

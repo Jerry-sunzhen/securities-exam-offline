@@ -18,13 +18,16 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
-ANS = re.compile(r'(?:【\s*(?:参考|正确)?答案\s*】|(?:参考|正确)?答案\s*[:：])[ \t]*([A-EＡ-Ｅ][A-EＡ-Ｅ、,， \t]*|正确|错误|对|错|√|×)', re.M)
+# 有些来源把左书名号识别丢了，答案写成「参考答案】ABC」，这里一并认。
+ANS = re.compile(r'(?:【\s*(?:参考|正确)?答案\s*】|(?:参考|正确)答案\s*】|(?:参考|正确)?答案\s*[:：])[ \t]*([A-EＡ-Ｅ][A-EＡ-Ｅ、,， \t]*|正确|错误|对|错|√|×)', re.M)
 # 题号后的点号若紧跟 1~3 位数字（如「10.40元」「1.5%」），那是金额或比例，不是题号；
 # 四位数年份（如「97.1995年以来」）仍按题号处理。
 START = re.compile(r'^[ \t]*(?:(?:第[ \t]*)?(\d{1,3})[ \t]*[.．、](?!\d{1,3}(?!\d))|第[ \t]*(\d{1,3})[ \t]*题|[（(](?P<sub>\d{1,2})[）)]|(?P<plain>\d{1,3})[ \t]*(?:[（(]多选[）)]|多选题|判断题)?[ \t]*$)', re.M)
 OPT = re.compile(r'(?<![A-Za-z])([A-E])[.．、]|^[ \t]*([A-E])[ \t]+', re.M)
-SECTION = re.compile(r'^[ \t]*(?:[一二三四五][、．.]\s*)?(单项选择题|单选题|多项选择题|多选题|判断题|共享题干题|综合题|不定项选择题|组合型选择题)[^\n]*', re.M)
+SECTION = re.compile(r'^[ \t]*(?:[一二三四五][、．.]\s*)?(单项选择题|单选题|多项选择题|多选题|判断题|共享题干题|综合题|材料题|不定项选择题|组合型选择题)[^\n]*', re.M)
 MATERIAL = re.compile(r'【题干】|\[题干\]|根据(?:以下|下列|下面)(?:资料|材料)[，,：:]?')
+# 材料题的段落标题（「四、材料题」下的「材料一:」「材料二：」）也算一段材料的起点。
+PASSAGE = re.compile(r'【题干】|\[题干\]|根据(?:以下|下列|下面)(?:资料|材料)[，,：:]?|材料[一二三四五六七八九十\d]{0,3}\s*[:：]')
 
 
 def digest(value):
@@ -108,7 +111,7 @@ def parse_source(source, text):
                 continue
             if candidate.group('sub'):
                 current_sections = [s for s in sections if s.start() < candidate.start()]
-                if not current_sections or current_sections[-1][1] not in ['共享题干题','综合题','不定项选择题']:
+                if not current_sections or current_sections[-1][1] not in ['共享题干题','综合题','材料题','不定项选择题']:
                     continue
             pre = text[candidate.end():answer.start()]
             stem, options = options_in(pre)
@@ -152,16 +155,16 @@ def parse_source(source, text):
         explanation = text[answer.end():end]
         # A shared passage is often at the end of the previous explanation.
         gap = text[prior_end:start.start()]
-        passages = list(MATERIAL.finditer(gap))
+        passages = list(PASSAGE.finditer(gap))
         if passages:
             material = compact(gap[passages[-1].end():])
             active_material = {'text':material, 'id':source['id']+'-case-'+digest(material)[:10]}
-        elif label in ['共享题干题','综合题','不定项选择题'] and start.group('sub'):
+        elif label in ['共享题干题','综合题','材料题','不定项选择题'] and start.group('sub'):
             parent = [s for s in starts if prior_end <= s.start() < start.start() and not s.group('sub') and not s.group('plain')]
             if parent:
                 material = compact(text[parent[-1].end():start.start()])
                 active_material = {'text':material, 'id':source['id']+'-case-'+digest(material)[:10]}
-        if label not in ['共享题干题', '综合题', '不定项选择题']:
+        if label not in ['共享题干题', '综合题', '材料题', '不定项选择题']:
             active_material = None
         mat = MATERIAL.search(explanation)
         if mat:
@@ -173,6 +176,8 @@ def parse_source(source, text):
         correct = {'正确':'A','对':'A','√':'A','错误':'B','错':'B','×':'B'}.get(correct, correct)
         correct = sorted(set(re.findall('[A-E]',correct)))
         judgment = len(options)==2 and all(normalize(o['text']) in ['正确','错误','对','错'] for o in options)
+        # 「材料题」区段里也可能夹着独立成题的小问：没有材料文本时按普通题处理，
+        # 否则会被当成「缺材料的综合题」扣下，白丢一道题。
         is_case = bool(active_material) or label in ['共享题干题','综合题','不定项选择题'] or '【不定项' in stem
         typ = 'judgment' if judgment else 'case' if is_case else 'multiple' if len(correct)>1 else 'single'
         issues = []

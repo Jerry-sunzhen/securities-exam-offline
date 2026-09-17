@@ -781,8 +781,13 @@
   // 章节练习的抽题顺序：没做过 → 做过且最近做错 → 做过且最近做对。
   function questionHistory() {
     const attempted = new Set();
-    for (const row of StudyDb.getAttemptRows()) attempted.add(row.question_id);
-    return { attempted, wrong: new Set(StudyDb.getWrongQuestionIds()) };
+    const lastSeen = new Map();
+    // 作答记录按时间倒序返回，第一次遇到的就是这题最近一次作答时间。
+    for (const row of StudyDb.getAttemptRows()) {
+      attempted.add(row.question_id);
+      if (!lastSeen.has(row.question_id)) lastSeen.set(row.question_id, Date.parse(row.created_at) || 0);
+    }
+    return { attempted, wrong: new Set(StudyDb.getWrongQuestionIds()), lastSeen };
   }
 
   function questionTier(question, history) {
@@ -796,19 +801,25 @@
     return tiers.flatMap((tier) => shuffle(tier));
   }
 
+  // 综合材料本来就少，除了「没做过优先」，再按最近一次作答时间把材料排一轮：
+  // 越久没出现的材料越先出，同一时间档（30 分钟）里的材料仍然随机，
+  // 既不会连着两组练习反复撞到同一段材料，也不会每轮都按固定顺序轮转。
+  function caseGroupRank(question, history) {
+    const seen = history.lastSeen?.get(question.id) || 0;
+    const recencyBucket = Math.min(Math.floor(seen / 1800000), 9e6 - 1);
+    return questionTier(question, history) * 1e7 + recencyBucket;
+  }
+
   function prioritizeGroups(groups, history) {
-    const buckets = new Map();
-    for (const group of groups) {
-      const tier = Math.min(...group.map((question) => questionTier(question, history)));
-      if (!buckets.has(tier)) buckets.set(tier, []);
-      buckets.get(tier).push(group);
-    }
-    return [...buckets.keys()].sort((left, right) => left - right).flatMap((tier) => shuffle(buckets.get(tier)));
+    return groups
+      .map((group) => ({ group, rank: Math.min(...group.map((question) => caseGroupRank(question, history))) }))
+      .sort((left, right) => left.rank - right.rank)
+      .map((item) => item.group);
   }
 
   // 综合材料题按整段材料出题：同一段材料下的小问保持连续。
   function selectCaseQuestions(pool, count, history) {
-    const importedCaseSelection = ExamBank.selectCases(pool, count, history ? (question) => questionTier(question, history) : null);
+    const importedCaseSelection = ExamBank.selectCases(pool, count, history ? (question) => caseGroupRank(question, history) : null);
     if (importedCaseSelection.length) return importedCaseSelection;
     const groups = new Map();
     for (const question of pool) {
