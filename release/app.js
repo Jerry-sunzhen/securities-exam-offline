@@ -827,34 +827,41 @@
     return result.length ? result : orderedGroups.flat().slice(0, Math.min(count, pool.length));
   }
 
-  function selectTypedQuestions(pool, type, count, history) {
-    if (count <= 0) return [];
-    const typed = pool.filter((question) => question.type === type);
-    if (!typed.length) return [];
-    if (type === "case") return selectCaseQuestions(typed, count, history);
-    return (history ? prioritizeQuestions(typed, history) : shuffle(typed)).slice(0, Math.min(count, typed.length));
-  }
-
   // 全部章节练习按本工具模拟卷的题型比例出题（单选 40 / 多选 40 / 判断 30 / 综合 10 折算），
   // 每个题型内部仍然按没做过 → 做错过 → 已做对的优先级抽题。
   function selectPaperPractice(pool, plan, count, history) {
     const selected = [];
     const used = new Set();
+    const seenStems = new Set();
+    const take = (question) => {
+      if (!question || used.has(question.id)) return false;
+      if (question.type !== "case") {
+        const key = ExamBank.normalizedStem(question);
+        if (seenStems.has(key)) return false;
+        seenStems.add(key);
+      }
+      used.add(question.id);
+      selected.push(question);
+      return true;
+    };
     for (const item of plan) {
-      for (const question of selectTypedQuestions(pool, item.type, item.count, history)) {
-        if (used.has(question.id)) continue;
-        used.add(question.id);
-        selected.push(question);
+      if (item.type === "case") {
+        for (const question of selectCaseQuestions(pool.filter((question) => question.type === "case"), item.count, history)) take(question);
+        continue;
+      }
+      const typed = pool.filter((question) => question.type === item.type);
+      const ordered = history ? prioritizeQuestions(typed, history) : shuffle(typed);
+      let taken = 0;
+      for (const question of ordered) {
+        if (taken >= item.count) break;
+        if (take(question)) taken += 1;
       }
     }
     // 某个题型题量不足（例如综合材料凑不满整段）时，用普通题按同样顺序补足总题量。
     if (selected.length < count) {
       const backfill = pool.filter((question) => question.type !== "case");
       for (const question of (history ? prioritizeQuestions(backfill, history) : shuffle(backfill))) {
-        if (used.has(question.id)) continue;
-        used.add(question.id);
-        selected.push(question);
-        if (selected.length >= count) break;
+        if (take(question) && selected.length >= count) break;
       }
     }
     return selected.slice(0, count);
@@ -881,7 +888,10 @@
       if (plan.length > 1) return selectPaperPractice(pool, plan, count, history);
     }
     const ordered = history ? prioritizeQuestions(pool, history) : shuffle(pool);
-    return ordered.slice(0, Math.min(count, pool.length));
+    // 错题本/收藏按用户自己的列表原样出题，不在这里去重。
+    if (ids) return ordered.slice(0, Math.min(count, pool.length));
+    // 同一组练习里同一题干只出一道：题库里存在同一道题在不同年份试卷重复出现的情况。
+    return ExamBank.uniqByStem(ordered, Math.min(count, pool.length));
   }
 
   function selectExamQuestions(subjectId) {
@@ -998,14 +1008,8 @@
           </div>
           ${question.caseMaterial ? `<div class="case-material"><strong>综合案例 · ${escapeHtml(question.caseGroupTitle || "材料题")} · 第 ${question.caseOrder || 1}/${question.caseGroupSize || 1} 问</strong><p>${escapeHtml(question.caseMaterial)}</p></div>` : ""}
           <div class="question-stem">${renderStem(question.stem)}</div>
-          <div class="options${compactOptions(question) ? " compact" : ""}">
-            ${question.options.map((option, index) => {
-              const chosen = selected.has(option.id);
-              const isRight = question.correctOptionIds.includes(option.id);
-              let optionClass = chosen ? "selected" : "";
-              if (submitted) optionClass += isRight ? " correct" : (chosen ? " incorrect" : "");
-              return `<button class="option ${optionClass}" data-action="choose-option" data-option="${option.id}" ${submitted ? "disabled" : ""}><span class="option-key">${String.fromCharCode(65 + index)}</span><span>${escapeHtml(formatOptionText(option.text))}</span></button>`;
-            }).join("")}
+          <div class="options${compactOptions(question) ? " compact" : ""}" ${isMultiple ? 'role="group" aria-label="多选题选项"' : 'role="radiogroup" aria-label="单选题选项"'}>
+            ${renderOptions(question, selected, submitted, isMultiple)}
           </div>
           <div class="question-actions">
             <div class="action-group">
@@ -1086,6 +1090,43 @@
     if (!STEM_COMBO_PATTERN.test(text || "")) return normalizeExamText(text);
     const keys = String(text).match(STEM_MARKER_GLOBAL) || [];
     return keys.join("、");
+  }
+
+  // 单选画 radio、多选画 checkbox，选项前的图标同时承担勾选状态与判卷结果的提示。
+  function optionIcon({ multiple, chosen, submitted, isRight }) {
+    const shape = multiple
+      ? '<rect x="2.6" y="2.6" width="12.8" height="12.8" rx="3.6" />'
+      : '<circle cx="9" cy="9" r="6.4" />';
+    let mark = "";
+    if (submitted && isRight) mark = '<path d="M5.6 9.3l2.4 2.4 4.6-5" />';
+    else if (submitted && chosen) mark = '<path d="M6.3 6.3l5.4 5.4M11.7 6.3l-5.4 5.4" />';
+    else if (chosen && multiple) mark = '<path d="M5.6 9.3l2.4 2.4 4.6-5" />';
+    else if (chosen) mark = '<circle cx="9" cy="9" r="3.1" fill="currentColor" stroke="none" />';
+    return `<svg class="option-icon-svg" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${shape}${mark}</svg>`;
+  }
+
+  function optionIconClass({ multiple, chosen, submitted, isRight }) {
+    const classes = ["option-icon", multiple ? "checkbox" : "radio"];
+    if (chosen) classes.push("chosen");
+    if (submitted && isRight) classes.push("correct");
+    if (submitted && chosen && !isRight) classes.push("incorrect");
+    return classes.join(" ");
+  }
+
+  function renderOptions(question, selected, submitted, isMultiple) {
+    return question.options.map((option, index) => {
+      const chosen = selected.has(option.id);
+      const isRight = question.correctOptionIds.includes(option.id);
+      let optionClass = chosen ? "selected" : "";
+      if (submitted) optionClass += isRight ? " correct" : (chosen ? " incorrect" : "");
+      const state = { multiple: isMultiple, chosen, submitted, isRight };
+      return `<label class="option ${optionClass}">
+        <input class="option-input" type="${isMultiple ? "checkbox" : "radio"}" name="question-${question.id}" value="${option.id}" data-action="choose-option" data-option="${option.id}" ${chosen ? "checked" : ""} ${submitted ? "disabled" : ""} />
+        <span class="${optionIconClass(state)}">${optionIcon(state)}</span>
+        <span class="option-key">${String.fromCharCode(65 + index)}</span>
+        <span class="option-text">${escapeHtml(formatOptionText(option.text))}</span>
+      </label>`;
+    }).join("");
   }
 
   // 选项本身很短（年份、金额、Ⅰ/Ⅱ 组合等）时排成两列，避免一道题占满整屏。
@@ -1472,7 +1513,7 @@
         const related = (questionData.questions || []).filter((question) => question.knowledgeLinks?.[0]?.knowledgeId === knowledgeId && question.examEligible !== false && question.verificationStatus === "source_transcribed");
         if (!related.length) { toast("这个知识点暂无可用历年题", "error"); return; }
         const relatedOrdered = prioritizeQuestions(related, questionHistory());
-        startSession({ mode: "practice", questions: relatedOrdered.slice(0, Math.min(20, related.length)), subjectId: related[0].subjectId });
+        startSession({ mode: "practice", questions: ExamBank.uniqByStem(relatedOrdered, Math.min(20, related.length)), subjectId: related[0].subjectId });
       }
       if (action === "outline-mode") { captureReadingPosition(); state.outlineMode = target.dataset.mode; state.outlineSearch = ""; render(); resetReadingPositionAfterRender(); }
       if (action === "back-to-top") {
