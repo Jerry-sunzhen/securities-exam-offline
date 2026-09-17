@@ -254,12 +254,22 @@
   .case-material p { @apply m-0; }
   .options { @apply mt-[21px] grid gap-[11px]; }
   .options.compact { @apply grid-cols-2 gap-2.5; }
-  .option { @apply grid w-full grid-cols-[30px_minmax(0,1fr)] items-start gap-[11px] rounded-xl border border-line bg-white px-[15px] py-[13px] text-left text-ink; }
+  .option { @apply grid w-full cursor-pointer grid-cols-[20px_minmax(0,30px)_minmax(0,1fr)] items-start gap-[10px] rounded-xl border border-line bg-white px-[15px] py-[13px] text-left text-ink; }
   .option:hover { @apply border-[#9dbde8] bg-[#f8fbff]; }
   .option.selected { @apply border-primary bg-primary-soft; }
   .option.correct { @apply border-[#6bc4a5] bg-success-soft; }
   .option.incorrect { @apply border-[#ee9eaa] bg-danger-soft; }
+  .option-input { @apply sr-only; }
+  .option-icon { @apply mt-[2px] grid size-[20px] place-items-center rounded-full text-[#9aa7b6] transition-colors; }
+  .option-icon.checkbox { @apply rounded-[6px]; }
+  .option-icon-svg { @apply size-[19px]; }
+  .option:hover .option-icon { @apply text-[#5f87c6]; }
+  .option.selected .option-icon { @apply text-primary; }
+  .option.correct .option-icon { @apply text-[#2f9c74]; }
+  .option.incorrect .option-icon { @apply text-[#d9485f]; }
+  .option-input:focus-visible + .option-icon { @apply outline outline-2 outline-offset-2 outline-primary; }
   .option-key { @apply grid size-[26px] place-items-center rounded-[7px] bg-[#edf1f6] font-bold; }
+  .option-text { @apply pt-[2px]; }
   .question-actions { @apply mt-[22px] flex justify-between gap-3; }
   .action-group { @apply flex flex-wrap gap-[9px]; }
   .explanation { @apply mt-[22px] border-t border-line pt-[21px]; }

@@ -22,7 +22,23 @@
     }
     return plan;
   }
+  // 同一题干在一张卷子/一组练习里只出现一次：模考与练习共用这套判断。
+  // 综合材料按整段出题，不参与去重，避免把材料组拆散。
   const normalizedStem = (q) => q.subjectId + ":" + q.stem.replace(/[\s，。、“”：（）()【】.．]/g, "");
+  function uniqByStem(ordered, count) {
+    const picked = [];
+    const seen = new Set();
+    for (const question of ordered) {
+      if (picked.length >= count) break;
+      if (question.type !== "case") {
+        const key = normalizedStem(question);
+        if (seen.has(key)) continue;
+        seen.add(key);
+      }
+      picked.push(question);
+    }
+    return picked;
+  }
   function matches(q, { bank = "all", year = "all", source = "all" } = {}) {
     return available(q) && (bank === "all" || (bank === "imported" ? imported(q) : !imported(q))) &&
       (year === "all" || q.origins?.some((o) => String(o.year) === String(year))) &&
@@ -99,5 +115,5 @@
     }
     return [...result, ...cases];
   }
-  globalThis.ExamBank = Object.freeze({ imported, available, multiple, points, paperMix, matches, selectCases, selectExam });
+  globalThis.ExamBank = Object.freeze({ imported, available, multiple, points, paperMix, matches, normalizedStem, uniqByStem, selectCases, selectExam });
 })();

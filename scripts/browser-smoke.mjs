@@ -20,6 +20,31 @@ const repairedOrderQuestion = questionPayload.questions.find((item) => item.id =
 if (!repairedOrderQuestion?.stem.startsWith("有甲、乙、丙、丁四个投资者，均申报买进X股票")) {
   throw new Error(`Repaired question stem is still truncated: ${repairedOrderQuestion?.stem || "missing"}`);
 }
+// 同一题干不会在同一组练习/同一张卷子里出现两次：直接对题库跑一遍组卷用的去重函数。
+await import(pathToFileURL(resolve(appRoot, "exam-bank.js")).href);
+const bank = globalThis.ExamBank;
+const stemBuckets = new Map();
+for (const question of questionPayload.questions) {
+  const key = bank.normalizedStem(question);
+  if (!stemBuckets.has(key)) stemBuckets.set(key, []);
+  stemBuckets.get(key).push(question);
+}
+const realDuplicateGroup = [...stemBuckets.values()].find((group) => group.length > 1 && group.every((question) => question.type !== "case"));
+if (!realDuplicateGroup) throw new Error("题库里没有可用于验证去重的同题干题目");
+const deduped = bank.uniqByStem(realDuplicateGroup, realDuplicateGroup.length);
+if (deduped.length !== 1 || deduped[0].id !== realDuplicateGroup[0].id) {
+  throw new Error(`同题干题目没有被去重: ${JSON.stringify(deduped.map((question) => question.id))}`);
+}
+const distinctDraw = bank.uniqByStem(questionPayload.questions.filter((question) => question.type !== "case").slice(0, 40), 40);
+if (distinctDraw.length !== 40) throw new Error(`去重后题量被削减: ${distinctDraw.length}`);
+for (const subject of questionPayload.subjects) {
+  for (const [type, count] of [["single", 40], ["multiple", 40], ["judgment", 30]]) {
+    const pool = questionPayload.questions.filter((question) => question.subjectId === subject.id && question.type === type);
+    if (bank.uniqByStem(pool, count).length !== count) {
+      throw new Error(`${subject.id}/${type} 去重后凑不满 ${count} 题：题库不足或去重过度`);
+    }
+  }
+}
 const outlinePayload = JSON.parse(readFileSync(resolve(root, "data/outline.json"), "utf8"));
 const expectedOutlinePages = outlinePayload.pages.filter((item) => item.page >= 4 && item.page !== 14).length;
 const browser = await puppeteer.launch({
@@ -353,12 +378,48 @@ if (!ratioNotice.includes("按模拟卷题型比例分配") || !ratioNotice.incl
 await page.select("#practice-count", "30");
 await page.click('[data-action="start-practice"]');
 await page.waitForSelector(".question-card");
+// 单选画 radio、多选画 checkbox，每个选项前都要有图标，且同一组练习不能出现同一题干。
+const optionControls = new Set();
+const walkedStems = new Set();
 for (let index = 0; index < 30; index += 1) {
+  const questionCard = await page.evaluate(() => {
+    const node = document.querySelector(".question-card");
+    const normalize = (text) => String(text || "").replace(/[\s，。、“”：（）()【】.．]/g, "");
+    return {
+      tag: node.querySelector(".question-tags .tag")?.textContent.trim() || "",
+      stem: normalize(node.querySelector(".question-stem")?.textContent),
+      types: [...new Set([...node.querySelectorAll(".option-input")].map((input) => input.type))],
+      controls: node.querySelectorAll(".option").length,
+      inputs: node.querySelectorAll(".option-input").length,
+      icons: node.querySelectorAll(".option-icon svg").length,
+      keys: node.querySelectorAll(".option .option-key").length
+    };
+  });
+  // 综合材料题里既有单选也有多选的小问，按题型标签判断控件类型。
+  const expectedControl = questionCard.tag === "多选" ? "checkbox" : questionCard.tag === "综合" ? questionCard.types[0] : "radio";
+  if (questionCard.inputs !== questionCard.controls || questionCard.icons !== questionCard.controls || questionCard.keys !== questionCard.controls || questionCard.types.length !== 1 || questionCard.types[0] !== expectedControl) {
+    throw new Error(`Option controls are not radio/checkbox with icons: ${JSON.stringify(questionCard)}`);
+  }
+  if (!questionCard.stem || walkedStems.has(questionCard.stem)) {
+    throw new Error(`同一组练习出现重复题干: ${questionCard.stem.slice(0, 40)}`);
+  }
+  optionControls.add(questionCard.types[0]);
+  walkedStems.add(questionCard.stem);
   await page.click(".question-card .option");
   await page.click('[data-action="submit-question"]');
   await page.waitForSelector(".explanation");
+  if (index === 0) {
+    const gradedIcons = await page.evaluate(() => ({
+      correct: document.querySelectorAll(".question-card .option-icon.correct svg").length,
+      marked: document.querySelectorAll(".question-card .option-icon.chosen svg").length
+    }));
+    if (!gradedIcons.correct || !gradedIcons.marked) throw new Error(`判卷后选项图标没有给出对错提示: ${JSON.stringify(gradedIcons)}`);
+  }
   await page.click('[data-action="next-question"]');
   if (index < 29) await page.waitForFunction((next) => document.querySelector(".session-meta")?.textContent.includes(`第 ${next}/30 题`), {}, index + 2);
+}
+if (!optionControls.has("radio") || !optionControls.has("checkbox")) {
+  throw new Error(`这一组题没有同时覆盖单选与多选的选项控件: ${[...optionControls].join(",")}`);
 }
 await page.waitForSelector(".practice-result");
 const practiceBoard = await page.evaluate(() => {
