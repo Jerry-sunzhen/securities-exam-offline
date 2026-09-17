@@ -905,8 +905,11 @@
     return ExamBank.uniqByStem(ordered, Math.min(count, pool.length));
   }
 
+  // 模考同样按最近最少出题挑综合材料：整卷一次要 10 道综合题，等于用掉半个材料池，
+  // 纯随机的话连续两次模考会大面积撞题。
   function selectExamQuestions(subjectId) {
-    return ExamBank.selectExam(questionData.questions, subjectId);
+    const history = questionHistory();
+    return ExamBank.selectExam(questionData.questions, subjectId, (question) => caseGroupRank(question, history));
   }
 
   // 练习不计入成绩，但同样按"120 题 / 120 分钟"的配速给出建议用时。

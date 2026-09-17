@@ -29,9 +29,25 @@ if (usableCase.length < 44 || caseMaterials.size < 19) {
 if (usableCase.some((item) => !item.caseMaterial || !item.caseGroupSize || item.caseOrder > item.caseGroupSize)) {
   throw new Error("综合材料题的段落元数据不完整");
 }
-// 同一题干不会在同一组练习/同一张卷子里出现两次：直接对题库跑一遍组卷用的去重函数。
 await import(pathToFileURL(resolve(appRoot, "exam-bank.js")).href);
 const bank = globalThis.ExamBank;
+// 模考也要走「没做过 → 做错过 → 做对了」+ 最近最少出题：连续两次模考的同一科目
+// 不该再撞到同一段材料。材料段数少，纯随机时平均每次会重 1.5 段。
+for (const subject of questionPayload.subjects) {
+  const lastSeen = new Map();
+  const rank = (question) => (lastSeen.has(question.id) ? 2e7 : 0) + Math.min(Math.floor((lastSeen.get(question.id) || 0) / 1800000), 9e6 - 1);
+  let previous = new Set();
+  for (let round = 0; round < 3; round += 1) {
+    const drawn = bank.selectExam(questionPayload.questions, subject.id, rank).filter((question) => question.type === "case");
+    if (drawn.length !== 10) throw new Error(`${subject.id} 模考综合题不足: ${drawn.length} 题`);
+    const groups = new Set(drawn.map((question) => question.caseGroupId));
+    const overlap = [...groups].filter((key) => previous.has(key)).length;
+    if (round > 0 && overlap) throw new Error(`${subject.id} 连续两次模考重复了 ${overlap} 段综合材料`);
+    for (const question of drawn) lastSeen.set(question.id, (round + 1) * 1800000);
+    previous = groups;
+  }
+}
+// 同一题干不会在同一组练习/同一张卷子里出现两次：直接对题库跑一遍组卷用的去重函数。
 const stemBuckets = new Map();
 for (const question of questionPayload.questions) {
   const key = bank.normalizedStem(question);
