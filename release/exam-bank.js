@@ -86,17 +86,26 @@
     }
     return choices.get(Math.max(...choices.keys())).flat();
   }
-  function selectExam(questions, subjectId) {
+  // rankOf 可选，口径与 selectCases 一致：模考也按「没做过 → 做错过 → 做对了」
+  // 叠加最近一次作答时间挑材料，避免连续两次模考大面积重题。
+  function selectExam(questions, subjectId, rankOf = null) {
     const pool = questions.filter((q) => available(q) && q.subjectId === subjectId);
-    let cases = selectCases(pool, 10);
+    let cases = selectCases(pool, 10, rankOf);
     // Some recalled papers mix four-question packs with two-question packs.
     // Fill the requested ten-question slot from remaining case items while
     // retaining their material/order metadata for review.
     if (cases.length < 10) {
-      const used = new Set(cases.map(normalizedStem));
-      for (const q of shuffled(pool.filter((item) => item.type === "case" && item.caseMaterial))) {
-        if (!used.has(normalizedStem(q))) { cases.push(q); used.add(normalizedStem(q)); }
+      const usedGroups = new Set(cases.map((q) => q.caseGroupId || q.id));
+      const remaining = pool.filter((item) => item.type === "case" && item.caseMaterial);
+      const ordered = typeof rankOf === "function"
+        ? [...remaining].sort((left, right) => rankOf(left) - rankOf(right))
+        : shuffled(remaining);
+      // 先补还没出现过的材料，实在凑不满再回头用已经用过的。
+      const fresh = ordered.filter((q) => !usedGroups.has(q.caseGroupId || q.id));
+      const spent = ordered.filter((q) => usedGroups.has(q.caseGroupId || q.id));
+      for (const q of [...fresh, ...spent]) {
         if (cases.length === 10) break;
+        cases.push(q);
       }
     }
     if (cases.length !== 10) throw new Error("综合题可用题量不足，暂不能生成该科模考。");
