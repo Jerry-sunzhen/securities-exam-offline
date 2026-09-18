@@ -71,21 +71,51 @@ export const sprintPlan = {
       id: "sat-1",
       date: "2026-09-19",
       start: "06:30",
-      minutes: 50,
+      minutes: 20,
       focus: "finance",
-      title: "出门前 · 基础错题与一页纸",
-      detail: "上午考基础，先把状态切回这一科：只翻错题和结论，不做新题，也别再碰法规。",
+      title: "出门前 · 基础错题",
+      detail: "出发前能刷几道算几道，只做单选和判断，材料题留到有桌子的地方。",
       tasks: [{ kind: "wrong", subjectId: "finance", label: "过一遍基础错题" }]
     },
     {
       id: "sat-2",
       date: "2026-09-19",
+      start: "06:50",
+      minutes: 30,
+      focus: "finance",
+      title: "车上 · 基础错题（手机）",
+      detail: "打车这半小时正好过一轮错题：只做单选和判断，别在车上读长材料；晕车就改成只看解析里的结论。",
+      tasks: [{ kind: "wrong", subjectId: "finance", label: "车上过基础错题" }]
+    },
+    {
+      id: "sat-3",
+      date: "2026-09-19",
       start: "07:20",
-      minutes: 60,
+      minutes: 40,
+      focus: "finance",
+      title: "到场后 · 错题与结论",
+      detail: "找个安静的地方坐下接着做，别站在嘈杂的候考区刷。08:00 之前是今天最后一段有效复习时间。",
+      tasks: [{ kind: "wrong", subjectId: "finance", label: "继续基础错题" }]
+    },
+    {
+      id: "sat-4",
+      date: "2026-09-19",
+      start: "08:00",
+      minutes: 15,
       kind: "break",
       focus: "finance",
-      title: "出门与到场",
-      detail: "按路程倒推出门时间，宁早不晚。到场后只看自己的结论，不和别人对答案、不开新题。"
+      title: "停笔 · 只看结论",
+      detail: "08:00 之后不再开新题，只翻自己的结论；上个厕所、喝口水，别和别人对答案。"
+    },
+    {
+      id: "sat-5",
+      date: "2026-09-19",
+      start: "08:15",
+      minutes: 15,
+      kind: "break",
+      focus: "finance",
+      title: "进考场",
+      detail: "签到、对号入座、试键盘和鼠标，身份证和准考证放在桌角。"
     },
     {
       id: "exam-1",
@@ -99,7 +129,7 @@ export const sprintPlan = {
       detail: "120 题 120 分钟。单选 40 题控制在 25 分钟内，多数时间留给多选和材料题；判断题不留空。"
     },
     {
-      id: "sat-3",
+      id: "sat-6",
       date: "2026-09-19",
       start: "10:30",
       minutes: 30,
@@ -109,7 +139,7 @@ export const sprintPlan = {
       detail: "不复盘上午的题、不对答案。吃点清淡的，别吃太饱，下午还有两小时。"
     },
     {
-      id: "sat-4",
+      id: "sat-7",
       date: "2026-09-19",
       start: "11:00",
       minutes: 30,
@@ -119,7 +149,7 @@ export const sprintPlan = {
       tasks: [{ kind: "wrong", subjectId: "law", label: "收尾法规错题" }]
     },
     {
-      id: "sat-5",
+      id: "sat-8",
       date: "2026-09-19",
       start: "11:30",
       minutes: 25,
@@ -129,7 +159,7 @@ export const sprintPlan = {
       tasks: [{ kind: "multiYear", subjectId: "law", label: "刷法规多年考点" }]
     },
     {
-      id: "sat-6",
+      id: "sat-9",
       date: "2026-09-19",
       start: "11:55",
       minutes: 20,
@@ -139,7 +169,7 @@ export const sprintPlan = {
       tasks: [{ kind: "memory", subjectId: "law", label: "最后过一遍法规卡" }]
     },
     {
-      id: "sat-7",
+      id: "sat-10",
       date: "2026-09-19",
       start: "12:15",
       minutes: 15,
