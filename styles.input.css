@@ -148,6 +148,11 @@
   .tag.binding-verified { @apply bg-success-soft text-success; }
   .tag.binding-suggested { @apply bg-[#eef3f8] text-[#5a6b81]; }
   .tag.binding-cross { @apply bg-[#fff2e2] text-[#9a5b00]; }
+  .imported-links.source-refs { @apply bg-[#f4faff]; }
+  .source-list { @apply my-2 grid list-none gap-2 p-0; }
+  .source-list li { @apply grid gap-0.5; }
+  .source-list a { @apply break-all text-[#285fa8] underline; }
+  .source-list small { @apply text-[11px] text-muted; }
   .binding-quote { @apply mt-1; }
   .binding-quote summary { @apply cursor-pointer text-[11px] text-muted; }
   .binding-quote blockquote { @apply mt-1 mb-0 rounded-md border-l-[3px] border-[#c3d5ee] bg-white/70 px-2.5 py-2 text-[11px] leading-[1.7] text-[#4a5a73]; }
