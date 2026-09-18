@@ -932,17 +932,13 @@
     }
     if (task.kind === "memory") { startMemorySession(task.subjectId); return; }
     if (task.kind === "exam") { startExam(task.subjectId); return; }
-    // 先过知识点再刷题：直接落到讲义页对应章节，并默认打开「只看多年考点」。
     if (task.kind === "outline") {
       captureReadingPosition();
       state.knowledgeSubject = task.subjectId;
-      state.multiYearOnly = task.multiYearOnly !== false;
-      state.outlineSearch = "";
+      state.multiYearOnly = true;
       state.view = "outline";
       render();
-      const anchorId = task.chapterId ? `knowledge-chapter-${task.chapterId}` : null;
-      if (anchorId && document.getElementById(anchorId)) restoreReadingPosition({ view: "outline", nodeId: anchorId });
-      else resetReadingPositionAfterRender();
+      resetReadingPositionAfterRender();
     }
   }
 
@@ -1134,11 +1130,16 @@
       selected.push(question);
       return true;
     };
+    // 综合材料先选，并把材料小问的题干也放进同一套去重集合：历年题里同一道题
+    // 既可能单独出现、也可能是某段材料的小问，这样两种形式不会在同一组里重复。
+    const casePlan = plan.find((item) => item.type === "case");
+    const caseSelection = casePlan ? selectCaseQuestions(pool.filter((question) => question.type === "case"), casePlan.count, history) : [];
+    for (const question of caseSelection) {
+      used.add(question.id);
+      seenStems.add(ExamBank.normalizedStem(question));
+    }
     for (const item of plan) {
-      if (item.type === "case") {
-        for (const question of selectCaseQuestions(pool.filter((question) => question.type === "case"), item.count, history)) take(question);
-        continue;
-      }
+      if (item.type === "case") continue;
       const typed = pool.filter((question) => question.type === item.type);
       const ordered = history ? prioritizeQuestions(typed, history) : shuffle(typed);
       let taken = 0;
@@ -1148,13 +1149,14 @@
       }
     }
     // 某个题型题量不足（例如综合材料凑不满整段）时，用普通题按同样顺序补足总题量。
-    if (selected.length < count) {
+    const total = () => selected.length + caseSelection.length;
+    if (total() < count) {
       const backfill = pool.filter((question) => question.type !== "case");
       for (const question of (history ? prioritizeQuestions(backfill, history) : shuffle(backfill))) {
-        if (take(question) && selected.length >= count) break;
+        if (take(question) && total() >= count) break;
       }
     }
-    return selected.slice(0, count);
+    return [...selected, ...caseSelection].slice(0, count);
   }
 
   // 全部章节练习与模考共用同一套结构：题型比例 + 单选 0.5 分、其余每题 1 分的计分。

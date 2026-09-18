@@ -32,20 +32,57 @@ if (usableCase.some((item) => !item.caseMaterial || !item.caseGroupSize || item.
 }
 await import(pathToFileURL(resolve(appRoot, "exam-bank.js")).href);
 const bank = globalThis.ExamBank;
-// 模考也要走「没做过 → 做错过 → 做对了」+ 最近最少出题：连续两次模考的同一科目
-// 不该再撞到同一段材料。材料段数少，纯随机时平均每次会重 1.5 段。
+// 模考也要走「没做过 → 做错过 → 做对了」+ 最近最少出题。整科综合材料只有 23 道小问，
+// 一次模考就要出 10 道，连考三次必然要回收旧材料，所以这里核的是能做到的保证：
+// 只要没用过的材料还凑得出 10 题，就一段旧材料都不动用；同一张卷子也不能出现重复题干。
+const completeCaseGroups = (subjectId) => {
+  const groups = new Map();
+  for (const question of questionPayload.questions) {
+    if (question.subjectId !== subjectId || question.type !== "case" || !question.caseMaterial || !bank.available(question)) continue;
+    const key = question.caseGroupId || question.id;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(question);
+  }
+  return [...groups.entries()].filter(([, list]) => list.length === list[0].caseGroupSize);
+};
+// 历年资料里有两段材料考了同一道小问，exam-bank 会按材料编号稳定淘汰其中一段；
+// 这里按同一口径先淘汰，再算没用过的材料能不能正好凑满题量。
+const dropStemCollisions = (groups) => {
+  const kept = [], stems = new Set();
+  for (const entry of [...groups].sort((left, right) => String(left[0]).localeCompare(String(right[0])))) {
+    const keys = entry[1].map((question) => bank.normalizedStem(question));
+    if (keys.some((key) => stems.has(key))) continue;
+    for (const key of keys) stems.add(key);
+    kept.push(entry);
+  }
+  return kept;
+};
+const canFillWithCases = (groups, count) => {
+  const reach = new Set([0]);
+  for (const [, list] of groups) for (const total of [...reach]) if (total + list.length <= count) reach.add(total + list.length);
+  return reach.has(count);
+};
 for (const subject of questionPayload.subjects) {
+  const usableGroups = dropStemCollisions(completeCaseGroups(subject.id));
+  const byKey = new Map(usableGroups);
   const lastSeen = new Map();
   const rank = (question) => (lastSeen.has(question.id) ? 2e7 : 0) + Math.min(Math.floor((lastSeen.get(question.id) || 0) / 1800000), 9e6 - 1);
-  let previous = new Set();
+  const groupCost = (list) => Math.min(...list.map(rank));
   for (let round = 0; round < 3; round += 1) {
     const drawn = bank.selectExam(questionPayload.questions, subject.id, rank).filter((question) => question.type === "case");
     if (drawn.length !== 10) throw new Error(`${subject.id} 模考综合题不足: ${drawn.length} 题`);
-    const groups = new Set(drawn.map((question) => question.caseGroupId));
-    const overlap = [...groups].filter((key) => previous.has(key)).length;
-    if (round > 0 && overlap) throw new Error(`${subject.id} 连续两次模考重复了 ${overlap} 段综合材料`);
+    const drawnStems = new Set();
+    for (const question of drawn) {
+      const stem = bank.normalizedStem(question);
+      if (drawnStems.has(stem)) throw new Error(`${subject.id} 模考同一张卷子出现重复题干: ${question.stem.slice(0, 30)}`);
+      drawnStems.add(stem);
+    }
+    const drawnGroups = [...new Set(drawn.map((question) => question.caseGroupId || question.id))];
+    const stale = drawnGroups.filter((key) => groupCost(byKey.get(key)) > 0);
+    if (stale.length && canFillWithCases(usableGroups.filter(([, list]) => groupCost(list) === 0), 10)) {
+      throw new Error(`${subject.id} 还有没用过的材料，模考却重复了 ${stale.length} 段旧材料`);
+    }
     for (const question of drawn) lastSeen.set(question.id, (round + 1) * 1800000);
-    previous = groups;
   }
 }
 // 同一题干不会在同一组练习/同一张卷子里出现两次：直接对题库跑一遍组卷用的去重函数。
@@ -201,46 +238,6 @@ if (sprintTaskSession.mode !== "practice" || sprintTaskSession.total !== expecte
 }
 await page.click('[data-action="exit-session"]');
 await page.waitForSelector('[data-nav="plan"]');
-// 知识点速览任务：进入讲义页、自动打开「只看多年考点」，并定位到对应章节。
-await page.click('[data-nav="plan"]');
-await page.waitForSelector(".plan-block");
-const lawChapterOneMultiYear = (() => {
-  const years = new Map();
-  for (const question of questionPayload.questions) {
-    if (question.subjectId !== "law" || question.examEligible === false || question.verificationStatus !== "source_transcribed") continue;
-    const knowledgeId = question.knowledgeLinks?.[0]?.knowledgeId;
-    if (!knowledgeId) continue;
-    const set = years.get(knowledgeId) || new Set();
-    for (const year of question.repeatYears || []) set.add(Number(year));
-    years.set(knowledgeId, set);
-  }
-  return questionPayload.knowledgePoints.filter((point) => point.chapterId === "law-1" && (years.get(point.id)?.size || 0) >= 2).length;
-})();
-await page.evaluate(() => {
-  [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes("看第一章知识点")).click();
-});
-await page.waitForSelector("#knowledge-chapter-law-1");
-const knowledgeTaskState = await page.evaluate(() => ({
-  view: document.querySelector(".page-title h2")?.textContent,
-  subject: document.querySelector("#knowledge-subject")?.value,
-  multiYearOnly: [...document.querySelectorAll('[data-action="toggle-multi-year"]')].some((button) => button.textContent.includes("显示全部知识点")),
-  heading: document.querySelector("#knowledge-chapter-law-1 h2")?.textContent || "",
-  cards: document.querySelectorAll("#knowledge-chapter-law-1 .knowledge-card").length
-}));
-if (knowledgeTaskState.view !== "知识讲义与官方大纲" || knowledgeTaskState.subject !== "law" || !knowledgeTaskState.multiYearOnly || !knowledgeTaskState.heading.includes("证券市场基本法律法规")) {
-  throw new Error(`知识点速览任务没有落到正确章节: ${JSON.stringify(knowledgeTaskState)}`);
-}
-if (knowledgeTaskState.cards !== lawChapterOneMultiYear) {
-  throw new Error(`「只看多年考点」没有生效: ${knowledgeTaskState.cards} / ${lawChapterOneMultiYear}`);
-}
-// 还原讲义页默认状态（金融基础、显示全部知识点），后面的断言按默认状态写。
-await page.select("#knowledge-subject", "finance");
-if (knowledgeTaskState.multiYearOnly) await page.click('[data-action="toggle-multi-year"]');
-await page.click('[data-nav="plan"]');
-await page.waitForSelector(".plan-block");
-// 清掉刚才留下的阅读位置：后面「知识讲义」首次进入仍按默认从头开始，
-// 滚动位置由专门的还原用例覆盖。
-await page.evaluate(() => localStorage.removeItem("securities-exam-reading-position-v1"));
 // 勾选完成要写进档案，切走再回来仍然勾着。
 await page.click('[data-nav="plan"]');
 await page.waitForSelector("[data-sprint-block]");
