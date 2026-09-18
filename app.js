@@ -982,6 +982,17 @@
       </article>`;
   }
 
+  // 顶部那条考试信息直接从计划数据拼，改考试时间不用再动 app.js。
+  function sprintExamLine() {
+    const exams = sprintData.exams || [];
+    if (!exams.length) return "";
+    const first = exams[0];
+    const date = sprintTime(first.date, first.start);
+    const weekday = `周${"日一二三四五六"[date.getDay()]}`;
+    return `${date.getMonth() + 1} 月 ${date.getDate()} 日（${weekday}）` +
+      exams.map((exam) => `${exam.start} ${exam.label}`).join(" · ");
+  }
+
   function renderSprintPlan() {
     const now = new Date();
     const status = sprintStatus(now);
@@ -991,7 +1002,9 @@
     const blocks = sprintData.blocks || [];
     const studyBlocks = sprintStudyBlocks();
     const finished = studyBlocks.filter((block) => done.has(block.id)).length;
-    const days = [...new Set(blocks.map((block) => block.date))];
+    const days = sprintData.days?.length
+      ? sprintData.days
+      : [...new Set(blocks.map((block) => block.date))].map((date) => ({ date, label: date }));
     const subjectStats = (subjectId) => {
       const pool = (questionData.questions || []).filter((question) => question.subjectId === subjectId && question.examEligible !== false);
       const attempted = new Set(StudyDb.getAttemptRows().map((row) => row.question_id));
@@ -1005,7 +1018,7 @@
           <div class="sprint-hero-top">
             <div>
               <h3>${escapeHtml(sprintData.title || "冲刺计划")}</h3>
-              <p>9 月 19 日（周六）8:30 金融市场基础知识 · 14:30 证券市场基本法律法规。下面的每一段都按当天的时间排好，点按钮直接带条件进练习。</p>
+              <p>${escapeHtml(sprintExamLine())}。下面的每一段都按时间排好，点按钮直接带条件进练习。</p>
             </div>
             <div class="sprint-clock">
               <span class="sprint-clock-label">${escapeHtml(status.label)}</span>
@@ -1025,9 +1038,9 @@
         </div>
         ${days.map((day) => `
           <section class="card card-body">
-            <h3 class="card-title">${day === "2026-09-18" ? "9 月 18 日 · 周五（全天 10 小时）" : `${day.slice(5).replace("-", " 月 ")} 日 · 周六（考试当天）`}</h3>
+            <h3 class="card-title">${escapeHtml(day.label)}</h3>
             <div class="plan-timeline">
-              ${blocks.filter((block) => block.date === day).map((block) => renderSprintBlock(block, current, done)).join("")}
+              ${blocks.filter((block) => block.date === day.date).map((block) => renderSprintBlock(block, current, done)).join("")}
             </div>
           </section>`).join("")}
         <div class="grid two">

@@ -160,9 +160,10 @@ if (desktopTailwindStyles.bodyBackground !== "rgb(244, 247, 251)" || desktopTail
 // 冲刺计划：倒计时、当前段落高亮、任务深链接和完成态都要工作。
 await page.click('[data-nav="plan"]');
 await page.waitForSelector(".plan-block");
+const expectedLawMultiYear = questionPayload.questions.filter((question) => question.subjectId === "law" && question.examEligible !== false && /多年考点/.test(question.repeatLabel || "")).length;
 const sprintPlanSnapshot = await page.evaluate(() => {
   const countdown = document.querySelector("[data-sprint-clock]")?.textContent.trim() || "";
-  const multiYearButton = [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes("刷多年考点题"));
+  const multiYearButton = [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes("刷法规多年考点"));
   return {
     view: document.querySelector(".page-title h2")?.textContent,
     countdown,
@@ -175,7 +176,6 @@ const sprintPlanSnapshot = await page.evaluate(() => {
     taskCount: document.querySelectorAll('[data-action="sprint-task"]').length
   };
 });
-const expectedFinanceMultiYear = questionPayload.questions.filter((question) => question.subjectId === "finance" && question.examEligible !== false && /多年考点/.test(question.repeatLabel || "")).length;
 const expectedPlanBlocks = sprintPlan.blocks.length;
 const expectedPlanExams = sprintPlan.blocks.filter((block) => block.kind === "exam").length;
 if (sprintPlanSnapshot.view !== "冲刺计划" || sprintPlanSnapshot.blocks !== expectedPlanBlocks || sprintPlanSnapshot.checkboxes !== expectedPlanBlocks - expectedPlanExams || sprintPlanSnapshot.examBlocks !== expectedPlanExams) {
@@ -184,11 +184,10 @@ if (sprintPlanSnapshot.view !== "冲刺计划" || sprintPlanSnapshot.blocks !== 
 if (!/^(?:\d+ 天 )?\d{2}:\d{2}:\d{2}$/.test(sprintPlanSnapshot.countdown)) {
   throw new Error(`冲刺计划倒计时格式不对: ${sprintPlanSnapshot.countdown}`);
 }
-if (!sprintPlanSnapshot.hasCurrentMarker || !sprintPlanSnapshot.multiYearLabel.includes(`${expectedFinanceMultiYear} 题`)) {
+if (!sprintPlanSnapshot.hasCurrentMarker || !sprintPlanSnapshot.multiYearLabel.includes(`${expectedLawMultiYear} 题`)) {
   throw new Error(`冲刺计划缺少当前段落或多年考点题量: ${JSON.stringify(sprintPlanSnapshot)}`);
 }
 // 点任务按钮应当带着条件直接进练习：法规多年考点一共 36 题。
-const expectedLawMultiYear = questionPayload.questions.filter((question) => question.subjectId === "law" && question.examEligible !== false && /多年考点/.test(question.repeatLabel || "")).length;
 await page.evaluate(() => {
   [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes("刷法规多年考点")).click();
 });
