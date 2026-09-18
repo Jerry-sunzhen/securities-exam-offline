@@ -326,6 +326,8 @@ function trimExplanation(raw) {
   text = text.replace(new RegExp(EXPLAIN_MARKER.source, "g"), "");
   text = text.replace(/^[\s（(]*(?:对|错|正确|错误)[）)]\s*/, "");
   text = normalizeLines(text, { joinLines: false, numericJunk: true });
+  // 来源排版会把点号单独留在行首（「（1）\n.充分了解…」），去掉多余点号并接回同一行。
+  text = text.replace(/[（(](\d{1,2})[）)]\s*[.。]?\s*\n\s*(?=\S)/g, "（$1）");
   text = text.replace(/^\s*(?:知识点)?解析\s*[:：]\s*/, "").replace(/^(?:【[^】]{0,10}】\s*)+/, "");
   text = normalizeRomanTokens(text);
   text = trimKaodian(text);
@@ -595,7 +597,8 @@ export function questionTextIssues(question) {
   for (const [label, text] of fields) {
     if (!text) continue;
     if (/证券从业\s*[-—－]|JMYT|慧考解析|参考答案|【\s*答\s*案\s*】|绝密押题|命中率|https?:\/\/|www\./.test(text)) issues.push(`${label}残留水印或答案标记`);
-    if (NEXT_QUESTION.test(`\n${text}`) && /【|答案|解析/.test(text)) issues.push(`${label}混入后续题目`);
+    // 【固定】这类原文高亮不是答案标记；这里只认出真正的答案/解析标记。
+    if (NEXT_QUESTION.test(`\n${text}`) && /【\s*(?:参考|正确|标准)?答案|【\s*(?:慧考|本题|题目|详细)?解析|参考答案|答案\s*[:：]|解析\s*[:：]/.test(text)) issues.push(`${label}混入后续题目`);
     if (/[\u4e00-\u9fff]\s?\d{1,3}\s+\d{1,2}(?:\s|$)/.test(text)) issues.push(`${label}残留页码噪声`);
     if (/^【\s*(?:单项|多项|不定项|判断)?选择题\s*】/.test(text)) issues.push(`${label}残留题型标记`);
     if (/。。|，，|、、|；；|：：/.test(text)) issues.push(`${label}重复标点`);
