@@ -6,6 +6,7 @@ import { subjects, chapters } from "../content/catalog.mjs";
 import { NOTE_SOURCES, TEXTBOOK_SOURCES, createMaterialContext, createNoteIndexes, bindQuestion, bindTextbook } from "./material-binding.mjs";
 import { parseNotesSections, locateSection } from "./notes-sections.mjs";
 import { cleanQuestion } from "./question-text.mjs";
+import { sprintPlan } from "../content/sprint-plan.mjs";
 
 // 内容全部来自内部材料：2026 新大纲三色笔记（讲义 + 题目定位）与两本教材（补充定位）。
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -257,6 +258,7 @@ writeFileSync(join(dataDir, "outline.json"), JSON.stringify(outline, null, 2));
 writeFileSync(join(dataDir, "questions.json"), JSON.stringify(questionPayload, null, 2));
 writeFileSync(join(dataDir, "outline.js"), `window.OUTLINE_DATA = ${JSON.stringify(outline)};\n`);
 writeFileSync(join(dataDir, "questions.js"), `window.QUESTION_DATA = ${JSON.stringify(questionPayload)};\n`);
+writeFileSync(join(dataDir, "sprint-plan.js"), `window.SPRINT_PLAN = ${JSON.stringify(sprintPlan)};\n`);
 copyFileSync(join(root, "node_modules/sql.js/dist/sql-wasm.js"), join(vendorDir, "sql-wasm.js"));
 const wasmBase64 = readFileSync(join(root, "node_modules/sql.js/dist/sql-wasm.wasm")).toString("base64");
 writeFileSync(join(vendorDir, "sql-wasm-data.js"), `window.SQL_WASM_BASE64 = "${wasmBase64}";\n`);

@@ -580,6 +580,16 @@
     return Object.fromEntries(rows.map((row) => [row.key, row.value]));
   }
 
+  // 通用设置读写：冲刺进度这类小块状态直接进 settings 表，跟着档案一起迁移和合并。
+  function getSetting(key) {
+    return get("SELECT value FROM settings WHERE key=?", [key])?.value ?? null;
+  }
+
+  function setSetting(key, value) {
+    run("INSERT OR REPLACE INTO settings(key,value,modified_at) VALUES (?,?,?)", [key, value, new Date().toISOString()]);
+    scheduleSave();
+  }
+
   window.StudyDb = {
     init,
     run,
@@ -608,6 +618,8 @@
     getBookmarkIds,
     getExamHistory,
     getMeta,
+    getSetting,
+    setSetting,
     onStatus(listener) { statusListener = listener; emitStatus("saved", "就绪"); },
     hasDirectFileSupport() { return Boolean(window.showOpenFilePicker && window.showSaveFilePicker); }
   };

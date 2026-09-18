@@ -82,6 +82,27 @@
   .hero-card h3 { @apply mt-0 mb-2 text-[23px] font-semibold; }
   .hero-card p { @apply m-0 max-w-[720px] leading-7 text-white/80; }
   .hero-actions { @apply mt-5 flex flex-wrap gap-2.5; }
+  .sprint-hero-top { @apply flex flex-wrap items-start justify-between gap-5; }
+  .sprint-clock { @apply grid gap-1 rounded-[13px] border border-white/25 bg-white/12 px-4 py-3 text-right; }
+  .sprint-clock-label { @apply text-xs text-white/75; }
+  .sprint-clock strong { @apply text-[26px] font-[750] tabular-nums leading-tight; }
+  .sprint-clock-target { @apply text-xs text-white/70; }
+  .sprint-progress { @apply self-center text-[13px] text-white/80; }
+
+  .plan-timeline { @apply grid gap-3; }
+  .plan-block { @apply rounded-[14px] border border-line bg-panel-soft p-[18px]; }
+  .plan-block.current { @apply border-primary bg-primary-soft shadow-[0_8px_22px_rgba(23,105,224,.12)]; }
+  .plan-block.done { @apply opacity-60; }
+  .plan-block.exam { @apply border-[#f1c96b] bg-warning-soft; }
+  .plan-head { @apply flex flex-wrap items-center gap-2 text-xs text-muted; }
+  .plan-time { @apply font-[650] text-ink tabular-nums; }
+  .plan-duration { @apply rounded-full border border-line bg-white px-2 py-[3px]; }
+  .plan-focus { @apply rounded-full border border-[#d7e3f6] bg-white px-2 py-[3px] text-[#3d5a80]; }
+  .plan-now { @apply rounded-full bg-primary px-2 py-[3px] font-[650] text-white; }
+  .plan-tag { @apply rounded-full border border-line bg-white px-2 py-[3px]; }
+  .plan-block h4 { @apply mt-2.5 mb-1.5 text-[15px] font-semibold; }
+  .plan-block p { @apply m-0 text-[13px] leading-[1.7] text-muted; }
+  .plan-actions { @apply mt-3.5 flex flex-wrap items-center gap-2; }
   .button { @apply min-h-10 rounded-[10px] border border-transparent bg-primary px-[15px] py-[9px] font-[650] text-white; }
   .button:hover { @apply bg-primary-dark; }
   .button.secondary { @apply border-line bg-white text-ink; }
@@ -453,7 +474,7 @@
 }
 
 @media (max-width: 1100px) {
-  .grid.cards-4 { @apply grid-cols-2; }
+  .grid.cards-4, .grid.cards-3 { @apply grid-cols-2; }
   .grid.two { @apply grid-cols-1; }
   .outline-layout { @apply grid-cols-[230px_minmax(0,1fr)]; }
   .knowledge-layout { grid-template-columns: 220px minmax(0, 1fr); }
@@ -484,6 +505,8 @@
 }
 
 @media (max-width: 560px) {
+  .sprint-clock { @apply w-full text-left; }
+  .plan-actions .button { @apply flex-1; }
   .grid.cards-4, .grid.cards-3, .form-grid.cols-2 { @apply grid-cols-1; }
   .topbar { @apply flex-col items-start; }
   .question-card { @apply p-[19px]; }

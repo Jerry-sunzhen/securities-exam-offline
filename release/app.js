@@ -2,6 +2,7 @@
   const outlineData = window.OUTLINE_DATA || { meta: {}, toc: [], pages: [], supplements: [] };
   const questionData = window.QUESTION_DATA || { meta: {}, subjects: [], chapters: [], knowledgePoints: [], questions: [] };
   const questionMap = new Map((questionData.questions || []).map((question) => [question.id, question]));
+  const sprintData = window.SPRINT_PLAN || { exams: [], blocks: [], notes: [] };
   const STEM_MARKERS = "ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ①②③④⑤⑥⑦⑧⑨⑩";
   const STEM_MARKER_GLOBAL = new RegExp(`[${STEM_MARKERS}]`, "g");
   const STEM_STATEMENT_PATTERN = new RegExp(`^[（(]?([${STEM_MARKERS}])[)）]?[\\s.、,，:：]*([\\s\\S]+)$`);
@@ -46,6 +47,7 @@
 
   const navItems = [
     ["dashboard", "⌂", "学习总览"],
+    ["plan", "冲", "冲刺计划"],
     ["outline", "知", "知识讲义"],
     ["practice", "练", "章节练习"],
     ["mistakes", "错", "错题与收藏"],
@@ -55,6 +57,7 @@
 
   const pageInfo = {
     dashboard: ["学习总览", "从三色笔记讲义、练习和模考逐步建立完整知识框架"],
+    plan: ["冲刺计划", "考前一天半的分段安排，点一下就连条件带题目进练习"],
     outline: ["知识讲义与官方大纲", "先读详细知识点，再用官方原文核对考试范围"],
     practice: ["章节练习", "按科目、章节和题型生成练习"],
     mistakes: ["错题与收藏", "集中修复薄弱知识点"],
@@ -79,6 +82,7 @@
     memorySession: null,
     activeExam: null,
     sessionTimer: null,
+    sprintTimer: null,
     toasts: []
   };
 
@@ -181,6 +185,8 @@
   }
 
   function render() {
+    clearInterval(state.sprintTimer);
+    state.sprintTimer = null;
     if (state.memorySession) {
       app.innerHTML = renderMemorySession();
       return;
@@ -192,6 +198,7 @@
     }
     const renderer = {
       dashboard: renderDashboard,
+      plan: renderSprintPlan,
       outline: renderOutline,
       practice: renderPractice,
       mistakes: renderMistakes,
@@ -199,6 +206,7 @@
       profile: renderProfile
     }[state.view] || renderDashboard;
     app.innerHTML = layout(renderer());
+    if (state.view === "plan") bindSprintClock();
   }
 
   function applyReadingPositionState(position) {
@@ -328,6 +336,7 @@
           <p>讲义按 2026 新大纲三色笔记的原文整理。答完题可以跳到对应笔记页和教材参考页核对原文；时间紧时优先刷带「★ 多年考点」标记的题。</p>
           <div class="hero-actions">
             <button class="button secondary" data-nav="outline">开始阅读知识讲义</button>
+            <button class="button secondary" data-nav="plan">冲刺计划</button>
             <button class="button" data-action="quick-practice">随机练习 30 题</button>
             <button class="button ghost" data-action="start-exam">120 题限时模考</button>
             ${state.activeExam ? '<button class="button secondary" data-action="resume-exam">恢复未完成模考</button>' : ""}
@@ -775,6 +784,259 @@
           <h3 class="card-title mt-22-safe">内容与版权</h3>
           <p class="content-note">本工具仅供个人非商业学习。内置大纲原件、统编教材与备考笔记版权归原发布机构；题目来自本地历年试题整理资料，答案按原资料保存；解析除原资料内容外，还包含依据本地三色笔记与教材原文辅助补写并标注「AI 补充」的部分，均不宣称官方题库或真题。</p>
         </section>
+      </div>`;
+  }
+
+  // ---- 冲刺计划：把考试前的固定日程做成可点击的清单，进度存在学习档案里 ----
+
+  const SPRINT_PROGRESS_KEY = "sprint:done";
+
+  function sprintTime(day, clock) {
+    return new Date(`${day}T${clock}:00${sprintData.timezone || "+08:00"}`);
+  }
+
+  function sprintBlockStart(block) { return sprintTime(block.date, block.start); }
+  function sprintBlockEnd(block) { return new Date(sprintBlockStart(block).getTime() + (block.minutes || 0) * 60000); }
+  function sprintExamStart(exam) { return sprintTime(exam.date, exam.start); }
+  function sprintExamEnd(exam) { return new Date(sprintExamStart(exam).getTime() + (exam.minutes || 120) * 60000); }
+  function sprintStudyBlocks() { return (sprintData.blocks || []).filter((block) => block.kind !== "exam"); }
+
+  function sprintDoneIds() {
+    try {
+      const value = JSON.parse(StudyDb.getSetting(SPRINT_PROGRESS_KEY) || "[]");
+      return new Set(Array.isArray(value) ? value : []);
+    } catch {
+      return new Set();
+    }
+  }
+
+  function toggleSprintBlock(id) {
+    const done = sprintDoneIds();
+    if (done.has(id)) done.delete(id);
+    else done.add(id);
+    StudyDb.setSetting(SPRINT_PROGRESS_KEY, JSON.stringify([...done]));
+  }
+
+  function sprintCountdown(ms) {
+    if (!Number.isFinite(ms) || ms <= 0) return "00:00:00";
+    const total = Math.floor(ms / 1000);
+    const days = Math.floor(total / 86400);
+    const hours = Math.floor((total % 86400) / 3600);
+    const minutes = Math.floor((total % 3600) / 60);
+    const seconds = total % 60;
+    const pad = (value) => String(value).padStart(2, "0");
+    const clock = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    return days ? `${days} 天 ${clock}` : clock;
+  }
+
+  // 当前状态：正在哪一场考试 / 距下一场多久 / 两科都考完了。
+  function sprintStatus(now = new Date()) {
+    const exams = sprintData.exams || [];
+    const running = exams.find((exam) => now >= sprintExamStart(exam) && now < sprintExamEnd(exam));
+    if (running) return { key: `running:${running.id}`, label: "正在考试", detail: running.label, value: sprintCountdown(sprintExamEnd(running) - now) };
+    const next = exams.find((exam) => now < sprintExamStart(exam));
+    if (next) return { key: `next:${next.id}`, label: `距 ${next.label} 开考`, detail: `${next.date.slice(5)} ${next.start}`, value: sprintCountdown(sprintExamStart(next) - now) };
+    const last = exams[exams.length - 1];
+    return { key: "finished", label: "两科都已考完", detail: last ? `${last.date.slice(5)} ${last.start}` : "", value: "结束" };
+  }
+
+  // 现在该做哪一段：正在进行的段落优先，其次是还没打勾的下一段。
+  function sprintCurrentBlock(now = new Date()) {
+    const blocks = sprintStudyBlocks();
+    const done = sprintDoneIds();
+    const active = blocks.find((block) => now >= sprintBlockStart(block) && now < sprintBlockEnd(block));
+    if (active) return active;
+    const upcoming = blocks.find((block) => now < sprintBlockStart(block) && !done.has(block.id));
+    if (upcoming) return upcoming;
+    return blocks.find((block) => !done.has(block.id)) || null;
+  }
+
+  function sprintClockKey(now = new Date()) {
+    return `${sprintStatus(now).key}|${sprintCurrentBlock(now)?.id || "none"}`;
+  }
+
+  function bindSprintClock() {
+    let lastKey = sprintClockKey();
+    state.sprintTimer = setInterval(() => {
+      const clock = document.querySelector("[data-sprint-clock]");
+      if (!clock) {
+        clearInterval(state.sprintTimer);
+        state.sprintTimer = null;
+        return;
+      }
+      const now = new Date();
+      const status = sprintStatus(now);
+      clock.textContent = status.value;
+      const key = sprintClockKey(now);
+      // 段落切换或开考时整页重画，避免只有数字在动而高亮还停在上一段。
+      if (key !== lastKey) {
+        lastKey = key;
+        render();
+      }
+    }, 1000);
+  }
+
+  function sprintTimeLabel(block) {
+    const end = sprintBlockEnd(block);
+    const pad = (value) => String(value).padStart(2, "0");
+    return `${block.start}–${pad(end.getHours())}:${pad(end.getMinutes())}`;
+  }
+
+  function multiYearQuestions(subjectId) {
+    return (questionData.questions || []).filter((question) =>
+      question.subjectId === subjectId && question.examEligible !== false &&
+      question.verificationStatus === "source_transcribed" && /多年考点/.test(question.repeatLabel || ""));
+  }
+
+  function wrongQuestions(subjectId) {
+    return StudyDb.getWrongQuestionIds().filter((id) => questionMap.get(id)?.subjectId === subjectId);
+  }
+
+  // 任务按钮上的题量是按当前档案实时算的，学完一段数字会自己变小。
+  function sprintTaskSize(task) {
+    if (task.kind === "wrong") return wrongQuestions(task.subjectId).length;
+    if (task.kind === "multiYear") return multiYearQuestions(task.subjectId).length;
+    if (task.kind === "practice") return task.count || 30;
+    return null;
+  }
+
+  function runSprintTask(task) {
+    if (task.kind === "practice") {
+      const questions = selectQuestions({
+        subjectId: task.subjectId,
+        chapterId: task.chapterId || "all",
+        count: task.count || 30,
+        types: task.types ? new Set(task.types) : null
+      });
+      startSession({ mode: "practice", questions, subjectId: task.subjectId });
+      return;
+    }
+    if (task.kind === "wrong") {
+      const ids = wrongQuestions(task.subjectId);
+      if (!ids.length) {
+        toast("这一科还没有错题，先按计划往下做", "error");
+        return;
+      }
+      startSession({ mode: "practice", questions: selectQuestions({ ids, count: ids.length }), subjectId: task.subjectId });
+      return;
+    }
+    if (task.kind === "multiYear") {
+      const related = multiYearQuestions(task.subjectId);
+      if (!related.length) {
+        toast("没有找到多年考点题", "error");
+        return;
+      }
+      const ordered = prioritizeQuestions(related, questionHistory());
+      startSession({ mode: "practice", questions: ExamBank.uniqByStem(ordered, Math.min(80, related.length)), subjectId: task.subjectId });
+      return;
+    }
+    if (task.kind === "memory") { startMemorySession(task.subjectId); return; }
+    if (task.kind === "exam") { startExam(task.subjectId); return; }
+    if (task.kind === "outline") {
+      captureReadingPosition();
+      state.knowledgeSubject = task.subjectId;
+      state.multiYearOnly = true;
+      state.view = "outline";
+      render();
+      resetReadingPositionAfterRender();
+    }
+  }
+
+  function renderSprintTaskButton(task) {
+    const size = sprintTaskSize(task);
+    const empty = size === 0;
+    const suffix = size === null ? "" : empty ? " · 暂无" : ` · ${size} 题`;
+    const title = empty ? ' title="这一科还没有对应题目，先按计划往下做"' : "";
+    return `<button class="button small" data-action="sprint-task"${empty ? " disabled" : ""}${title} data-task="${escapeHtml(JSON.stringify(task))}">${escapeHtml(task.label)}${suffix}</button>`;
+  }
+
+  // 英雄区的按钮：正在休息就指向后面第一个有任务的段落。
+  function sprintHeroAction(current) {
+    if (!current) return null;
+    if (current.tasks?.length) return { label: `现在开始：${current.title}`, task: current.tasks[0] };
+    const blocks = sprintStudyBlocks();
+    const index = blocks.findIndex((block) => block.id === current.id);
+    const next = blocks.slice(index + 1).find((block) => block.tasks?.length) || blocks.find((block) => block.tasks?.length);
+    return next ? { label: `接下来：${next.title}`, task: next.tasks[0] } : null;
+  }
+
+  function renderSprintBlock(block, current, done) {
+    const isExam = block.kind === "exam";
+    const isBreak = block.kind === "break";
+    const focusLabel = { finance: "金融市场基础知识", law: "证券市场基本法律法规", both: "两科" }[block.focus] || "";
+    return `
+      <article class="plan-block ${isExam ? "exam" : ""} ${block.id === current?.id ? "current" : ""} ${done.has(block.id) ? "done" : ""}" data-block-id="${escapeHtml(block.id)}">
+        <div class="plan-head">
+          <span class="plan-time">${sprintTimeLabel(block)}</span>
+          <span class="plan-duration">${block.minutes} 分钟</span>
+          ${focusLabel ? `<span class="plan-focus">${escapeHtml(focusLabel)}</span>` : ""}
+          ${block.id === current?.id ? '<span class="plan-now">现在</span>' : ""}
+          ${isBreak ? '<span class="plan-tag">休息</span>' : ""}
+        </div>
+        <h4>${escapeHtml(block.title)}</h4>
+        <p>${escapeHtml(block.detail)}</p>
+        <div class="plan-actions">
+          ${(block.tasks || []).map(renderSprintTaskButton).join("")}
+          ${isExam ? "" : `<label class="check-chip"><input type="checkbox" data-sprint-block="${escapeHtml(block.id)}" ${done.has(block.id) ? "checked" : ""} />完成</label>`}
+        </div>
+      </article>`;
+  }
+
+  function renderSprintPlan() {
+    const now = new Date();
+    const status = sprintStatus(now);
+    const done = sprintDoneIds();
+    const current = sprintCurrentBlock(now);
+    const hero = sprintHeroAction(current);
+    const blocks = sprintData.blocks || [];
+    const studyBlocks = sprintStudyBlocks();
+    const finished = studyBlocks.filter((block) => done.has(block.id)).length;
+    const days = [...new Set(blocks.map((block) => block.date))];
+    const subjectStats = (subjectId) => {
+      const pool = (questionData.questions || []).filter((question) => question.subjectId === subjectId && question.examEligible !== false);
+      const attempted = new Set(StudyDb.getAttemptRows().map((row) => row.question_id));
+      return { total: pool.length, unseen: pool.filter((question) => !attempted.has(question.id)).length, multiYear: multiYearQuestions(subjectId).length };
+    };
+    const stats = { finance: subjectStats("finance"), law: subjectStats("law") };
+    const wrongTotal = { finance: wrongQuestions("finance").length, law: wrongQuestions("law").length };
+    return `
+      <div class="grid">
+        <section class="card hero-card">
+          <div class="sprint-hero-top">
+            <div>
+              <h3>${escapeHtml(sprintData.title || "冲刺计划")}</h3>
+              <p>9 月 19 日（周六）8:30 金融市场基础知识 · 14:30 证券市场基本法律法规。下面的每一段都按当天的时间排好，点按钮直接带条件进练习。</p>
+            </div>
+            <div class="sprint-clock">
+              <span class="sprint-clock-label">${escapeHtml(status.label)}</span>
+              <strong data-sprint-clock>${escapeHtml(status.value)}</strong>
+              <span class="sprint-clock-target">${escapeHtml(status.detail)}</span>
+            </div>
+          </div>
+          <div class="hero-actions">
+            ${hero ? `<button class="button" data-action="sprint-task" data-task="${escapeHtml(JSON.stringify(hero.task))}">${escapeHtml(hero.label)}</button>` : '<button class="button" data-nav="stats">看学习统计</button>'}
+            <span class="sprint-progress">已完成 ${finished} / ${studyBlocks.length} 段</span>
+          </div>
+        </section>
+        <div class="grid cards-3">
+          <section class="card card-body"><div class="metric-label">金融市场基础知识</div><div class="metric-value">${stats.finance.total}</div><div class="metric-detail">可练题 · 未做 ${stats.finance.unseen} · 多年考点 ${stats.finance.multiYear} · 错题 ${wrongTotal.finance}</div></section>
+          <section class="card card-body"><div class="metric-label">证券市场基本法律法规</div><div class="metric-value">${stats.law.total}</div><div class="metric-detail">可练题 · 未做 ${stats.law.unseen} · 多年考点 ${stats.law.multiYear} · 错题 ${wrongTotal.law}</div></section>
+          <section class="card card-body"><div class="metric-label">计划进度</div><div class="metric-value">${finished}/${studyBlocks.length}</div><div class="progress"><span style="width:${studyBlocks.length ? Math.round(finished * 100 / studyBlocks.length) : 0}%"></span></div><div class="metric-detail">勾选会自动存进学习档案</div></section>
+        </div>
+        ${days.map((day) => `
+          <section class="card card-body">
+            <h3 class="card-title">${day === "2026-09-18" ? "9 月 18 日 · 周五（全天 10 小时）" : `${day.slice(5).replace("-", " 月 ")} 日 · 周六（考试当天）`}</h3>
+            <div class="plan-timeline">
+              ${blocks.filter((block) => block.date === day).map((block) => renderSprintBlock(block, current, done)).join("")}
+            </div>
+          </section>`).join("")}
+        <div class="grid two">
+          ${(sprintData.notes || []).map((note) => `
+            <section class="card card-body">
+              <h3 class="card-title">${escapeHtml(note.title)}</h3>
+              <ul class="knowledge-points">${(note.items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+            </section>`).join("")}
+        </div>
       </div>`;
   }
 
@@ -1518,6 +1780,11 @@
       if (action === "start-exam-subject") startExam(target.dataset.subject);
       if (action === "start-practice") startSession({ mode: "practice", questions: selectQuestions({ subjectId: state.practiceSubject, chapterId: state.practiceChapter, count: state.practiceCount, types: state.practiceTypes }), subjectId: state.practiceSubject });
       if (action === "start-case-practice") startSession({ mode: "practice", questions: selectQuestions({ subjectId: state.practiceSubject, chapterId: "all", count: 16, types: new Set(["case"]) }), subjectId: state.practiceSubject });
+      if (action === "sprint-task") {
+        const task = JSON.parse(target.dataset.task || "{}");
+        if (target.dataset.block) toggleSprintBlock(target.dataset.block);
+        runSprintTask(task);
+      }
       if (action === "list-tab") { state.listTab = target.dataset.tab; render(); }
       if (action === "practice-list") startSession({ mode: "practice", questions: selectQuestions({ ids: getListQuestions().map((q) => q.id), count: getListQuestions().length }) });
       if (action === "toggle-multi-year") { state.multiYearOnly = !state.multiYearOnly; render(); }
@@ -1608,6 +1875,7 @@
     if (target.id === "practice-subject") { state.practiceSubject = target.value; state.practiceChapter = "all"; render(); }
     if (target.id === "practice-chapter") { state.practiceChapter = target.value; render(); }
     if (target.id === "practice-count") { state.practiceCount = Number(target.value); render(); }
+    if (target.dataset.sprintBlock) { toggleSprintBlock(target.dataset.sprintBlock); render(); }
     if (target.dataset.practiceType) {
       if (target.checked) state.practiceTypes.add(target.dataset.practiceType); else state.practiceTypes.delete(target.dataset.practiceType);
       const caseOnly = state.practiceTypes.size === 1 && state.practiceTypes.has("case");
