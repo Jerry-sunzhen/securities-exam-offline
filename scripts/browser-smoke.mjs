@@ -30,6 +30,14 @@ if (usableCase.length < 44 || caseMaterials.size < 19) {
 if (usableCase.some((item) => !item.caseMaterial || !item.caseGroupSize || item.caseOrder > item.caseGroupSize)) {
   throw new Error("综合材料题的段落元数据不完整");
 }
+// 解析不能空着练：原资料确实没有解析的题目前只剩 2 道，再往上说明新导入的题没补解析就进了题库。
+// 联网补充的解析必须带官方页面链接，界面上才能点回去核对。
+const placeholderExplanations = questionPayload.questions.filter((item) => !String(item.explanation || "").trim() || /原资料未提供可用解析/.test(String(item.explanation || "")));
+if (placeholderExplanations.length > 2) throw new Error(`占位解析变多：${placeholderExplanations.length} 题（${placeholderExplanations.slice(0, 5).map((item) => item.id).join(", ")}）`);
+const webExplanations = questionPayload.questions.filter((item) => item.explanationSource === "official-web");
+if (webExplanations.some((item) => !(item.explanationReferences || []).some((reference) => /^https?:\/\//i.test(String(reference.url || ""))))) {
+  throw new Error("联网补充的解析缺少可点回的官方页面链接");
+}
 await import(pathToFileURL(resolve(appRoot, "exam-bank.js")).href);
 const bank = globalThis.ExamBank;
 // 模考也要走「没做过 → 做错过 → 做对了」+ 最近最少出题。整科综合材料只有 23 道小问，

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { pathToFileURL } from "node:url";
 // 本地只读联网检索助手：供学习助教在只读沙箱里核验时效信息。
 // 只做两件事——搜关键词、读某个 URL 的正文摘要；不写文件、不带 cookie、不登录。
 // 用法：
@@ -6,7 +7,14 @@
 //   node scripts/web-lookup.mjs search "证券公司 上市公司 信息披露" [--count 5]
 //   node scripts/web-lookup.mjs fetch "https://www.sac.net.cn/" [--max-chars 4000]
 
-const args = process.argv.slice(2);
+// 既能当命令跑，也能被其它脚本 import 复用（import 时不解析参数、不执行命令）。
+const entryPoint = process.argv[1] || "";
+const isMain = (() => {
+  if (!entryPoint) return false;
+  try { return import.meta.url === pathToFileURL(entryPoint).href; } catch { return false; }
+})();
+
+const args = isMain ? process.argv.slice(2) : [];
 const command = args[0] || "probe";
 const option = (name, fallback) => {
   const index = args.indexOf(name);
@@ -174,7 +182,8 @@ function printResults(engineName, query, results, filteredCount) {
   if (filteredCount > 0) console.log(`（已过滤 ${filteredCount} 条与关键词无关的结果）`);
 }
 
-async function search(query, limit, site) {
+// 返回 { engine, query, results, filtered }；搜不到时 results 为空数组。
+export async function lookupSearch(query, limit = 5, site = "") {
   if (!query) throw new Error("search 需要关键词");
   const fullQuery = site ? `site:${site} ${query}` : query;
   const terms = queryTerms(fullQuery);
@@ -202,39 +211,50 @@ async function search(query, limit, site) {
     }
     // 相关结果够多就直接采用；只有一条时先记下来，继续试下一个引擎，最后再回退到它。
     if (relevant.length >= Math.min(2, limit) || (relevant.length >= 1 && results.length <= 2)) {
-      printResults(engine.name, fullQuery, relevant, results.length - relevant.length);
-      return 0;
+      return { engine: engine.name, query: fullQuery, results: relevant, filtered: results.length - relevant.length, attempts };
     }
     if (relevant.length && (!best || relevant.length > best.results.length)) best = { engine: engine.name, results: relevant, filtered: results.length - relevant.length };
     attempts.push(`${engine.name}:${relevant.length} 条相关结果`);
   }
-  if (best) {
-    console.log(`（只找到 ${best.results.length} 条相关结果，结论请务必用 fetch 打开页面确认）`);
-    printResults(best.engine, fullQuery, best.results, best.filtered);
-    return 0;
-  }
-  console.log(`检索时间：${stamp()}`);
-  console.log(`查询：${fullQuery}`);
-  console.log(`未能拿到可信的搜索结果（${attempts.join("；")}）。`);
-  console.log("建议改用更短的关键词、加 --site 限定官方域名，或用 fetch 直接读取已知官方页面（如 https://www.sac.net.cn/ ）。");
-  return 1;
+  if (best) return { engine: best.engine, query: fullQuery, results: best.results, filtered: best.filtered, attempts, fallback: true };
+  return { engine: "", query: fullQuery, results: [], filtered: 0, attempts };
 }
 
-async function fetchPage(target, maxChars) {
+async function search(query, limit, site) {
+  const found = await lookupSearch(query, limit, site);
+  if (!found.results.length) {
+    console.log(`检索时间：${stamp()}`);
+    console.log(`查询：${found.query}`);
+    console.log(`未能拿到可信的搜索结果（${found.attempts.join("；")}）。`);
+    console.log("建议改用更短的关键词、加 --site 限定官方域名，或用 fetch 直接读取已知官方页面（如 https://www.sac.net.cn/ ）。");
+    return 1;
+  }
+  if (found.fallback) console.log(`（只找到 ${found.results.length} 条相关结果，结论请务必用 fetch 打开页面确认）`);
+  printResults(found.engine, found.query, found.results, found.filtered);
+  return 0;
+}
+
+// 返回 { url, finalUrl, status, title, text }；text 为去标签后的正文（未截断）。
+export async function lookupPage(target) {
   if (!/^https?:\/\//i.test(target || "")) throw new Error("fetch 需要 http/https 开头的完整 URL");
   let attempt;
   try { attempt = await request(target); }
   catch { attempt = await request(target); }
   const { body, response, finalUrl } = attempt;
   const title = stripTags(/<title[^>]*>([\s\S]*?)<\/title>/i.exec(body)?.[1] || "");
-  const text = stripTags(body);
+  return { url: target, finalUrl, status: response.status, title, text: stripTags(body) };
+}
+
+async function fetchPage(target, maxChars) {
+  const page = await lookupPage(target);
   console.log(`抓取时间：${stamp()}`);
+  const { finalUrl, status, title, text } = page;
   console.log(`请求 URL：${target}`);
   console.log(`最终 URL：${finalUrl}`);
-  console.log(`HTTP 状态：${response.status}`);
+  console.log(`HTTP 状态：${status}`);
   if (title) console.log(`页面标题：${title}`);
   console.log(`正文摘录：${text ? clipText(text, maxChars) : "（未提取到正文，可能是 PDF、脚本渲染页面或空响应）"}`);
-  return response.ok ? 0 : 1;
+  return status >= 200 && status < 300 ? 0 : 1;
 }
 
 // 探测本机是否能出网：官方站点偶尔很慢，所以多个目标、任一成功即算可用。
@@ -264,7 +284,7 @@ async function probe() {
   return 1;
 }
 
-try {
+if (isMain) try {
   const limit = Number(option("--count", "5"));
   const maxChars = Number(option("--max-chars", "4000"));
   if (command === "search") process.exitCode = await search(positional.join(" ").trim(), Number.isFinite(limit) && limit > 0 ? Math.min(limit, 10) : 5, option("--site", ""));

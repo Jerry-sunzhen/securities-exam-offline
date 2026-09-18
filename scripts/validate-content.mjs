@@ -127,6 +127,42 @@ for (const question of payload.questions) {
 }
 console.log(`Text cleanup issues: ${textIssueCount}`);
 
+// 解析完整性：每道题都要有解析；联网补充的解析必须能回查到官方页面。
+const PLACEHOLDER = /原资料未提供可用解析/;
+const EXPLANATION_SOURCES = new Set(["local-materials-ai", "official-web"]);
+const explanationStats = { placeholder: [], supplemented: 0, webVerified: 0 };
+for (const question of payload.questions) {
+  const text = String(question.explanation || "").trim();
+  if (!text) errors.push(`${question.id}: 缺少解析`);
+  else if (PLACEHOLDER.test(text)) explanationStats.placeholder.push(question.id);
+  const source = question.explanationSource;
+  if (source !== undefined) {
+    if (!EXPLANATION_SOURCES.has(source)) errors.push(`${question.id}: 未知的解析来源 ${source}`);
+    else explanationStats.supplemented += 1;
+    if (source === "official-web") explanationStats.webVerified += 1;
+  }
+  if (source === "official-web") {
+    const references = Array.isArray(question.explanationReferences) ? question.explanationReferences : [];
+    if (!references.length) errors.push(`${question.id}: 联网补充的解析缺少来源页面`);
+    for (const reference of references) {
+      if (!/^https?:\/\//i.test(String(reference.url || ""))) errors.push(`${question.id}: 解析来源不是可访问的链接`);
+      if (!reference.fetchedAt) errors.push(`${question.id}: 解析来源缺少抓取日期`);
+    }
+  }
+  for (const checked of Array.isArray(question.explanationCheckedSources) ? question.explanationCheckedSources : []) {
+    if (!/^https?:\/\//i.test(String(checked.url || ""))) errors.push(`${question.id}: 联网核验页面不是可访问的链接`);
+  }
+}
+console.log(`讲解补充: ${explanationStats.supplemented} 题（其中联网核验 ${explanationStats.webVerified} 题），仍为占位解析 ${explanationStats.placeholder.length} 题`);
+if (explanationStats.placeholder.length) {
+  const bySubject = new Map();
+  for (const id of explanationStats.placeholder) {
+    const subject = payload.questions.find((question) => question.id === id)?.subjectId || "unknown";
+    bySubject.set(subject, (bySubject.get(subject) || 0) + 1);
+  }
+  console.log(`  占位解析分布：${[...bySubject.entries()].map(([key, value]) => `${key} ${value}`).join("，")}`);
+}
+
 const normalized = new Map();
 for (const question of payload.questions) {
   const key = question.stem.replace(/[\s，。、“”：（）()]/g, "");

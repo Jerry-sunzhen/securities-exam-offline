@@ -75,6 +75,14 @@ pnpm dev
 
 题干、选项和解析已统一做过文本清洗：去掉 PDF 水印、页眉页码、断行与混入的相邻题目，统一引号、罗马数字和顿号，修正识别错字与粘连的页码、重复字句。清洗规则集中在 `scripts/question-text.mjs`，逐题修正记录在 `content/exam-corrections.json`（题号与题干边界由 `scripts/import-exams.py` 识别，行首的金额或比例如「10.40 元」「1.5%」不会被当成题号，「四、材料题」区段与左书名号丢失的「参考答案】」也会被识别；解析里「（1）检查公司财务；」这类列举不再被当成题号，答完题看到的不再是「监事会的职权有：」这种半截话），可重复执行 `node scripts/clean-imported-exams.mjs` 复现；清洗只改文本，不改题目 ID，因此刷题记录、错题本和背诵进度不受影响。
 
+原资料没有解析（或只剩「原资料未提供可用解析」这类占位）的题目，走 `scripts/enrich-explanations.mjs` 的两段式补充：先用本地三色笔记与教材原文检索出依据，生成逐项解析；依据不足时再用 `scripts/web-lookup.mjs` 只读联网，把检索范围限定在证监会（csrc.gov.cn）、证券业协会（sac.net.cn）、政府网（gov.cn）和沪深交易所官网，抓回官方正文作为依据。只有通过校验的解析才会写回 `content/imported-exams.json`：正文 90～420 个汉字、必须逐项分析正确选项、出现的数字要能在原资料或官网页面上找到、不接受 `INSUFFICIENT`。写回后按来源标注 `explanationSource`（`local-materials-ai` 或 `official-web`），联网补充的还会记录引用页面与抓取日期（`explanationReferences`、`explanationCheckedSources`），应用里可以直接点开核对；这些解析都由机器整理，不等于官方答案，涉及现行规则仍以最新官方文本为准。补充后仍写不出解析的题目保留占位说明，`npm run validate` 会打印剩余数量。
+
+```bash
+npm run enrich:explanations        # 只用本地资料补解析，先跑这一档
+npm run enrich:explanations:web    # 本地资料不足时再叠加官方站点联网核验
+node scripts/enrich-explanations.mjs --only-missing --apply --batch 3 --concurrency 3   # 常用参数
+```
+
 历年真题资料迁移在 `content/imported-exams.json` 中维护，原始文件及其 SHA-256、年份、题号和 PDF 页码保存在 `docs/exam-sources/`。题目的知识点与页码绑定在 `scripts/build-content.mjs` 构建时生成；标记为待核验的题目不会进入默认练习或模考。模考使用两科通用业务卷结构（40 单选、40 多选、30 判断、10 综合，总分 100），综合题和单选题按样卷分值计分。
 
 “综合案例专项”按资料里的完整材料出题，同一段材料下的全部小问连续出现（每段 1-6 问不等）。资料中的材料题数量有限，因此案例专项的题量不代表协会公布的真实题型占比。

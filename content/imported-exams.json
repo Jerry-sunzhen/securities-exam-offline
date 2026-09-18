@@ -1112,7 +1112,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "企业改组为拟上市股份有限公司，发起人以货币或非货币财产出资，应当由会计师事务所对出资进行审验并出具验资报告，以证明出资真实、到位，这是发起人出资设立公司的法定验证方式。A 项：评估师事务所负责对非货币财产等资产价值进行评估作价，并不出具验资报告。B 项：保荐机构承担发行上市的保荐与推荐职责，与发起人出资验证无关。C 项：会计师事务所依法对发起人出资进行审验并出具验资报告，为正确项。D 项：律师事务所出具的是法律意见书，核查设立及发行的合法性，不负责出资验资。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -1141,7 +1141,9 @@
         2019
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -2309,7 +2311,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "非公开发行的公司债券不面向社会公众，其发行与转让均应限于具有相应风险识别和承担能力的合格投资者，转让不得突破合格投资者范围，以控制风险。A 项：机构投资者只是主体类型之一，并非界定转让范围的法定称谓。B 项：中小投资者属于受特别保护的公众投资者，正被排除在非公开发行债券之外。C 项：合格投资者是公司债券发行与转让对象的法定限定，为正确项。D 项：专业投资者与普通投资者是对公司债券投资者的分类，不能替代合格投资者这一转让范围限定。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -2338,7 +2340,9 @@
         2019
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -2480,7 +2484,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "政府债券的举债主体是中央政府和地方政府，国债由中央政府发行，地方政府债券由地方政府发行，国有企业、国有金融机构均不属于政府债券的举债主体。A 项：遗漏了中央政府，且错误地把国有企业列入举债主体。B 项：遗漏了地方政府，且错误地把国有金融机构列入举债主体。C 项：中央政府与地方政府共同构成政府债券的举债主体，为正确项。D 项：国有企业发行的是企业债券，国有金融机构发行的是金融债券，均不属于政府举债。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -2509,7 +2513,21 @@
         2019
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationCheckedSources": [
+        {
+          "title": "中国政府网",
+          "url": "https://dzsws.mofcom.gov.cn/zthd/szhzxhbxdcyfmd/art/2020/art_6d666aee73814952aa08c3bbca281f48.html",
+          "fetchedAt": "2026-09-18"
+        },
+        {
+          "title": "政府工作报告",
+          "url": "https://www.mofcom.gov.cn/xwfb/ldrhd/art/2025/art_603435844c68492290da26c50b0f3853.html",
+          "fetchedAt": "2026-09-18"
+        }
+      ],
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -2708,7 +2726,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B 项：社会保障基金即社保基金，属于具有公共保障性质的机构资金，资金运用需服从安全性和流动性要求，投资方向受到较严格限制，故为正确答案。A 项：证券投资基金由基金管理人按基金合同约定的投资目标和范围运作，投资方向取决于产品类型和合同，相对灵活。C 项：企业年金虽同属养老基金，但其投资运作可由受托机构在法规和合同允许的范围内组合配置，限制程度不及社保基金。D 项：社会公益基金主要按章程和捐赠意愿确定资金用途，投资方向约束相对更宽。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -2737,7 +2755,9 @@
         2019
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -3797,7 +3817,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B 项：题干已说明短期融资券的注册会议原则上每周召开1次，按相关规定该次会议应由5名注册委员会委员参加，故5名为正确答案。A 项：9名不符合规定参加注册会议的委员人数要求。C 项：7名同样不是规定的人数。D 项：3名也不是规定的人数。其余选项均属对注册委员会委员人数的干扰设置，本题应选5名。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -3826,7 +3846,9 @@
         2019
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -3911,7 +3933,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "C 项：证券投资者保护基金是依据《证券投资者保护基金管理办法》筹集形成的，用于在防范和处置证券公司风险中保护证券投资者利益，故为正确答案。A 项：《证券法》是证券市场的基本法律，规定投资者保护的基本原则，并非该基金筹集形成的直接依据。B 项：《证券交易所管理办法》规范证券交易所的组织与运行，与保护基金的筹集无关。D 项：《证券登记结算管理办法》规范证券登记结算机构的业务活动，也不涉及该基金的募集。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -3940,7 +3962,9 @@
         2019
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -4139,7 +4163,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "《公司法》规定，公司清算中由清算组负责清理公司财产、编制资产负债表和财产清单，并在清理完毕后制定清算方案，故A项正确。A项：清算组是清算期间执行清算事务的机构，清理财产、编制负债表和财产清单后制定清算方案属于其职责。B项：股东会和股东大会是公司权力机构，不具体负责清算财产的清理和表册编制。C项：人民法院并非清理公司财产、编制负债表和财产清单的机构。D项：董事会是公司经营决策机构，进入清算后相关事务由清算组负责，而非董事会。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -4168,7 +4192,9 @@
         2019
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -4253,7 +4279,7 @@
       "correctOptionIds": [
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A项：Ⅰ计算复杂不成立，简单算术股价平均数正因计算简便而得名；Ⅲ计算结果不精确也不是其缺点，故A项所含Ⅰ、Ⅲ均错。B项：四项全选把Ⅰ、Ⅲ也算作缺点，而这两项并不成立，故B项错误。C项：在Ⅱ、Ⅳ之外多加了不存在的Ⅰ、Ⅲ，故C项错误。D项：Ⅱ、Ⅳ均成立，简单算术股价平均数没有考虑各种股票的权数，不能反映不同股票对市场影响的大小；样本股发生股份变动时，还会失去真实性、连续性和时间数列上的可比性，故D项正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -4282,7 +4308,9 @@
         2019
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -4370,7 +4398,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "典型的间接融资是资金盈余者与资金短缺者通过金融中介间接发生信用关系，银行信贷是其主要代表形式，故与银行发生信用关系属于间接融资，选A。A项：银行作为金融中介，吸收存款并发放贷款，是典型的间接融资形式。B项：证券融资中资金供求双方通过证券市场直接发生信用关系，属于直接融资。C项：信托虽具有融通资金的功能，但不是最典型的间接融资形式。D项：基金属于集合投资工具，也非典型的间接融资形式。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -4399,7 +4427,9 @@
         2019
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -15574,7 +15604,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "有限合伙协议除应满足普通合伙企业协议内容要求外，还应当载明普通合伙人和有限合伙人的姓名或者名称、住所等事项，并涵盖执行事务合伙人应具备的条件和选择程序、执行事务合伙人的除名条件和更换程序、有限合伙人入伙退伙的条件程序及相关责任、有限合伙人和普通合伙人相互转变程序。A 项：仅列Ⅰ、Ⅳ，遗漏Ⅱ、Ⅲ，不完整。B 项：仅列Ⅰ、Ⅱ、Ⅲ，遗漏Ⅳ，不完整。C 项：Ⅰ、Ⅱ、Ⅲ、Ⅳ均属法定应载明事项，正确。D 项：仅列Ⅱ、Ⅲ、Ⅳ，遗漏Ⅰ，不完整。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -15603,7 +15633,23 @@
         2020
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "official-web",
+      "explanationReferences": [
+        {
+          "title": "中华人民共和国合伙企业法",
+          "url": "https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/fgs/art/2023/art_28f19c7b1d204e69a131292d0b793078.html",
+          "fetchedAt": "2026-09-18"
+        }
+      ],
+      "explanationCheckedSources": [
+        {
+          "title": "中华人民共和国合伙企业法",
+          "url": "https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/fgs/art/2023/art_28f19c7b1d204e69a131292d0b793078.html",
+          "fetchedAt": "2026-09-18"
+        }
+      ],
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -17540,7 +17586,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "背信运用受托财产罪的犯罪主体是特殊主体，即商业银行、证券交易所、期货交易所、证券公司、期货经纪公司、保险公司或者其他金融机构；主观方面表现为故意，过失不构成本罪；侵犯的客体是金融管理秩序和客户的合法权益。A 项：含Ⅱ，而商业银行可以成为本罪主体，Ⅱ错误。B 项：含Ⅱ，同样因商业银行可以成为本罪主体而错误。C 项：Ⅰ、Ⅲ、Ⅳ均正确，证券交易所属本罪主体，主观方面只能由故意构成，客体为金融管理秩序和客户合法权益。D 项：含错误的Ⅱ，且遗漏Ⅰ、Ⅳ。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -17569,7 +17615,9 @@
         2020
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -20422,7 +20470,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "合格投资者中的自然人应具备2年以上投资经历，且近3年本人年均收入不低于40万元，并须以真实身份和自有资金参与资产管理计划，故B项成立。A 项：法人单位即便净资产达标，也不得使用发行债券募集的资金参与，须以自有资金参与。B 项：投资经历与年收入符合合格投资者条件，且使用自有资金，正确。C 项：证券公司及其子公司可以以自有资金参与，并非不得参与，说法错误。D 项：期货公司及其子公司不得使用贷款资金参与，须以自有资金参与。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -20451,7 +20499,9 @@
         2020
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -33441,7 +33491,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "欺诈发行股票、债券罪的主观方面只能由故意构成，过失不构成本罪，故A项说法错误，为本题应选项。A项：该罪主观方面表现为故意，过失不构成此罪，故A项错误。B项：该罪主体主要是单位，故B项说法正确。C项：自然人在一定条件下也能成为该罪主体，故C项说法正确。D项：该罪侵犯的是复杂客体，即国家对证券市场的管理秩序以及投资者的合法权益，故D项说法正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -33470,7 +33520,9 @@
         2022
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -34128,7 +34180,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "操纵证券、期货市场罪侵犯的客体是国家证券、期货管理制度和投资者的合法权益，故B项说法正确。A项：本罪主观方面由故意构成，过失不构成本罪，故A项错误。B项：本罪客体为国家证券、期货管理制度和投资者的合法权益，故B项正确。C项：单位犯罪对单位判处罚金，并对直接责任主管和责任人依前处罚，单位亦受处罚，故C项错误。D项：本罪主体为一般主体，单位亦能成为本罪主体，故D项错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -34157,7 +34209,9 @@
         2022
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51200,7 +51254,7 @@
       "correctOptionIds": [
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "依据规定，非公开募集基金应当向合格投资者募集，合格投资者累计不得超过200人，故D项符合规定。A项：150人并非该累计人数上限，故A项错误。B项：100人并非该累计人数上限，故B项错误。C项：300人并非该累计人数上限，故C项错误。D项：200人为非公开募集基金合格投资者累计人数的法定上限，故D项正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51229,7 +51283,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51257,7 +51313,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查证券资信评级业务人员的法定回避情形，应选B项。据本地参考教材，评级委员会委员及评级从业人员在开展业务期间，本人、直系亲属担任受评级机构或者受评级证券发行人的董事、监事和高级管理人员时才须回避，普通员工不在回避范围内，故B项表述错误。A项：本人、直系亲属持有受评级机构或者受评级证券发行人的股份达到5%以上，属于应当回避的情形，该说法正确。C项：本人、直系亲属持有受评级证券或者受评级机构发行的证券金额超过50万元，属于应当回避的情形，该说法正确。D项：本人、直系亲属担任受评级机构或者受评级证券发行人聘任的会计师事务所、律师事务所、财务顾问等证券服务机构的负责人或者项目签字人，属于应当回避的情形，该说法正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51286,7 +51342,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51314,7 +51372,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查非法吸收公众存款罪，应选C项。本地参考明确该罪主体为一般主体，包括单位和个人，主观方面只能是故意，C项称主体只能是单位、主观可为过失，故说法错误。A项：单位犯该罪的，对单位判处罚金，并对其直接负责的主管人员和其他直接责任人员依照《刑法》相关规定处罚，该说法正确。B项：本罪侵犯的客体是国家金融管理秩序，该说法正确。D项：本罪在客观方面表现为非法吸收或者变相吸收公众存款的行为，该项表述与之相符，该说法正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51343,7 +51401,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51371,7 +51431,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查证券公司风险控制指标体系的核心。本地参考教材载明，证券公司风险控制指标体系以净资本和流动性为核心，净资本等于核心净资本加附属净资本，并配套风险覆盖率、资本杠杆率、流动性覆盖率、净稳定资金率等指标，故A项正确。B项：净资产不属于该风险控制指标体系的核心指标，该说法错误。C项：总负债不是该风险控制指标体系的核心，该说法错误。D项：净利润是经营成果指标，也不是该风险控制指标体系的核心，该说法错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51411,7 +51471,9 @@
         2025
       ],
       "repeatCount": 2,
-      "repeatLabel": "重复出现 · 2025"
+      "repeatLabel": "重复出现 · 2025",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51439,7 +51501,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "我国证券市场法律法规体系的主要层级为法律、行政法规、部门规章、规范性文件、行业自律规则五个层级，故正确答案为B。A项：只列出法律、行政法规、部门规章三个层级，遗漏了规范性文件和行业自律规则，层级不完整。B项：教材明确该体系包括法律、行政法规、部门规章、规范性文件、行业自律规则，与题意相符。C项：仅列到规范性文件共四个层级，缺少行业自律规则，仍不完整。D项：多列了各组织机构规章制度，但公司内部规章制度属于证券公司自身合规管理范畴，并非证券市场法律法规体系的层级。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51468,7 +51530,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51496,7 +51560,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "客户的交易结算资金和证券属于客户，应当与证券公司自有资产相互独立、分别管理，故证券公司向股东出借、挪用的客户交易结算资金属于法律禁止情形，正确答案为C。A项：股东为证券公司提供担保是正常担保行为，法律并不禁止。B项：证券公司依法向股东分配税后利润属于合法的利润分配，不是禁止情形。C项：将客户交易结算资金出借、挪用给股东，破坏了客户资产的独立存管，为法律所禁止。D项：股东在证券公司开立证券账户属于正常的开户投资行为，法律允许。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51525,7 +51589,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51553,7 +51619,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "期货和衍生品交易活动除应遵守法律、行政法规和国家有关规定外，还应遵循公开、公平、公正原则，禁止欺诈、操纵市场和内幕交易，故正确答案为C。A项：自愿、平等、有偿是证券发行、交易活动当事人的行为准则，不是本题所问原则。B项：诚实信用、平等互利、公序良俗不是期货和衍生品交易的原则表述。C项：期货交易采用公开的集中交易方式，与证券市场交易一样强调公开、公平、公正。D项：高效、透明、诚信不属于法律规定的基本原则。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51582,7 +51648,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51610,7 +51678,7 @@
       "correctOptionIds": [
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A项：合伙企业解散应当由清算人进行清算，清算人由全体合伙人担任，符合规定。B项：经全体合伙人过半数同意，可以自合伙企业解散事由出现后15日内指定一个或者数个合伙人，或者委托第三人担任清算人，符合规定。C项：合伙企业财产在支付清算费用和职工工资、社会保险费用、法定补偿金以及缴纳所欠税款、清偿债务后的剩余财产，依照普通合伙企业利润分配、亏损分担规则进行分配，符合规定。D项：表述错误，清算结束后清算报告的编制、签名盖章以及向企业登记机关报送并申请注销登记，应严格按法定要求进行，D项与法定要求不符，故应选D。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51642,7 +51710,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51670,7 +51740,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B 项：证券公司从业人员是指从事证券融资融券、证券自营、证券做市交易、证券资产管理等业务和相关管理工作的人员，行政管理部前台岗属行政事务，不具备从业人员身份，故为本题应选项。A 项：证券公司董事长、从事业务管理工作的其他董事和监事、高级管理人员、分支机构负责人均为从业人员，刘某属于从业人员。C 项：证券分析师属于证券投资咨询人员，从事证券投资咨询业务，属于从业人员。D 项：融资融券部门投资经理从事融资融券业务，属于从业人员。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51702,7 +51772,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51730,7 +51802,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "C 项：基金管理人、基金托管人因依法解散、被依法撤销或者被依法宣告破产等原因进行清算的，基金财产不属于其清算财产，该说法正确，为本题应选项。A 项：基金财产的债权不得与基金管理人、基金托管人固有财产的债务相抵销，不同基金财产的债权债务也不得相互抵销，并无公募基金除外的规定，故错误。B 项：基金管理人、基金托管人因基金财产的管理、运用或者其他情形取得的财产和收益应归入基金财产，而非归入基金管理人，故错误。D 项：基金财产的债务由基金财产本身承担，基金份额持有人以其出资为限对基金财产的债务承担责任，故错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51759,7 +51831,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51787,7 +51861,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题要求选出说法错误的一项，C项当选。C项：违反廉洁从业规定后向中国证券业协会报告或者积极配合调查即免予从轻处理的表述与规定不符，故错误。A项：曾任证券期货经营机构合规风控职务的人员违反廉洁从业规定的，应当从重处理，说法正确。B项：直接、间接或者唆使、协助他人向监管人员输送利益的，应当从重处理，说法正确。D项：曾为公职人员特别是监管人员违反廉洁从业规定的，应当从重处理，说法正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51816,7 +51890,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51844,7 +51920,7 @@
       "correctOptionIds": [
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "D项：证券公司受中国证券登记结算机构委托为客户开立证券账户，须审查客户申报的姓名或者名称、身份的真实性，同一客户开立的资金账户和证券账户的姓名或者名称应当一致，该说法正确。A项：资金账户可由证券公司为客户开立，但证券账户是证券公司受托代客户开立，并非均由证券公司直接开立，该说法错误。B项：证券公司不得将客户的资金账户、证券账户提供给他人使用，该做法错误。C项：投资者应当使用实名开立的账户进行交易，证券公司将自有证券账户提供给客户使用不符合账户实名要求，该做法错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51873,7 +51949,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51901,7 +51979,7 @@
       "correctOptionIds": [
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题应选D项。D项：该做法将离职情形排除在工作人员廉洁从业考察评估之外，与规定要求不符，故做法错误。A项：建立健全廉洁从业内部控制制度，制定事前风险防范体系、事中管控措施和事后追责机制，符合规定。B项：对所从事的业务种类、环节及相关工作开展廉洁风险评估，识别廉洁从业风险点，强化岗位制衡与内部监督并确保运作有效，做法正确。C项：制定工作人员廉洁从业规范，明确廉洁从业要求，加强廉洁培训和教育并培育廉洁从业文化，做法正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51930,7 +52008,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -51958,7 +52038,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查另类投资业务的总体要求。A 项：现行规则明确另类子公司不得再下设任何机构，故“可以下设实业投资子公司”的说法不正确，为本题应选项。B 项：另类子公司开展业务应当遵循稳健经营、诚实守信、勤勉尽责原则并坚持专业化投资原则，说法正确。C 项：证券公司应当建立完善有效的内部控制机制，履行母公司的管理责任，对子公司统一实施管控，说法正确。D 项：证券公司应当将另类子公司的合规与风险管理纳入公司统一体系，加强对另类子公司的资本约束，说法正确。故本题选 A。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -51990,7 +52070,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -52018,7 +52100,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查流动性风险的含义。A 项：流动性风险正是指证券公司无法以合理成本及时获得充足资金，以偿付到期债务、履行其他支付义务和满足正常业务开展资金需求的风险，与题干表述一致，为正确答案。B 项：操作风险是指由不完善或有问题的内部程序、人员、信息技术系统以及外部事件造成损失的风险，与题干不符。C 项：声誉风险虽属证券公司全面风险管理涵盖的风险类型之一，但题干所述资金获取困难并不属于声誉风险。D 项：信用风险是全面风险管理体系中的另一类风险，题干所述为资金及时获取问题，与信用风险无关。故本题选 A。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -52058,7 +52140,9 @@
         2025
       ],
       "repeatCount": 2,
-      "repeatLabel": "重复出现 · 2025"
+      "repeatLabel": "重复出现 · 2025",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -52089,7 +52173,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查证券法关于证券公司从业人员执业行为的禁止性规定。A 项：为牟取佣金收入，诱使客户进行不必要的证券买卖，属于损害客户利益的禁止行为，说法正确。B 项：在证券交易活动中作出虚假陈述或者信息误导，法律明确禁止，说法正确。C 项：不在规定时间内向客户提供交易的确认文件，属于损害客户利益的禁止行为，说法正确。D 项：未经客户委托擅自为客户买卖证券，同样属于禁止的损害客户利益行为，说法正确。故本题选 A、B、C、D。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -52121,7 +52205,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -52152,7 +52238,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "证券公司处理投资者个人信息应当遵循合法、正当、必要、诚信原则，不得损害投资者合法权益，四项共同构成其个人信息保护义务。A 项：合法要求处理投资者个人信息有法律依据并符合法律规定，是处理信息的基本前提，故正确。B 项：正当要求处理目的和手段合理适当，不得以不正当方式获取、使用信息，故正确。C 项：必要要求处理信息限于实现处理目的所需的最小范围，不得过度收集，故正确。D 项：诚信要求处理者秉持诚实信用，不得欺骗、误导投资者，故正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -52184,7 +52270,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -52475,7 +52563,7 @@
         "B",
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "设立管理公开募集基金的基金管理公司应当具备法定条件并经国务院证券监督管理机构批准，故正确选项为 A、B、C。A 项：应当有符合《证券投资基金法》和《公司法》规定的章程，故正确。B 项：取得基金从业资格的人员达到法定人数是设立条件之一，故正确。C 项：董事、监事、高级管理人员具备相应的任职条件，故正确。D 项：注册资本应当不低于 1 亿元人民币且必须为实缴资本，而非不低于 5000 万元，故错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -52509,7 +52597,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -52538,7 +52628,7 @@
         "B",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "证券投资咨询人员主要包括证券投资顾问人员及证券分析师两类，故本题正确选项为 B、D。A 项：证券经纪人属于从业人员登记中的一般证券业务类别，并非投资咨询人员，故错误。B 项：证券分析师属于证券投资咨询人员，其从事发布证券研究报告业务，故正确。C 项：证券交易员不属于证券投资咨询人员，故错误。D 项：证券投资顾问属于证券投资咨询人员，其向客户提供投资建议，故正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -52568,7 +52658,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -52598,7 +52690,7 @@
         "B",
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "财务顾问从事上市公司并购重组财务顾问业务应履行法定职责。A项：接受并购重组当事人委托，对上市公司并购重组活动进行尽职调查、全面评估所涉及风险，属于应履行的职责，故正确。B项：在充分核查验证基础上依据中国证监会规定和监管要求客观、公正发表专业意见，属于应履行的职责，故正确。C项：根据中国证监会相关规定持续督导委托人依法履行相关义务，属于应履行的职责，故正确。D项：提供证券投资咨询服务并非财务顾问的法定职责，故错误。",
       "caseMaterial": "2015 年，甲证券公司与乙上市公司签署《独立财务顾问协议》，成为丙公司借壳乙公司的财务顾问。\n当年，丙公司完成借壳上市，重大资产重组完成后，甲证券公司在法律规定的期限内承担持续督导责任，先后出具了《2015 年度持续督导意见》\n《关于丙公司的专项核查意见》等。陈某与李某为项目主要负责人及签字主办人。该证券公司就该借壳上市独立财务顾问项目收取各项费用总计 1000 万元，以上业务过程中，甲证券公司未关注到丙公司购销业务异常增加，未发现…",
       "caseGroupId": "law-d077e29682f8-case-86b849f098",
       "origins": [
@@ -52632,7 +52724,9 @@
       "repeatLabel": null,
       "caseOrder": 1,
       "caseGroupSize": 2,
-      "caseGroupTitle": "历年材料题"
+      "caseGroupTitle": "历年材料题",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -52722,7 +52816,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "存在法定情形时，可以对有关责任人员从轻、减轻采取证券市场禁入措施。B项：及时停止、纠正违规行为并主动减轻违法行为危害后果，符合从轻减轻情形，故正确。C项：积极配合监管部门调查并有检举揭发他人内幕交易等立功表现，符合从轻减轻情形，故正确。D项：确有证据证明其受公司大股东胁迫而实施相关行为，符合受他人胁迫情形，故正确。A项：股价受其他利好因素影响大涨、无投资者通过法律途径维权，不属于法定从轻减轻情形，也不影响对违法行为的责任认定，故错误。",
       "caseMaterial": "张某系某上市公司董事长，指示公司有关人员伪造工程进度单、人工成本计算单、材料成本等相关资料，签无真实交易背景的购销合同并伪造有关凭证，虚增营业收入 2000 万元，并将前述数据载入相关定期报告，张某因此被证监会采取 5 年证券市场禁入。",
       "caseGroupId": "law-d077e29682f8-case-e6b958ad33",
       "origins": [
@@ -52756,7 +52850,9 @@
       "repeatLabel": null,
       "caseOrder": 1,
       "caseGroupSize": 1,
-      "caseGroupTitle": "历年材料题"
+      "caseGroupTitle": "历年材料题",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -52784,7 +52880,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "依据风险管理相关规定，公司开展风险评估的最低频率为每年一次。A项：每季度虽频次更高，但并非规定的最低评估周期；B项：每年一次与规定的最低评估频率一致，故正确；C项：每半年虽频次更高，同样不符合规定的最低评估周期；D项：每两年间隔过长，低于法定最低评估频率，故错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -52813,7 +52909,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -52841,7 +52939,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查基金管理公司重大事项变更的审批要求。A 项：基金管理公司变更持有5%以上股权的股东、变更公司的实际控制人或者变更其他重大事项的，应当报经国务院证券监督管理机构批准，故该项正确。B 项：2%低于规定比例，不是需要报批的持股起点，错误。C 项：3%同样不符合规定比例，错误。D 项：8%高于规定比例，也不是报批所需的持股起点，错误。因此本题选A。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -52870,7 +52968,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -52898,7 +52998,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查声誉风险管理应遵循的原则。A 项：从高层做起并不属于该指引规定的原则，故该项不属于应遵循的原则，为本题答案。B 项：预防第一原则属于声誉风险管理应遵循的原则。C 项：审慎管理原则属于应遵循的原则。D 项：快速响应原则属于应遵循的原则。该指引规定的原则为全程全员原则、预防第一原则、审慎管理原则和快速响应原则。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -52927,7 +53027,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -52955,7 +53057,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查股票溢价收入的归属。C 项：股份有限公司以超过股票票面金额的发行价格发行股份所得的溢价款，应当列为公司资本公积金，故该项正确。A 项：法定公积金是从公司税后利润中提取的，并非股票发行的溢价收入。B 项：任意公积金是在提取法定公积金后经股东会决议从税后利润中提取的，也与溢价收入无关。D 项：营业收入是公司日常经营活动取得的收入，不能涵盖股票溢价部分。因此本题选C。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -52984,7 +53086,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53012,7 +53116,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题选A。根据《证券法》第二百二十条，违法行为人的财产不足以支付时，优先用于承担民事赔偿责任，因此欺诈发行股票、债券的犯罪在同时承担民事赔偿责任与缴纳罚款、罚金时，先承担民事赔偿责任。A项：该表述符合优先用于民事赔偿的法定顺序，为正确答案。B项：刑事并非题干所指的优先承担对象，刑罚与罚款、罚金并列列于民事赔偿之后。C项：行政处罚同样不是优先承担的责任。D项：缴纳罚款属于行政责任，罚金属于刑事责任，二者均须在民事赔偿之后支付。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53041,7 +53145,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53069,7 +53175,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题选C。证券公司合规管理应覆盖所有业务、各部门、各分支机构、各层级子公司和全体工作人员，并贯穿决策、执行、监督、反馈等各个环节。A项：合规管理贯穿决策、执行、监督、反馈等各个环节，说法正确。B项：合规管理覆盖所有业务，说法正确。C项：合规管理的覆盖对象是各层级子公司而非各关联公司，二者范围并不相同，故该说法错误，为本题所选。D项：合规管理覆盖全体工作人员，说法正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53098,7 +53204,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53126,7 +53234,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题选A。证券公司应当任命一名高级管理人员负责全面风险管理工作，即首席风险官，证券公司指定或设立的专门风险管理部门在首席风险官的领导下推动全面风险管理工作。A项：风险管理部门在首席风险官领导下推动全面风险管理工作，故正确。B项：合规总监负责合规管理，不领导全面风险管理工作。C项：首席信息官负责信息技术管理工作，与全面风险管理无关。D项：董事会秘书属于高级管理人员，但不承担领导全面风险管理工作的职责。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53155,7 +53263,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53183,7 +53293,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查专业投资者的范围。A项：自然人成为第二类专业投资者需金融资产不低于500万元，或最近3年个人年均收入不低于50万元，并具备相应投资、工作经历，仅300万元金融资产未达标准，可能不属于专业投资者，为应选项。B项：商业银行属于经金融监管部门批准设立的金融机构，是第一类专业投资者。C项：保险公司同属该类金融机构，也属第一类专业投资者。D项：私募基金管理者即经行业协会备案或者登记的私募基金管理人，同样列入第一类专业投资者。因此选A。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53212,7 +53322,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53240,7 +53352,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查开放式基金份额持有人的赎回权。A项：开放式基金的基金份额可以在基金合同约定的时间和场所申购或者赎回，持有人可依约定申请赎回，表述正确。B项：赎回场所由基金合同约定，并非任何场所都能申请，表述错误。C项：赎回时间同样受基金合同约定约束，并非任何时间都能申请，表述错误。D项：开放式基金份额可以赎回，不得申请赎回的是封闭式基金，表述错误。因此选A。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53269,7 +53381,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53299,7 +53413,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查证券公司内部控制体系的要求。A项：融资融券属信用业务，需动态监控担保物价值与客户负债，建立逐日盯市制度以控制风险，表述正确。B项：资产管理属受托业务，不得向客户订立保本保底条款，该表述错误。C项：经纪业务应落实账户实名制，核验客户身份真实性，表述正确。D项：自营业务是证券公司以自有资金、以自己的名义为本公司买卖证券，故必须以自己的名义进行，表述正确。因此选A、C、D。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53330,7 +53444,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53361,7 +53477,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A项：虚假出资、抽逃出资的，处以虚假出资金额或者所抽逃出资金额5%以上15%以下的罚款，与教材责任条款一致。B项：虚假出资、抽逃出资的责任主体是公司的发起人、股东，故违法行为主体的表述正确。C项：上述违法行为由公司登记机关责令改正，该项成立。D项：情节严重的，撤销公司登记或者吊销营业执照，符合相关法律责任规定。四个选项均能在《公司法》相关责任条款中找到依据。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53409,7 +53525,9 @@
         2025
       ],
       "repeatCount": 2,
-      "repeatLabel": "重复出现 · 2025"
+      "repeatLabel": "重复出现 · 2025",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53439,7 +53557,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A项：从事私募基金业务活动应当遵循自愿原则，与原文表述一致。B项：平等是证券发行、交易活动当事人的行为准则，并非私募基金业务活动应遵循的原则，故错误。C项：从事私募基金业务活动应当遵循诚信原则，表述正确。D项：从事私募基金业务活动应当遵循公平原则，与自愿、诚信并列，故该项成立。综上，应选A、C、D。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53470,7 +53588,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53501,7 +53621,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A项：公司从事经营活动必须遵守商业道德，符合公司经营原则。B项：公司从事经营活动必须遵守法律，该项正确。C项：公司从事经营活动必须遵守社会公德，表述成立。D项：公司从事经营活动必须遵守行政法规，与法律并列，故该项正确。四个选项均属于公司经营活动应当遵守的内容，故选A、B、C、D。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53549,7 +53669,9 @@
         2025
       ],
       "repeatCount": 2,
-      "repeatLabel": "重复出现 · 2025"
+      "repeatLabel": "重复出现 · 2025",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53579,7 +53701,7 @@
         "B",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A项：本地参考原文载明流动性覆盖率等于优质流动性资产比未来30日内现金净流出再乘100%，标准为不得低于100%，故正确。B项：净稳定资金率等于可用稳定资金比所需稳定资金再乘100%，标准为不得低于100%，故正确。C项：风险覆盖率等于净资本比各项风险资本准备之和再乘100%，标准为不得低于100%，而非80%，故错误。D项：资本杠杆率等于核心净资本比表内外资产总额再乘100%，标准为不得低于8%，故正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53623,7 +53745,9 @@
         2025
       ],
       "repeatCount": 2,
-      "repeatLabel": "重复出现 · 2025"
+      "repeatLabel": "重复出现 · 2025",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53654,7 +53778,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "四项分别从经营根基、服务实体经济、资本市场改革和风险防范角度阐明健康良好行业文化的重要意义。A项：健康良好的行业文化是行稳致远的立身之本，是公司稳健经营的基础，故正确。B项：健康良好的行业文化是服务实体经济的内在要求，契合服务实体经济的根本目标，故正确。C项：健康良好的行业文化是全面深化资本市场改革的重要保障，能为改革提供支撑，故正确。D项：健康良好的行业文化是防范金融风险的有力抓手，有助于防范金融风险，故正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53686,7 +53810,16 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationCheckedSources": [
+        {
+          "title": "国民经济行业分类 - 国家统计局",
+          "url": "https://www.stats.gov.cn/sj/tjbz/gmjjhyfl/",
+          "fetchedAt": "2026-09-18"
+        }
+      ],
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53716,7 +53849,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "财务顾问主办人在并购重组信息依法公开前负有保密义务，不得实施法律禁止的相关行为。A项：操纵证券市场属于法律禁止的行为，财务顾问主办人实施的应受处罚，故正确。B项：在项目组内讨论相关信息属于正常业务工作，不属于违规行为，故不选。C项：泄露内幕信息是内幕交易的禁止情形之一，应受处罚，故正确。D项：建议他人买卖该公司证券属于明示、暗示他人买卖的禁止情形，应受处罚，故正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53747,7 +53880,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53777,7 +53912,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "根据教材规定，证券公司、证券投资咨询机构从事证券投资顾问业务，应当遵守法律、行政法规和《证券投资顾问业务暂行规定》，加强合规管理，健全内部控制，防范利益冲突，切实维护客户合法权益，故B、C、D三项成立。A项：规定要求的是加强合规管理，而非加强人员管理，人员管理属于证券投资顾问业务内部控制中的具体要求，与本题所引基本原则的表述不符，故错误。B项：切实维护客户合法权益是规定明确要求的内容，故正确。C项：防范利益冲突是规定明确要求的内容，故正确。D项：健全内部控制是规定明确要求的内容，故正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53808,7 +53943,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53838,7 +53975,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "根据《证券公司监督管理条例》关于内部控制体系的要求，A、C、D三项均正确。A项：证券公司融资融券业务应当建立逐日盯市制度，故正确。B项：资产管理业务不得向客户作出保本保底承诺，订立客户保本保底条款违反规定，故错误。C项：证券公司经纪业务应当进行账户实名制管理，对客户申报的姓名或名称、身份的真实性进行审查，故正确。D项：证券公司的自营业务必须以自己的名义进行，故正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53869,7 +54006,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53889,7 +54028,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查反洗钱的定义，题干表述与法规和教材一致。A项：反洗钱是指为了预防通过各种方式掩饰、隐瞒毒品犯罪、黑社会性质的组织犯罪、恐怖活动犯罪、走私犯罪、贪污贿赂犯罪、破坏金融管理秩序犯罪、金融诈骗犯罪等犯罪所得及其收益的来源和性质的洗钱活动，依照《反洗钱法》等法律法规采取相关措施的行为，与三色笔记及教材的界定相符，故正确。B项：题干内容符合反洗钱的法定定义，并不存在错误，故错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53918,7 +54057,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -53938,7 +54079,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "此题说法错误，应选B。A项：若认为该说法正确，就须同时认可“基金评价机构必须加入中国证券业协会”和“可以对不同分类的基金进行合并评价”两部分，但后者与《证券投资基金评价业务管理暂行办法》不符，基金评价机构不得对不同分类的基金进行合并评价，故A项不能成立。B项：该说法把不得合并评价的事项说成可以合并评价，后半句与规定相悖，整个判断因而错误，应选B。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -53967,7 +54108,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54036,7 +54179,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B 项：本题选B，该表述错误，因为按规定证券公司应当按照规定向社会公众披露本公司经审计的年度财务报告及其他信息，并保证披露信息的真实、准确、完整，题干把经审计的年度财务报告写成未经审计，与规定不符。A 项：认为该表述正确不能成立，题干将应当经审计的年度财务报告表述为未经审计，属于对披露要求的错误描述，故不能判为正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -54065,7 +54208,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54085,7 +54230,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "即该说法错误。B项：我国证券市场法律法规体系的主要层级依次为法律、行政法规、部门规章、规范性文件、行业自律规则，题干把行业自律规则排在规范性文件之前，层级位次颠倒，故该表述错误，为应选项。A项：该说法把顺序说成法律、行政法规、部门规章、行业自律规则、规范性文件，与教材所列顺序不一致，故不能认为正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -54117,7 +54262,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54145,7 +54292,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "中国证监会对证券公司及其直接负责人员的行政处罚包括责令改正、警告、没收违法所得和罚款等，而纪律处分由行业自律组织作出，不属于证监会可以采取的处罚措施。A项：责令改正是证监会针对违法行为可以采取的处罚措施，符合规定，不选。B项：没收业务收入并处罚款属于对证券公司违法行为的行政责任，符合规定，不选。C项：对陈某和李某给予纪律处分属于自律组织的权限，不是证监会的处罚措施，为应选项。D项：对直接负责的主管人员和责任人给予警告并处罚款，属于证监会可以采取的处罚，不选。",
       "caseMaterial": "2015 年，甲证券公司与乙上市公司签署《独立财务顾问协议》，\n成为丙公司借壳乙公司的财务顾问。当年，丙公司完成借壳上市，重大资产重组完成后，甲证券公司在法律规定的期限内承担持续督导责任，先后出具了《2015 年度持续督导意见》\n《关于丙公司的专项核查意见》等。陈某与李某为项目主要负责人及签字主办人。该证券公司就该借壳上市独立财务顾问项目收取各项费用总计 1000 万元，以上业务过程中，甲证券公司未关注到丙公司购销业务异常增加，未发现丙公司存在虚构建材销售收入的情况，也未与会计师沟通核实公司的业务结构、盈利模式等情况….",
       "caseGroupId": "law-7771b61d3979-case-6b023d0354",
       "origins": [
@@ -54177,7 +54324,9 @@
       "repeatLabel": null,
       "caseOrder": 1,
       "caseGroupSize": 1,
-      "caseGroupTitle": "历年材料题"
+      "caseGroupTitle": "历年材料题",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54296,7 +54445,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "股票期权交易实行当日无负债结算制度，结算结果应当在当日及时通知结算参与人，结算参与人据此对投资者进行结算并按约定方式通知投资者，与题干完全对应。A项：当日无负债结算制度要求当日及时通知结算结果，正是题干所述制度，为应选项。B项：保证金制度是关于权利金、行权资金和以现金形式提交的保证金存放的规定，与当日通知结算结果无关。C项：强制平仓是风险处置措施，不是结算结果通知所依据的制度。D项：套期保值是证券公司自有资金参与股票期权交易的目的之一，并非题干所指的结算制度。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -54325,7 +54474,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54535,7 +54686,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A项：具有中华人民共和国国籍是申请登记为证券投资咨询人员的必备条件之一，说法正确。B项：具有完全民事行为能力同样是必备条件，说法正确。C项：必备条件要求具有大学本科以上学历，而非专科以上学历，故该说法错误，为本题答案。D项：未受过刑事处罚或者与证券业务有关的严重行政处罚属于必备条件，说法正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -54564,7 +54715,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54592,7 +54745,7 @@
       "correctOptionIds": [
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A项：分类监管制度对促进证券公司加强合规管理、提升风险控制能力、培育核心竞争力发挥正向激励作用，提升风险控制能力在其中，说法正确。B项：培育核心竞争力也是该正向激励作用的体现，说法正确。C项：加强合规管理同样是该正向激励作用的体现，说法正确。D项：便于证券公司广告宣传不属于分类监管的正向激励作用，且证券公司不得将相关评估结果用于广告、宣传、营销等商业目的，故该说法错误，为本题答案。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -54621,7 +54774,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54649,7 +54804,7 @@
       "correctOptionIds": [
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A项：有限合伙企业由普通合伙人执行合伙事务，说法正确。B项：执行事务合伙人可以要求在合伙协议中确定执行事务的报酬及报酬提取方式，说法正确。C项：有限合伙人不执行合伙事务，不得对外代表有限合伙企业，说法正确。D项：有限合伙人参与选择承办有限合伙企业审计业务的会计师事务所，属于法律明确规定不视为执行合伙事务的行为，故该说法错误，为本题答案。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -54678,7 +54833,23 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "official-web",
+      "explanationReferences": [
+        {
+          "title": "中华人民共和国合伙企业法",
+          "url": "https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/fgs/art/2023/art_28f19c7b1d204e69a131292d0b793078.html",
+          "fetchedAt": "2026-09-18"
+        }
+      ],
+      "explanationCheckedSources": [
+        {
+          "title": "中华人民共和国合伙企业法",
+          "url": "https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/fgs/art/2023/art_28f19c7b1d204e69a131292d0b793078.html",
+          "fetchedAt": "2026-09-18"
+        }
+      ],
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54706,7 +54877,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题要求选出错误说法，B 项当选。A 项：行政重组可以采取注资、股权重组、债务重组、资产重组、合并或者其他方式，与规定一致。B 项：证券公司经停业整顿、托管、接管或者行政重组在规定期限内仍达不到正常经营条件，但能够清偿到期债务的，应由国务院证券监督管理机构依法撤销其证券业务许可，而非申请行政重组，故错误。C 项：行政重组期限一般不超过12个月，期满未完成的，国务院证券监督管理机构可以决定延长，延长最长不得超过6个月。D 项：在托管、接管等过程中达到正常经营条件的，经国务院证券监督管理机构批准可以恢复正常经营。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -54735,7 +54906,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54763,7 +54936,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "证券公司风险控制指标体系以净资本和流动性为核心，资本杠杆率的计算公式为核心净资本除以表内外资产总额再乘以100%，其监管标准为不得低于8%，即0.08，证券公司应持续符合该标准，故B项正确。A项0.05低于规定的8%，不符合持续符合风险控制指标标准的要求，错误。C项0.1即10%，虽高于8%的下限，但它不是该指标规定的最低标准，错误。D项0.07同样低于8%的规定下限，错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -54792,7 +54965,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54820,7 +54995,7 @@
       "correctOptionIds": [
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查资产管理计划终止后的备案时限，正确选项为 D。A 项：1个工作日不是规定的备案期限。B 项：3个工作日不符合规定要求。C 项：4个工作日亦无相应依据。D 项：证券公司应当自资产管理计划终止之日起5个工作日内报中国证券投资基金业协会备案，并抄报中国证监会相关派出机构，故正确。资产管理计划成立时的备案同样适用5个工作日的期限要求。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -54849,7 +55024,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54877,7 +55054,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B项：董事会是召集股东大会的法定主体，公司章程规定对外提供担保等事项须经股东大会决议时，应由董事会及时召集股东大会会议进行表决，故B项正确。A项：董事长负责召集和主持董事会会议，股东大会由董事会召集、董事长主持，其本身并非召集主体。C项：证券事务代表属于协助办理信息披露等事务的岗位，无权召集股东大会。D项：董事会秘书负责股东会和董事会会议的筹备、文件保管及股东资料管理，办理信息披露事务，其职责是筹备而非召集。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -54909,7 +55086,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54937,7 +55116,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B项：证券公司内部控制要求建立独立的监督检查部门，对各项业务、各部门、各分支机构、各岗位全面实施监控、检查和反馈，这属于第三道业务监控防线，故B项正确。A项：相关部门、相关岗位之间相互制衡、监督属于第二道防线。C项：重要一线岗位双人、双职、双责属于第一道防线，并应加强对单人单岗业务的监控。D项：建立危机处理机制和程序、制订切实有效的应急应变措施和预案，是内部控制对危机处理的要求，不属于三道业务监控防线。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -54966,7 +55145,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -54994,7 +55175,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B项：证券公司持续合规状况主要根据司法机关采取的刑事处罚措施，以及中国证监会及其派出机构采取的行政处罚措施、监管措施和证券期货行业自律组织的纪律处分等情况进行评价，刑事处罚只能由司法机关作出，故B项正确。A项：中国证监会作出的是行政处罚、市场禁入决定和监督管理措施，并非刑事处罚。C项：中国证监会及其派出机构作出的是行政处罚措施、监管措施，同样不属于刑事处罚。D项：中国人民银行不是证券公司持续合规状况评价中刑事处罚措施的作出主体。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55023,7 +55204,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55051,7 +55234,7 @@
       "correctOptionIds": [
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "中国证监会根据证券公司评价计分的高低，将证券公司分为A（AAA、AA、A）、B（BBB、BB、B）、C（CCC、CC、C）、D、E五大类十一个级别，其中C级是正常经营状态的最低等级，故正确答案为C级。A项：D级是评价计分低于60分的公司，已不属于正常经营状态的等级。B项：B级高于C级，并非正常经营状态的最低等级。C项：E级是被依法采取责令停业整顿、指定其他机构托管、接管、行政重组等风险处置措施、评价计分为0分的公司，不是正常经营状态的等级。D项：C级正是正常经营状态的最低等级，为本题应选项。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55080,7 +55263,16 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationCheckedSources": [
+        {
+          "title": "中国政府网_中央人民政府门户网站",
+          "url": "https://www.gov.cn/?home",
+          "fetchedAt": "2026-09-18"
+        }
+      ],
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55110,7 +55302,7 @@
         "B",
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "证券公司、证券投资咨询机构和其他财务顾问机构有法定情形之一的不得担任财务顾问，包括最近24个月内存在违反诚信的不良记录，最近24个月内因执业行为违反行业规范而受到行业自律组织纪律处分，最近36个月内因违法违规经营受到处罚或涉嫌违法违规经营正被调查，故A、B、C三项均成立。A项：最近24个月内有违反诚信的不良记录，属于该情形。B项：最近24个月内因执业行为违反行业规范受到自律组织纪律处分，同样属于该情形。C项：最近36个月内因违法违规经营受处罚或涉嫌违法正被调查，属于该情形。D项：存在大额贷款未清偿，不属于不得担任财务顾问的情形，其对应财务顾问主办人应未负有数额较大到期未清偿债务的条件，故不选。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55141,7 +55333,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55172,7 +55366,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "财务顾问主办人应当具备的条件包括未负有数额较大到期未清偿的债务、最近24个月无违反诚信的不良记录、最近24个月未因执业行为违反行业规范而受到行业自律组织纪律处分、最近36个月未因执业行为违法违规受到处罚，其反面即为不得担任财务顾问主办人的情形。A项：最近24个月内有违反诚信的不良记录，不符合该项任职条件。B项：最近36个月因职业行为违法违规受到处罚，不符合未受处罚的条件。C项：最近24个月因职业行为违反行业规范受到自律组织纪律处分，不符合该项条件。D项：有大额贷款，属于负有数额较大到期未清偿债务的情形，不符合未负有此类债务的条件。四项均构成不得担任财务顾问主办人的条件。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55204,7 +55398,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55235,7 +55431,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "股份有限公司章程应当载明公司名称和住所、经营范围、设立方式、股份总数、每股金额和注册资本、发起人的姓名或者名称及认购的股份数等内容，四个选项均在法定记载范围之内。A 项：章程须载明发起人的姓名或者名称，即发起人的名字，说法正确。B 项：公司股份总数属于章程必须载明的事项，说法正确。C 项：公司的注册资本应当在章程中载明，说法正确。D 项：公司经营范围也是章程的法定记载事项，说法正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55270,7 +55466,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55300,7 +55498,7 @@
         "B",
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "公司高级管理人员是指公司的经理、副经理、财务负责人，上市公司董事会秘书和公司章程规定的其他人员，本题四个选项中只有财务负责人属于此列。A 项：副董事长属董事会成员，不在高管范围内，故不属于。B 项：监事长是监督机构人员，不属于高级管理人员。C 项：章程未作其他规定时，人力资源负责人不在法定高管范围内，故不属于。D 项：财务负责人是法定高级管理人员，故不选。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55331,7 +55529,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55361,7 +55561,7 @@
         "B",
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "证券公司、托管人、销售机构和投资顾问等服务机构违反法律、行政法规及中国证监会其他规定的，中国证监会及相关派出机构可采取的行政监管措施包括责令改正、监管谈话、出具警示函、责令定期报告、暂不受理与行政许可有关的文件等。A 项：责令改正是所列监管措施之一，正确。B 项：监管谈话属于监管措施，正确。C 项：出具警示函属于监管措施，正确。D 项：市场禁入措施不属于本条所列的行政监管措施，故错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55395,7 +55595,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55425,7 +55627,7 @@
         "B",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "期货交易所职责属法定事项，四项说法需逐一比对。A项：期货交易所依照章程和业务规则对会员进行自律管理，属于其法定职责，故正确。B项：开展交易者教育和市场培育工作亦为期货交易所职责之一，故正确。C项：期货交易场所不得直接或者间接参与期货交易，该项说法与之相反，故错误。D项：设计合约品种、安排合约品种上市是期货交易所的职责，故正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55456,7 +55658,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55487,7 +55691,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "代销金融产品中的禁止性行为由《证券公司代销金融产品管理规定》规范，四项做法均违反规定，故全选。A项：营业部员工向投资者宣传基金稳赚不赔，属夸大宣传、虚假宣传误导客户购买金融产品，故错误。B项：员工与客户约定基金亏损由其承担，属与客户分担投资损失，故错误。C项：销售基金赠送大米，属以赠送实物方式诱导客户购买金融产品，故错误。D项：员工销售基金后收取基金公司奖励的购物卡，属代销人员接受委托人给予的财物或其他利益，故错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55519,7 +55723,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55549,7 +55755,7 @@
         "B",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "证券公司受期货公司委托从事介绍业务，其应当提供的服务范围由试行办法规定。A项：提供期货交易设施属于应当提供的服务，故正确。B项：提供期货行情信息属于应当提供的服务，故正确。C项：证券公司不得代期货公司、客户收付期货保证金，故错误。D项：协助办理开户手续属于应当提供的服务，故正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55580,7 +55786,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55610,7 +55818,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查证券公司流动性风险限额管理，B、C、D三项均为限额管理的正确要求。A项：限额并非一经设定就不得调整，指引明确必要时可以进行调整，故错误。B项：证券公司应当对流动性风险限额的执行情况进行监控，属于限额管理要求，故正确。C项：证券公司应至少每年对流动性风险限额进行一次评估，必要时进行调整，故正确。D项：证券公司应当根据其业务规模、性质、复杂程度、流动性风险偏好和外部市场发展变化、监管要求等情况设定流动性风险限额，故正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55641,7 +55849,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55672,7 +55882,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查证券公司风险控制指标体系。A项：净资本由核心净资本加附属净资本构成，是风险控制指标体系的核心指标，故正确。B项：净稳定资金率等于可用稳定资金除以所需稳定资金，属于主要风险控制指标，故正确。C项：资本杠杆率等于核心净资本除以表内外资产总额，属于主要风险控制指标，故正确。D项：流动性覆盖率等于优质流动性资产除以未来30日内现金净流出，属于主要风险控制指标，故正确。四项均属于证券公司应持续符合的风险控制指标。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55704,7 +55914,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55734,7 +55946,7 @@
         "B",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查《证券法》关于证券发行、交易活动禁止行为的规定。A项：证券的发行、交易活动必须遵守法律、行政法规，禁止欺诈行为，故正确。B项：禁止内幕交易，属于法律明文列举的禁止行为，故正确。C项：法律禁止的是欺诈、内幕交易和操纵证券市场等具体行为，获取利益本身并非《证券法》列举的发行、交易禁止行为，故错误。D项：禁止操纵证券市场，属于法律明文列举的禁止行为，故正确。因此A、B、D三项当选。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55765,7 +55977,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55785,7 +55999,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "教材明确指出公司除法定的会计账簿外不得另立会计账簿，对公司资产也不得以任何个人名义开立账户存储，题干却称可以另立会计账簿，与规定恰好相反，故应选B。A项：认为公司可以另立会计账簿，与教材“不得另立会计账簿”的强制性规定相悖，故错误。B项：公司除法定的会计账簿外不得另立会计账簿，违反者还将由县级以上人民政府财政部门责令改正并处以罚款，题干说法不能成立，故选B。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55814,7 +56028,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55834,7 +56050,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "材料显示培训要求按人员类别分别规定，证券公司对证券经纪人应进行不少于60小时的执业前培训，其中法律法规和职业道德的培训不少于20小时，对一般从业人员则自首次执业登记日的下一年起，每个自然年为一个培训周期，两者在培训口径上并不相同，题干把高级管理人员的岗前培训时间与其他从业人员视为一致，缺乏依据，故应选B。A项：认为二者一致，与材料对培训要求分类规定的情形不符，故错误。B项：培训要求因人员类别而异，高级管理人员的岗前培训时间不能简单等同于其他从业人员，题干说法不能成立，故选B。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55863,7 +56079,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55883,7 +56101,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "教材指出法律关系主体的种类包括自然人、组织和国家，题干表述与之一致，故应选A。A项：教材明确法律关系主体的种类包括自然人、组织和国家，题干说法正确，故选A。B项：认为该说法错误，与教材关于法律关系主体种类的表述不符；法律关系由主体、客体与内容构成，其主体正是自然人、组织和国家，故B错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55912,7 +56130,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55932,7 +56152,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查利用“荐股软件”从事证券投资咨询业务的许可要求。A项：向投资者销售或者提供荐股软件并直接或者间接获取经济利益的，属于从事证券投资咨询业务，应当经中国证监会许可并取得证券投资咨询业务资格，与教材规定一致，故表述正确。B项：错误，该行为并非无需许可的普通软件销售，销售或提供荐股软件并直接或间接获利即落入证券投资咨询业务范围，须经许可，故不选。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -55961,7 +56181,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -55981,7 +56203,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查证券公司风险控制指标标准。正确答案为B。A项：流动性覆盖率不得低于100%虽符合规定，但题干后半句称资本杠杆率不得低于10%不符合规定，整句判断有误，故不能选A。B项：现行标准要求资本杠杆率不得低于8%而非10%，流动性覆盖率则确为不得低于100%，题干数字有误，故该判断成立。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -56010,7 +56232,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -56030,7 +56254,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查证券公司流动性风险限额管理的评估频率。正确答案为B。A项：称应至少每半年对流动性风险限额进行一次评估不符合规定，每半年开展的应为流动性风险压力测试，故该说法错误。B项：规定要求证券公司应至少每年对流动性风险限额进行一次评估，必要时进行调整，同时至少每半年开展一次压力测试，故题干表述有误，判断为B。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -56059,7 +56283,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -56079,7 +56305,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "首次建立业务关系的客户，证券公司应在建立业务关系后的10个工作日内按收集信息、筛选分析信息、初评和复评的流程划分风险等级；对于首次建立业务关系的客户，无论其风险等级高低，证券公司在其初次确定风险等级后的3年内至少应进行一次复核，故题干表述成立。A项：首次建立业务关系的客户无论风险等级高低，在初次确定风险等级后3年内至少复核一次，与规定一致，故该项正确。B项：认定为错误则违背了上述持续尽职调查的复核要求，故错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -56108,7 +56334,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -56128,7 +56356,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "证券发行、交易活动的当事人具有平等的法律地位，应当遵守自愿、有偿、诚实信用的原则，题干的“不平等”“无偿”表述与法律规定的“平等”“有偿”不符，故该说法错误。A项：若认定其正确，则与当事人法律地位平等、有偿的要求相悖，不应选。B项：指出该说法有误，符合平等、自愿、有偿、诚实信用的要求，为正确答案。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -56157,7 +56385,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -56177,7 +56407,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "有限合伙企业仅剩普通合伙人时，才转为普通合伙企业；除合伙协议另有约定外，有限合伙人转变为普通合伙人应当经全体合伙人一致同意。仅有一名有限合伙人转变为普通合伙人，并不当然使整个企业变为普通合伙企业，故该说法错误。A项：若认为有限合伙人转普通合伙人企业即变普通合伙企业，则与上述转化条件不符，错误。B项：指出该说法错误，符合有限合伙与普通合伙转化的规定，正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -56206,7 +56436,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -56275,7 +56507,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "教材对资产管理合同内容约定的表述是：应当对巨额退出、延期支付、延期清算、管理人变更或者托管人变更等或有事项作出明确约定。题干把其中的“巨额退出”写成了“巨额申赎”，与规定表述不一致，故该说法错误，判断为错误的B项成立。A项：认为题干正确，但题干未使用规定的“巨额退出”这一表述，故该判断不能成立；B项：题干以“巨额申赎”替代了“巨额退出”，表述不准确，故判断为错误是正确的。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -56304,7 +56536,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -56324,7 +56558,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "从业人员是指证券公司中从事证券业务和相关管理工作的人员，教材明确证券公司董事长、从事业务管理工作的其他董事和监事、高级管理人员、分支机构负责人均为从业人员。董事长被列入从业人员范围，故题干“证券公司董事长不属于证券行业从业人员”的说法错误，应选B。A项：认为题干正确，与董事长属于从业人员的界定相矛盾，不能成立；B项：题干否定董事长的从业人员身份，与规定不符，因此判断为错误是正确的。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -56353,7 +56587,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -56373,7 +56609,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B 项：正确。证券公司应当委托外部专业机构开展信息技术管理工作的全面审计，频率不低于每三年一次，题干把这一外部全面审计说成不低于每两年一次，缩短了审计间隔，与规定不符，所以该表述错误。A 项：错误。频率不低于每年一次、并在三年内完成信息技术管理全部事项审计的是公司内部开展的专项审计，覆盖信息技术治理、信息技术合规与风险管理、信息技术安全管理、应急管理等内容，并非题干所指的外部全面审计，因此不能据此认定题干正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -56402,7 +56638,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -56422,7 +56660,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A 项：正确。证券公司内部控制应当贯彻健全、合理、制衡、独立的原则，确保内部控制有效：健全性要求事前、事中、事后控制相统一，覆盖所有业务、部门和人员；合理性要求与公司经营规模、业务范围、风险状况及所处环境相适应，以合理成本实现控制目标；制衡性要求部门和岗位权责分明、相互牵制，前台业务运作与后台管理支持适当分离；独立性要求承担监督检查职能的部门独立于其他部门，故题干的四项原则表述完整准确。B 项：错误。认为该表述错误与内部控制基本要求不符，健全、合理、制衡、独立四项原则均有明确规定。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -56451,7 +56689,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -56471,7 +56711,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A 项：正确。证券公司开展中间介绍业务只能接受其全资拥有、控股或被同一机构控制的期货公司的委托，业务范围限于协助办理开户、提供期货行情信息和交易设施等，不得代理客户进行期货交易、结算或者交割，也不得代客户下达交易指令、利用客户交易编码或期货结算账户进行期货交易，并且证券公司与期货公司应当独立经营，财务、人员、经营场所分开隔离，故从事介绍业务的工作人员不得进行期货交易。B 项：错误。该选项与中间介绍业务人员应遵守的禁止性规定相抵触。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -56500,7 +56740,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -56520,7 +56762,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B 项：营业部开户岗属于客户账户类业务，而按照证券公司内部控制与合规管理的要求，从事技术、风险监控、合规管理的人员不得从事营销、客户账户及客户资金存管等业务活动，电脑等技术与业务部门的人员也不得相互兼任，故技术人员不能兼任开户岗，该说法正确。A 项：仅因其熟悉公司系统就允许其兼任开户岗，与上述人员不得兼任客户账户业务的规定相冲突，说法错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -56549,7 +56791,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -56569,7 +56813,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A 项：合规负责人应当对证券公司内部规章制度、重大决策、新产品和新业务方案等进行合规审查，并出具书面合规审查意见，这是其职责要求，题干表述与之相符，说法正确。B 项：若认为合规负责人无须开展上述合规审查或无须出具书面合规审查意见，则与该职责要求不符，说法错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -56598,7 +56842,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "law",
@@ -103010,7 +103256,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B 项：AA 级表示偿还债务的能力很强，受不利经济环境的影响不大，违约风险很低，Ⅰ的偿债能力很强、违约风险很低，Ⅲ的受意料之外不利变化影响不大，Ⅳ的违约风险很低，均与 AA 含义相符。A 项：Ⅱ把偿债能力和违约风险表述为一般，属于较低等级的含义，纳入后错误。C 项：漏选Ⅳ，不全面。D 项：漏选Ⅲ，不全面。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -103039,7 +103285,9 @@
         2021
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -117155,7 +117403,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "中国金融监管体制经历了从集中统一监管到分业监管再到当前格局的演变，教材指出我国已从过去的“一行三会”过渡到当前中央金融委员会领导下的“一行一局一会”格局，故题干表述错误。A项：认为“一行三会”是当前体制，与教材所述现行“一行一局一会”格局不符，故错误；B项：判断题干错误，与教材关于现行监管格局的表述一致，故为正确答案。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -117184,7 +117432,16 @@
         2023
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationCheckedSources": [
+        {
+          "title": "中国政府网_中央人民政府门户网站",
+          "url": "https://www.gov.cn/?home",
+          "fetchedAt": "2026-09-18"
+        }
+      ],
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -117558,7 +117815,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "债券理论价格是把未来各期现金流按对应期限的贴现率折算为现值后加总。三色笔记中该国债面值100元、票面利率年息3.75%、每年付息1次，1年、2年、3年期贴现率分别为4%、4.5%、5%，将各年利息与到期本金分别折现求和，即得理论价格约96.66元。A项：96.66元为按各期贴现率逐期折现加总的结果，与题干条件相符，故正确；B项：98元与按上述贴现率逐期折现所得结果不符，故错误；C项：97.66元与实际折现结果不符，故错误；D项：100元等于债券面值，未考虑贴现因素，故错误。",
       "caseMaterial": "20*2年3月31日，财政部发行的某期国债距到期日还有3年（该债券于20*0年发行），面值100元，票面利率年息3.75%，每年付息1次下次付息日在1年以后。1年期、2年期、3年期贴现率分别为4%、4.5%、5%。\n根据材料回答问题：",
       "caseGroupId": "finance-756e4541b1b1-case-a4c1b8aa47",
       "origins": [
@@ -117590,7 +117847,9 @@
       "repeatLabel": null,
       "caseOrder": 1,
       "caseGroupSize": 1,
-      "caseGroupTitle": "历年材料题"
+      "caseGroupTitle": "历年材料题",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -118416,7 +118675,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "普通股股东的权利中，教材明确股东权是一种综合权利，普通股股东基于持股享有的首要权利是可以以股东身份参与股份公司的重大事项决策，即通过参加股东会、行使表决权参与决策，故C项正确。A项：优先认股权或配股权是公司增发、配股时原股东的权利，并非股东权中首要的权利；B项：股份可依法转让体现的是股票的流动性，属于处分股份的权利，不是首要权利；C项：与教材“首要的是参与重大事项决策”的表述一致，故正确；D项：公司资产收益权和剩余资产分配权直接体现的是剩余索取权，虽属股东权利，但不是首要权利。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -118445,7 +118704,9 @@
         2023
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -130850,7 +131111,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查全球金融体系的机构分类。C 项：证券交易所是提供证券集中交易场所、设施和服务并履行自律管理的市场组织，不以自己的账户吸收存款，故不属于存款吸收机构，为正确答案。A 项：商业银行通常吸收存款，在支付系统中处于核心地位，属于存款吸收机构。B 项：教材将抵押贷款银行与储蓄银行、开发银行、信用合作社、投资银行、建房互助协会等并列为其他存款吸收机构，故其属于存款吸收机构。D 项：储蓄银行同样被列入其他存款吸收机构，属于存款吸收机构。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -130879,7 +131140,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -130907,7 +131170,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查金融期权的选择权性质与交易动机。A 项：看涨期权即认购期权，指期权买方有权在约定期限内按行权价格向卖方买入一定数量标的资产，交易者买入认购期权，正是预期基础金融工具的价格在合约期限内将会上涨，故为正确答案。B 项：预期基础金融工具价格下跌的交易者买入的是看跌期权即认沽期权，方向相反。C 项：预期价格不变时，买入方行权无利可图，还要损失期权费，不会据此买入看涨期权。D 项：买入看涨期权以对价格上涨的预期为前提，并非无法判断方向。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -130936,7 +131199,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -130964,7 +131229,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查多层次资本市场中主板市场的定位。B 项：主板市场是一国或地区证券发行、上市及交易的主要场所，对发行人的营业期限、股本大小、盈利水平、最低市值等方面要求标准较高，上市企业多为大型成熟企业，具有较大的资本规模以及稳定的盈利能力，故为正确答案。A 项：创业型企业主要由创业板市场即二板市场服务，并非主板上市企业的主要类型。C 项：创新型企业主要由北京证券交易所、创业板等突出创新特色的市场层次承接。D 项：成长型企业是创业板服务的主要对象，主板则主要服务于成熟期大型企业。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131004,7 +131269,9 @@
         2025
       ],
       "repeatCount": 2,
-      "repeatLabel": "重复出现 · 2025"
+      "repeatLabel": "重复出现 · 2025",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131032,7 +131299,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "沪深300指数选取沪深A股中规模大、流动性好、最具代表性的300只股票为样本，编制时以计算期的同度量因素作为权数，采用的是派许加权法。A项：派许加权法即加权平均法中选用计算期同度量因素作权数的方法，符合沪深300指数的编制规则，为正确项。B项：算术平均法只对样本股票价格作简单平均，不区分股票地位的权重，故错误。C项：几何平均法以样本股票价格的几何平均数为代表，伦敦金融时报指数和美国价值线指数采用此法，故错误。D项：B-S模型法属于期权定价方法，与股价指数编制无关，故错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131061,7 +131328,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131089,7 +131358,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "题干反映的链条是货币供应量增加引起股价上升，股价上升使托宾q值提高，当企业市场价值大于重置成本时企业增加投资，最终提高总产出，这正是货币政策的资产价格传导机制。A项：该机制通过股价变动影响托宾q，进而影响投资和总产出，与题干链条一致，为正确项。B项：汇率传导机制是指扩张性货币政策使实际利率下降、本币贬值，从而刺激净出口增加，不涉及股价与托宾q，故错误。C项：信用传导机制由伯南克提出，包括银行借贷渠道和资产负债渠道，强调通过信用途径影响国民经济总量，故错误。D项：利率传导机制以利率为核心变量，先由货币供应量变动影响利率，再由利率影响投资和产出，也非题干描述，故错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131121,7 +131390,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131149,7 +131420,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "收益公司债券的利息只有在公司有盈利时才支付，未付利息可以累加并在收益增加后补发，所有应付利息付清后公司才可对股东分红。A项：可转换公司债券是依约定条件可转换为股份的债券，其核心特征是含转换选择权，与盈利付息无关，故错误。B项：信用公司债券是不以公司任何资产作担保而发行的无担保证券，属于按担保情况划分的类别，故错误。C项：收益公司债券的利息来源为发行公司利润扣除固定支出后的余额，只有公司有盈利时才支付利息，为正确项。D项：保证公司债券由第三者作为还本付息担保人，属于担保证券，不涉及以盈利为付息前提，故错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131178,7 +131449,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131206,7 +131479,7 @@
       "correctOptionIds": [
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "国际债券是一国借款人在国际证券市场上以外国货币为面值、向外国投资者发行的债券，其发行人包括各国政府、政府所属机构、银行或其他金融机构、工商企业及国际组织等，故由政府、工商企业发行的国家债券、企业债券、公司债券均可成为国际债券。A 项：国家债券可由各国政府作为发行人，属于国际债券的发行人范围。B 项：企业债券可由工商企业发行，属于该范围。C 项：公司债券同属工商企业发行的债券，也属该范围。D 项：次级债券是清偿顺序在普通债之后的债务工具，属证券公司、商业银行等的特定债务，划分依据是清偿顺序，不属于国际债券。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131235,7 +131508,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131263,7 +131538,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "题干给出的是压力测试的定义，该方法用于测算压力情景下风险控制指标等变化，评估风险承受能力并采取应对措施。A 项：压力测试，题干所述正是这一整体测试方法，为正确答案。B 项：压力情景是测试所设定的极端经营环境或突发事件等情形，是压力测试的前提要素而非方法本身。C 项：敏感性分析是测试单个重要风险因素或少数关系密切因素变化时的压力情景影响，范围较窄。D 项：情景分析是测试多种风险因素同时变化或某些不利事件发生时的压力情景影响，与题干整体定义不符。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131303,7 +131578,9 @@
         2025
       ],
       "repeatCount": 2,
-      "repeatLabel": "重复出现 · 2025"
+      "repeatLabel": "重复出现 · 2025",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131331,7 +131608,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "中国证券业协会是证券业的自律性组织，是社会团体法人，题干所问正是这一性质定位。A 项：证券监督机构是国务院证券监督管理机构即中国证监会，协会的自律管理活动受其指导和监督，协会本身不是监管机构。B 项：证券服务机构是从事证券投资咨询等业务并需核准或备案的机构，与协会性质不同。C 项：自律性组织，中国证券业协会由会员组成，对会员及其从业人员实施自律管理，为正确答案。D 项：会员单位是协会的组成成员和服务对象，是协会的构成主体，而非对协会性质的界定。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131360,7 +131637,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131388,7 +131667,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "我国基金信息披露具有强制性，投资者据此了解基金运作，将其称为自愿性信息披露与事实不符，A项错误。B项：基金管理人、基金托管人和其他信息披露义务人应当依法披露基金信息，并保证所披露信息的真实性、准确性和完整性，说法正确。C项：信息披露义务人依法应承担的责任不因委托第三方代为披露而免除，说法正确。D项：信息披露义务人应当如实向投资者披露基金投资、资产负债、收益分配以及基金净值、投资组合情况和主要财务指标等重大信息，说法正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131417,7 +131696,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131445,7 +131726,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "按基金募集方式的不同，基金分为公募基金和私募基金，公募基金面向社会公众公开发售基金份额，私募基金向特定合格投资者非公开发售，A项正确。B项：主动型基金和被动型基金是按基金投资理念划分的，与募集方式无关，B项错误。C项：封闭式基金和开放式基金是按基金运作方式划分的，C项错误。D项：契约型基金和公司型基金是按基金组织形式划分的，D项错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131474,7 +131755,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131502,7 +131785,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "投资者保护机构作为诉讼代表人，按照“明示退出、默示加入”的原则，依法为受害投资者提起民事损害赔偿诉讼，符合条件的投资者默认加入，不愿参加者明示退出，C项正确。A项：默示退出、明示加入把退出设为默示、加入设为明示，与该原则相反，A项错误。B项：默示退出、默示加入使加入和退出均无需投资者表态，不符合该制度设计，B项错误。D项：明示退出、明示加入要求投资者逐一明示加入，无法实现对受害投资者的集体保护，D项错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131531,7 +131814,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131663,7 +131948,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "压力测试采用以定量分析为主的风险分析方法，测算压力情景下风险控制指标等的变化，评估风险承受能力并采取必要应对措施；教材指出证券公司压力测试可采用敏感性分析和情景分析等方法。A项：历史情景分析法依据历史极端情形设置测试情景，属于情景分析的具体形式。B项：历史情景和假设情景相结合的分析方法同样属于情景分析的运用。C项：假设情景分析法通过设定假设的极端情形开展测试，也是情景分析的一种形式。D项：敏感性分析测试单个重要风险因素或少数关系密切因素变动对指标的影响，也是压力测试可采用的方法。四项均属于压力测试可采用的方法。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131695,7 +131980,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131726,7 +132013,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "委托指令需要反映客户买卖证券的具体要求；教材明确，委托指令应当包括证券账户号码、证券代码、买卖方向、委托数量、委托价格以及交易所及其会员要求的其他内容。A项：委托数量与委托价格共同确定客户买卖的数量和价格要求，属于委托指令内容。B项：证券代码用于指明所买卖的具体证券，属于委托指令内容。C项：证券账户号码用于确定委托对应的账户，属于委托指令内容。D项：买卖方向表明客户是买入还是卖出，属于委托指令内容。四项均正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131758,7 +132045,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131787,7 +132076,7 @@
         "B",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "教材指出，按照市场功能的不同，可以将资本市场划分为发行市场和交易市场。B项：发行市场即一级市场，承担新证券发行筹资功能，符合按市场功能的划分。D项：交易市场即二级市场，为已发行证券提供流通变现功能，同样符合按市场功能的划分。A项：场外市场是按资本市场的组织形式和交易活动是否集中统一划分的结果，不是按市场功能划分。C项：场内市场同样属于按组织形式和交易活动是否集中统一划分，与市场功能标准不符。故本题选B、D。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131817,7 +132106,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131847,7 +132138,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查基础设施公募REITs的要求。B项：基金通过资产支持证券和项目公司等特殊目的载体取得基础设施项目完全所有权或经营权利，表述正确。C项：80%以上基金资产投资于基础设施资产支持证券，并持有其全部份额，表述正确。D项：基金管理人主动运营管理基础设施项目，以获取基础设施项目租金、收费等稳定现金流为主要目的，表述正确。A项：收益分配比例应不低于合并后基金年度可供分配金额的90%，而非60%，故表述错误。因此本题选B、C、D项。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131878,7 +132169,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131907,7 +132200,7 @@
         "A",
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查公司解散或破产清算时剩余资产的分配顺序。A项：优先股股东对公司剩余财产的权利先于普通股股东，故表述正确。B项：优先股股东的清偿顺序在债权人之后，即剩余财产先清偿债权人，再分配给优先股股东，故表述正确。C项：优先股股东在债权人之前与先清偿债权人的规则相反，故表述错误。D项：优先股股东在普通股股东之后与优先股优先于普通股受偿的规则相反，故表述错误。因此本题选A、B项。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -131937,7 +132230,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -131968,7 +132263,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查中国存托凭证的参与主体。中国存托凭证由存托人签发、以境外证券为基础在境内发行，代表境外基础证券权益。A项：发行人是在境外发行基础证券的主体，属于参与主体，故正确。B项：存托人按存托协议持有境外基础证券并签发存托凭证，属于参与主体，故正确。C项：托管人受存托人委托托管存托凭证所代表的基础证券，属于参与主体，故正确。D项：持有人依法享有存托凭证代表的境外基础证券权益并通过存托人行使权利，属于参与主体，故正确。因此本题选A、B、C、D项。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132014,7 +132309,16 @@
         2025
       ],
       "repeatCount": 2,
-      "repeatLabel": "重复出现 · 2025"
+      "repeatLabel": "重复出现 · 2025",
+      "explanationSource": "local-materials-ai",
+      "explanationCheckedSources": [
+        {
+          "title": "中国政府网_中央人民政府门户网站",
+          "url": "https://www.gov.cn/?home",
+          "fetchedAt": "2026-09-18"
+        }
+      ],
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132044,7 +132348,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "金融市场按金融资产到期期限可分为货币市场和资本市场，货币市场交易到期期限在1年以内的金融资产，债券市场与股权投资市场交易的是股票、债券等金融资产，均属于金融市场的组成部分，故B、C、D正确。A项：房地产市场交易的是实物房地产，属于实物资产交易而非以金融资产为交易对象的金融市场。B项：货币市场是金融市场中交易短期金融资产的市场，属于金融市场。C项：债券市场属于证券市场，是金融市场的重要组成部分。D项：股权投资市场交易股权类金融资产，同样属于金融市场。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132075,7 +132379,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132104,7 +132410,7 @@
         "B",
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "国债按是否可流通分为流通国债和非流通国债，流通国债可在流通市场上交易，投资者可以自由认购、自由转让；非流通国债不允许在流通市场交易，不能自由转让，故B、C正确。A项：长期国债是按偿还期限划分的类型，并非按是否可流通划分。B项：流通国债是可以在流通市场上交易的国债，属于按是否可流通划分。C项：非流通国债是不允许在流通市场上交易的国债，属于按是否可流通划分。D项：特种国债是按资金用途划分的类型，与是否可流通无关。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132134,7 +132440,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132163,7 +132471,7 @@
         "B",
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "可交换债券的发行主体是上市公司的股东，可转换债券的发行主体是上市公司本身；可交换债券用于换股的是发行人持有的其他公司股份，其换股不会影响标的股票总股本数量，而可转换债券转股会使标的股票总股本扩大，故B、C正确。A项：将两个发行主体对调，可交换债券的发行主体应是上市公司的股东，可转换债券才是上市公司本身。B项：可转换债券的发债主体和偿债主体为上市公司，可交换债券为上市公司股东，表述正确。C项：可交换债券换股不改变标的公司总股本，可转换债券转股会使总股本扩大，表述正确。D项：可转换债券转股会使总股本扩大，可交换债券换股不影响总股本，与D项表述相反。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132193,7 +132501,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132222,7 +132532,7 @@
         "B",
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查涨跌幅限制下申报委托的有效性。B 项：低于涨幅限制价格的委托未超出当日价格上限，仍在有效申报范围内，因此有效。C 项：高于跌幅限制价格的委托未跌破当日价格下限，同样属于有效申报，故 B、C 正确。A 项：高于涨幅限制价格的委托超出当日价格上限，属于无效委托。D 项：低于跌幅限制价格的委托跌破当日价格下限，也属于无效委托。教材明确，高于涨幅限制价格的委托和低于跌幅限制价格的委托无效，只有在限制价格区间内的申报才有效。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132252,7 +132562,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132281,7 +132593,7 @@
         "A",
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查沪港通的申报路径与标的范围。A 项：沪股通由香港投资者委托香港联合交易所参与者，经由香港联合交易所在上海设立的证券交易服务公司向上交所申报，买卖规定范围内的上交所上市股票，表述正确。B 项：沪港通下的港股通由内地投资者委托上交所会员，经由上交所设在香港的证券交易服务公司向联交所申报，买卖规定范围内的联交所上市股票，表述正确。C 项：把港股通的服务公司设地方与申报方向写反，应为上交所设在香港的服务公司向联交所申报，而非联交所的服务公司向上交所申报。D 项：沪股通应经由香港联交所设在上海的服务公司申报，而非上交所设立的服务公司，且遗漏了申报买卖的股票范围。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132311,7 +132623,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132331,7 +132645,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题考查我国证券交易所的竞价方式。A 项：正确，目前我国证券交易所采用两种竞价方式，即集合竞价方式和连续竞价方式；集合竞价是对规定一段时间内接受的买卖申报一次性集中撮合，连续竞价是对买卖申报逐笔连续撮合，且集合竞价中未能成交的委托自动进入连续竞价，故该表述成立。B 项：错误，其否定了集合竞价与连续竞价并存的做法，与我国证券交易所现行竞价制度不符。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132363,7 +132677,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132383,7 +132699,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A项：正确。报价驱动即做市商市场，证券交易的买价和卖价都由做市商给出，做市商根据市场买卖力量和自身情况进行双向报价，成交价格由做市商决定；投资者之间并不直接成交，而是从做市商手中买进证券或向做市商卖出证券，做市商在其所报价位上以自有资金或证券与投资者交易，收入来源是买卖差价。B项：错误。题干所述成交价格由做市商决定、投资者以做市商为对手且彼此不发生直接关系两点，与报价驱动的特点完全一致，不存在与做市商市场实际情形相悖之处，不应判为错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132412,7 +132728,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132432,7 +132750,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B项：正确。本题应选B，即题干说法错误。《证券期货投资者适当性管理办法》构建了一整套适当性管理的制度框架，其核心理念是将适当的产品或服务销售或者提供给适合的投资者，以经营机构的适当性义务为主线展开。A项：错误。适当性管理要求经营机构履行适当性义务，并对违法违规行为承担法律责任，并非卖者无责、买者自负，故A项表述不符合该办法的核心理念。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132461,7 +132779,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132481,7 +132801,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A项：正确。金融债券作为债券的一种特殊类型，表示的是银行等金融机构与金融债券持有者之间的债权债务关系，其特点之一就是不记名、不挂失，但可以抵押和转让。B项：错误。题干关于金融债券不记名、不挂失且可抵押转让的表述，与金融债券的特点一致，不存在与事实不符之处，不应判为错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132510,7 +132830,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132530,7 +132852,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "该说法成立。A 项：期望尾损失也称条件VaR，衡量组合处在超限区间之内损失的期望值，VaR只给出给定置信水平上最严重的损失程度，并不说明尾部区间内损失的状况，两者差值越大说明该组合损益分布的肥尾性越强，在相同VaR水平上风险更高，故正确。B 项：期望尾损失能弥补VaR值在反映尾部风险方面的不足，差值越大恰恰表明尾部风险更大，认为该说法错误不符合这一结论。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132559,7 +132881,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132587,7 +132911,7 @@
       "correctOptionIds": [
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "D 项：贷款业务是银行将所吸收的资金按一定利率贷给客户并约定归还期限的业务，属于运用资金的资产业务，故为正确选项。A 项：银行承兑汇票属于表外业务中的担保类业务，不属于资产业务。B 项：吸收存款是商业银行组织资金来源的负债业务，不是资产业务。C 项：资产托管属于表外业务中的中介服务类业务，也不属于资产业务。",
       "caseMaterial": "甲公司为一高科技企业，从事新材料研发和制造，其原材料大部分进口产成品主要销往海外市场。为了更好地服务实体经济\nA 股份制商业银行与甲公司签订了全面合作和服务协议，依据协议。",
       "caseGroupId": "finance-d2b4ae4bb394-case-346f870fb6",
       "origins": [
@@ -132619,7 +132943,9 @@
       "repeatLabel": null,
       "caseOrder": 1,
       "caseGroupSize": 2,
-      "caseGroupTitle": "历年材料题"
+      "caseGroupTitle": "历年材料题",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132649,7 +132975,7 @@
         "B",
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A 项：财务顾问属于中介服务类业务，指银行根据客户委托提供中介服务并收取手续费，故正确。B 项：代理收付同属中介服务类业务，故正确。C 项：资产托管也在中介服务类业务范围内，故正确。D 项：贷款业务是银行运用资金的资产业务，不属于表外业务中的中介服务类业务，故错误。",
       "caseMaterial": "甲公司为一高科技企业，从事新材料研发和制造，其原材料大部分进口产成品主要销往海外市场。为了更好地服务实体经济\nA 股份制商业银行与甲公司签订了全面合作和服务协议，依据协议。",
       "caseGroupId": "finance-d2b4ae4bb394-case-346f870fb6",
       "origins": [
@@ -132683,7 +133009,9 @@
       "repeatLabel": null,
       "caseOrder": 2,
       "caseGroupSize": 2,
-      "caseGroupTitle": "历年材料题"
+      "caseGroupTitle": "历年材料题",
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132711,7 +133039,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "C 项：教材明确指出内地证券公司开展国际化业务的主战场仍是中国香港市场，故该项正确。A 项：新加坡虽有中金公司设立子公司及 ETF 互通等业务，但并非我国证券公司国际化业务主要集中的市场。B 项：本地参考原文未将英国伦敦列为我国证券公司国际化业务集中地。D 项：美国虽为中金公司设立子公司的所在地之一，但不是业务集中的主要市场。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132740,7 +133068,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132768,7 +133098,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B 项：教材对股票期权的定义正是买方在交付期权费后，取得在合约规定的到期日或到期日以前按协定价格买入或卖出一定数量相关股票的权利，与题干相符。A 项：利率期权的标的是一定面额的利率工具，买方行使的是按约定利率买卖利率工具的权利。C 项：货币期权又称外汇期权，标的是外汇资产，按约定汇率买卖一定数额外汇。D 项：互换期权的标的与互换相关，并非题干所述的相关股票。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132797,7 +133127,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132825,7 +133157,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "C 项：教材明确股票发行制度是指发行人在申请发行股票时必须遵循的一系列程序化的规范，故该项正确。A 项：投资者是发行股票的认购方，不是申请发行并遵循该套规范的主体。B 项：证券公司主要承担保荐、承销等中介职责，并非申请发行股票的主体。D 项：证券服务机构提供审计、法律等专业服务，也不属于申请发行股票的主体。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132854,7 +133186,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132882,7 +133216,7 @@
       "correctOptionIds": [
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "C 项：教材明确“债券通”是开展中国内地与香港地区债券市场互联互通合作的全新计划，让境内与境外投资者通过在香港地区建立的基础设施连接，在对方市场买卖债券，故成立。A 项：巴黎与我国债券市场之间不存在题干所述的互联互通计划，故错误。B 项：纽约同样不是“债券通”连接的地区，材料中没有相应安排。D 项：伦敦对应的是上海证券交易所与伦敦证券交易所互联互通存托凭证业务，并非债券市场互联互通计划。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132911,7 +133245,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132939,7 +133275,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A 项：按单利计算，五年后一万元的现值应为 10000÷（1+5%×5）＝8000 元，与选项一致。B 项：7500 元与按题干利率和期限折现的结果不符，故错误。C 项：10000 元是到期收入本身，未按利率折现，不是现值。D 项：12500 元是把一万元按单利向前计算得到的终值，与求现值的题意相反。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -132968,7 +133304,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -132998,7 +133336,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B 项：基金通过资产支持证券和项目公司等特殊目的载体取得基础设施项目完全所有权或经营权利，符合要求。C 项：80%以上基金资产投资于基础设施资产支持证券，并持有其全部份额，符合要求。D 项：基金管理人主动运营管理基础设施项目，以获取租金、收费等稳定现金流为主要目的，符合要求。A 项：采取封闭式运作正确，但收益分配比例应不低于合并后基金年度可供分配金额的90%，而非60%，故错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133029,7 +133367,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -133059,7 +133399,7 @@
         "B",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "契约型基金依基金合同设立，其当事人为基金份额持有人、基金管理人与基金托管人。A 项：基金管理人是基金的募集者和管理者，负责投资管理，属于基金当事人，故正确。B 项：基金投资人即基金份额持有人，是基金的出资人和受益人，属于基金当事人，故正确。C 项：基金董事会是公司型基金依公司章程设立的组织机构，契约型基金不设董事会，故不属于其当事人。D 项：基金托管人独立保管基金资产，依法成为基金当事人之一，故正确。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133090,7 +133430,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -133120,7 +133462,7 @@
         "B",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "中国证监会依法对证券投资基金活动实施监督管理。A 项：制定有关基金活动监督管理的规章、规则，并行使审批、核准或者注册权，属于证监会职责。B 项：指导和监督中国证券投资基金业协会的活动，属于证监会职责。C 项：组织行业交流、推动行业创新是基金行业自律组织的职能，而非证监会职责，故错误。D 项：监督检查基金信息的披露情况，属于证监会职责。因此正确项为 A、B、D。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133151,7 +133493,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -133181,7 +133525,7 @@
         "B",
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "一般性货币政策工具是中央银行普遍或常规运用的工具，实施对象是整体经济和金融活动，主要包括存款准备金制度、再贴现政策和公开市场业务三大工具。A 项：存款准备金制度通过调整法定存款准备金率影响商业银行信贷规模，属一般性工具。B 项：再贴现政策属于一般性货币政策工具。C 项：公开市场业务属于一般性货币政策工具。D 项：常备借贷便利属于中央银行贷款类等其他政策工具，不属于一般性货币政策工具，故错误。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133212,7 +133556,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -133243,7 +133589,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "本题四项均为金融机构面临的风险，答案A、B、C、D全选。A 项：流动性风险是金融机构面临的风险之一，表现为融资来源不稳定、资产负债期限不匹配等。B 项：信用风险因交易对手违约或履约可能性变化而给金融机构带来损失。C 项：市场风险包括利率风险、汇率风险、股票价格风险和商品风险。D 项：操作风险通过内部控制、IT技术应用、业务持续计划等方法进行管理。教材也把信用风险、市场风险、操作风险、流动性风险等列为金融机构面临的风险因子。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133275,7 +133621,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -133295,7 +133643,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "题干表述与教材一致。B 项：教材指出信用风险构成要素分析以违约为中心，违约仍是最重要的信用事件，对信用风险的描述和量化仍以违约为中心，主要包括违约概率、违约损失率和违约时的风险暴露等。A 项：题干并未否定违约的中心地位，也未扩大或缩小信用风险要素的范围，故判为错误不成立。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133324,7 +133672,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -133344,7 +133694,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "题干列出的正是教材所讲金融市场的五大功能。B 项：教材明确金融市场有资金融通、价格发现、提供流动性、风险管理、降低搜寻成本和信息成本五大功能，题干与之一致，提供流动性指为投资者提供出售金融资产的机制，风险管理指通过保险、对冲交易等方式防范化解风险，降低搜寻成本和信息成本指降低交易成本。A 项：题干五项与教材表述完全对应，不存在遗漏或错误，故判为错误不成立。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133373,7 +133723,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -133393,7 +133745,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B 项：开放式基金每个交易日估值，并不晚于下一交易日公告份额净值，本地参考原文在基金资产估值频率部分对此有明确记载，基金份额净值是计算申购份额和赎回金额的基础，故题干说法正确。A 项：错误，该选项否定了开放式基金每个交易日估值、并不晚于下一交易日公告份额净值的规则，与本地参考原文的记载不符。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133422,7 +133774,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -133442,7 +133796,7 @@
       "correctOptionIds": [
         "B"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "B 项：按交割方式划分，即以交易是即期还是未来交割为标准，金融市场可分为现货市场和衍生品市场，其中现货市场是即期交易的市场，衍生品市场是交易衍生工具的市场，本地参考原文的表述正是如此，故题干说法正确。A 项：错误，该选项否认了按交割方式可将金融市场分为现货市场和衍生品市场，与本地参考原文不符。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133471,7 +133825,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -133491,7 +133847,7 @@
       "correctOptionIds": [
         "A"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "A 项：场内市场即证券交易所市场，是一个高度组织化、集中进行证券交易的市场，是整个证券市场的核心；场外市场没有集中的交易场所和市场制度，处于资本市场体系中较低的层次，并非核心，题干说法不成立，故本题应选A项。B 项：该选项主张题干成立，但场内市场才是整个证券市场的核心，场外市场不是，故该选项与本地参考原文不符。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133520,7 +133876,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -133548,7 +133906,7 @@
       "correctOptionIds": [
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "商业银行的主要业务分为负债业务、资产业务和表外业务，其中资产业务是银行运用资金赚取收益的活动，D项贷款业务正是银行将吸收的资金按约定利率贷给客户并约定期限归还的业务，属于资产业务，故为正确答案。A项：银行承兑汇票属于表外业务中的担保承诺类业务，不是资产业务。B项：吸收存款是银行组织资金来源的活动，属于负债业务，是资产业务和其他业务营运的起点和基础。C项：资产托管属于表外业务中的中介服务类业务，是银行收取手续费的业务。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133577,7 +133935,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -133607,7 +133967,7 @@
         "B",
         "C"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "商业银行表外业务分为担保承诺类、代理投融资服务类、中介服务类和其他类，中介服务类业务指商业银行根据客户委托提供中介服务、收取手续费的业务，包括代理收付、财务顾问、资产托管、各类保管业务等，故A、B、C三项均属此类。A项：财务顾问属于中介服务类业务。B项：代理收付属于中介服务类业务。C项：资产托管属于中介服务类业务。D项：贷款业务是银行运用资金赚取收益的业务，属于资产业务，不属于表外业务。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133638,7 +133998,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",
@@ -133668,7 +134030,7 @@
         "C",
         "D"
       ],
-      "explanation": "原资料未提供可用解析；请结合教材定位和现行官方规则自行核对。",
+      "explanation": "商业银行表外业务中的担保承诺类业务，包括担保类、承诺类等按照约定承担偿还责任的业务，其中担保类业务指商业银行对第三方承担偿还责任的业务，包括银行承兑汇票、保函、信用证等，故A、C、D三项均属此类。A项：信用证属于担保类业务。B项：投资业务是银行运用资金的业务，属于资产业务，不属于表外业务。C项：保函属于担保类业务。D项：银行承兑汇票属于担保类业务。",
       "caseMaterial": null,
       "caseGroupId": null,
       "origins": [
@@ -133699,7 +134061,9 @@
         2025
       ],
       "repeatCount": 1,
-      "repeatLabel": null
+      "repeatLabel": null,
+      "explanationSource": "local-materials-ai",
+      "explanationModel": "deepseek-flash"
     },
     {
       "subjectId": "finance",

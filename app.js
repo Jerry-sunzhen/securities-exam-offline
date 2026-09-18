@@ -360,7 +360,7 @@
           </section>
           <section class="card card-body">
             <h3 class="card-title">本版本说明</h3>
-            <div class="notice">讲义与题目都来自本地内部资料：讲义为 2026 新大纲三色笔记原文，第一版自拟内容已全部移除。题库由本地历年试题整理资料迁移而来，共 ${questionData.meta?.importedQuestionCount || 0} 道（去重后），其中 ${questionData.meta?.eligibleQuestionCount || 0} 道进入练习与模考；待核验题不会进入默认练习。每道题都绑定到具体笔记页码，答完题可以在解析区直接打开对应页。原资料解析过短的题目，会由本地三色笔记与教材原文辅助补写逐项解析并标注「AI 补充」，原解析仍可在解析区展开对比。多选题采用“全部选对才得分”的本地规则。</div>
+            <div class="notice">讲义与题目都来自本地内部资料：讲义为 2026 新大纲三色笔记原文，第一版自拟内容已全部移除。题库由本地历年试题整理资料迁移而来，共 ${questionData.meta?.importedQuestionCount || 0} 道（去重后），其中 ${questionData.meta?.eligibleQuestionCount || 0} 道进入练习与模考；待核验题不会进入默认练习。每道题都绑定到具体笔记页码，答完题可以在解析区直接打开对应页。原资料解析缺失或过短的题目，会先由本地三色笔记与教材原文辅助补写逐项解析，仍无法判断时再按证监会、协会、政府与交易所官网页面只读联网核验，标注「AI 补充」或「AI 补充 · 官方核验」，原解析仍可在解析区展开对比（当前 ${questionData.meta?.supplementedExplanationCount || 0} 题补充，其中 ${questionData.meta?.webVerifiedExplanationCount || 0} 题联网核验；${questionData.meta?.missingExplanationCount || 0} 题仍待补充）。多选题采用“全部选对才得分”的本地规则。</div>
             <div class="profile-status">
               <div class="status-row"><span>讲义来源</span><strong>2026 新大纲三色笔记</strong></div>
               <div class="status-row"><span>主大纲</span><strong>2025 版，24 页</strong></div>
@@ -1434,12 +1434,21 @@
   }
 
   function renderExplanation(question, correct) {
-    const enriched = question.explanationSource === "local-materials-ai";
+    const source = question.explanationSource || "";
+    const enriched = source === "local-materials-ai" || source === "official-web";
+    const webVerified = source === "official-web";
     const sourceExplanation = String(question.sourceExplanation || "").trim();
+    const safeSources = (list) => (Array.isArray(list) ? list : [])
+      .filter((item) => item && /^https?:\/\//i.test(String(item.url || "")));
+    const referenceList = safeSources(question.explanationReferences);
+    const checkedList = safeSources(question.explanationCheckedSources).filter((item) => !referenceList.some((reference) => reference.url === item.url));
+    const renderSources = (list) => `<ul class="source-list">${list.map((item) => `<li><a href="${escapeHtml(String(item.url))}" target="_blank" rel="noreferrer">${escapeHtml(String(item.title || item.url))}</a><small>${item.fetchedAt ? `抓取于 ${escapeHtml(String(item.fetchedAt))}` : ""}</small></li>`).join("")}</ul>`;
     return `
       <div class="explanation">
         <div class="result-banner ${correct ? "correct" : "incorrect"}">${correct ? "回答正确" : `回答错误，正确答案：${question.correctOptionIds.join("、")}`}</div>
-        <h4>解析${enriched ? ' <span class="tag binding-suggested">AI 补充</span>' : ""}</h4><p>${escapeHtml(question.explanation)}</p>
+        <h4>解析${enriched ? ` <span class="tag binding-suggested">${webVerified ? "AI 补充 · 官方核验" : "AI 补充"}</span>` : ""}</h4><p>${escapeHtml(question.explanation)}</p>
+        ${referenceList.length ? `<div class="imported-links source-refs"><strong>解析引用的官方页面</strong>${renderSources(referenceList)}<small>解析由本地资料与上述官方页面辅助补写，属机器整理，不代表官方答案；如与最新官方文本不一致，以官方发布为准。</small></div>` : ""}
+        ${!referenceList.length && checkedList.length ? `<details class="binding-quote"><summary>本题联网核验过的官方页面（${checkedList.length}）</summary>${renderSources(checkedList)}</details>` : ""}
         ${enriched && sourceExplanation ? `<details class="binding-quote"><summary>查看原资料解析（未改写）</summary><blockquote>${escapeHtml(sourceExplanation)}</blockquote></details>` : ""}
         ${question.optionExplanations ? `<h4>选项说明</h4>${question.options.map((option) => `<p><strong>${option.id}：</strong>${escapeHtml(question.optionExplanations[option.id] || "")}</p>`).join("")}` : ""}
         <h4>答案出处与核验说明</h4>
@@ -1470,6 +1479,9 @@
   }
 
   function renderAnswerStatus(question) {
+    if (question?.explanationSource === "official-web") {
+      return '<div class="source-status supplement"><strong>历年整理题 · 答案按原资料保存</strong><span>答案按原资料保存；原资料没有可用解析，本段解析依据本地三色笔记与教材原文辅助补写，并联网核验了证监会、协会、政府与交易所官网页面，只有校验通过的题目才会替换，可能仍有个别表述偏差。引用页面与抓取日期见上，涉及现行规则时以最新官方文本为准。</span></div>';
+    }
     if (question?.explanationSource === "local-materials-ai") {
       return '<div class="source-status supplement"><strong>历年整理题 · 答案按原资料保存</strong><span>答案按原资料保存；原解析过短，本段解析由本地三色笔记与教材原文辅助补写，只有校验通过的题目才会替换，可能仍有个别表述偏差。原资料解析与可回查页码都在本页，涉及现行规则时以最新官方文本为准。</span></div>';
     }
