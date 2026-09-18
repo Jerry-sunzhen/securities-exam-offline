@@ -3,6 +3,7 @@ import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
+import { sprintPlan } from "../content/sprint-plan.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const appRoot = process.argv[2] ? resolve(root, process.argv[2]) : root;
@@ -156,6 +157,72 @@ if (desktopTailwindStyles.bodyBackground !== "rgb(244, 247, 251)" || desktopTail
   throw new Error(`Tailwind desktop layout invalid: ${JSON.stringify(desktopTailwindStyles)}`);
 }
 
+// 冲刺计划：倒计时、当前段落高亮、任务深链接和完成态都要工作。
+await page.click('[data-nav="plan"]');
+await page.waitForSelector(".plan-block");
+const sprintPlanSnapshot = await page.evaluate(() => {
+  const countdown = document.querySelector("[data-sprint-clock]")?.textContent.trim() || "";
+  const multiYearButton = [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes("刷多年考点题"));
+  return {
+    view: document.querySelector(".page-title h2")?.textContent,
+    countdown,
+    blocks: document.querySelectorAll(".plan-block").length,
+    checkboxes: document.querySelectorAll("[data-sprint-block]").length,
+    examBlocks: document.querySelectorAll(".plan-block.exam").length,
+    current: document.querySelector(".plan-block.current")?.dataset.blockId || null,
+    hasCurrentMarker: Boolean(document.querySelector(".plan-now")),
+    multiYearLabel: multiYearButton?.textContent.trim() || "",
+    taskCount: document.querySelectorAll('[data-action="sprint-task"]').length
+  };
+});
+const expectedFinanceMultiYear = questionPayload.questions.filter((question) => question.subjectId === "finance" && question.examEligible !== false && /多年考点/.test(question.repeatLabel || "")).length;
+const expectedPlanBlocks = sprintPlan.blocks.length;
+const expectedPlanExams = sprintPlan.blocks.filter((block) => block.kind === "exam").length;
+if (sprintPlanSnapshot.view !== "冲刺计划" || sprintPlanSnapshot.blocks !== expectedPlanBlocks || sprintPlanSnapshot.checkboxes !== expectedPlanBlocks - expectedPlanExams || sprintPlanSnapshot.examBlocks !== expectedPlanExams) {
+  throw new Error(`冲刺计划结构不对: ${JSON.stringify(sprintPlanSnapshot)}`);
+}
+if (!/^(?:\d+ 天 )?\d{2}:\d{2}:\d{2}$/.test(sprintPlanSnapshot.countdown)) {
+  throw new Error(`冲刺计划倒计时格式不对: ${sprintPlanSnapshot.countdown}`);
+}
+if (!sprintPlanSnapshot.hasCurrentMarker || !sprintPlanSnapshot.multiYearLabel.includes(`${expectedFinanceMultiYear} 题`)) {
+  throw new Error(`冲刺计划缺少当前段落或多年考点题量: ${JSON.stringify(sprintPlanSnapshot)}`);
+}
+// 点任务按钮应当带着条件直接进练习：法规多年考点一共 36 题。
+const expectedLawMultiYear = questionPayload.questions.filter((question) => question.subjectId === "law" && question.examEligible !== false && /多年考点/.test(question.repeatLabel || "")).length;
+await page.evaluate(() => {
+  [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes("刷法规多年考点")).click();
+});
+await page.waitForSelector(".question-card");
+const sprintTaskSession = await page.evaluate(() => {
+  const context = window.ExamApp.getChatContext();
+  return { mode: context.mode, total: context.total, subject: context.question?.subject };
+});
+if (sprintTaskSession.mode !== "practice" || sprintTaskSession.total !== expectedLawMultiYear || sprintTaskSession.subject !== "证券市场基本法律法规") {
+  throw new Error(`冲刺计划任务没有带对条件: ${JSON.stringify({ sprintTaskSession, expectedLawMultiYear })}`);
+}
+await page.click('[data-action="exit-session"]');
+await page.waitForSelector('[data-nav="plan"]');
+// 勾选完成要写进档案，切走再回来仍然勾着。
+await page.click('[data-nav="plan"]');
+await page.waitForSelector("[data-sprint-block]");
+const sprintBlockId = await page.evaluate(() => {
+  const box = document.querySelector("[data-sprint-block]");
+  box.click();
+  return box.dataset.sprintBlock;
+});
+await page.evaluate(() => window.StudyDb.flush());
+await page.click('[data-nav="dashboard"]');
+await page.click('[data-nav="plan"]');
+await page.waitForSelector("[data-sprint-block]");
+const sprintProgress = await page.evaluate((id) => ({
+  checked: document.querySelector(`[data-sprint-block="${id}"]`)?.checked || false,
+  stored: JSON.parse(window.StudyDb.getSetting("sprint:done") || "[]"),
+  label: document.querySelector(".sprint-progress")?.textContent || ""
+}), sprintBlockId);
+if (!sprintProgress.checked || !sprintProgress.stored.includes(sprintBlockId) || sprintProgress.label !== `已完成 1 / ${expectedPlanBlocks - expectedPlanExams} 段`) {
+  throw new Error(`冲刺计划完成态没有持久化: ${JSON.stringify(sprintProgress)}`);
+}
+await page.screenshot({ path: resolve(screenshotDir, "smoke-sprint-plan.png"), fullPage: true });
 await page.click('[data-nav="outline"]');
 await page.waitForSelector(".knowledge-card");
 const knowledgeCards = await page.$$eval(".knowledge-card", (nodes) => nodes.length);
