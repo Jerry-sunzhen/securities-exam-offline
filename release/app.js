@@ -932,13 +932,17 @@
     }
     if (task.kind === "memory") { startMemorySession(task.subjectId); return; }
     if (task.kind === "exam") { startExam(task.subjectId); return; }
+    // 先过知识点再刷题：直接落到讲义页对应章节，并默认打开「只看多年考点」。
     if (task.kind === "outline") {
       captureReadingPosition();
       state.knowledgeSubject = task.subjectId;
-      state.multiYearOnly = true;
+      state.multiYearOnly = task.multiYearOnly !== false;
+      state.outlineSearch = "";
       state.view = "outline";
       render();
-      resetReadingPositionAfterRender();
+      const anchorId = task.chapterId ? `knowledge-chapter-${task.chapterId}` : null;
+      if (anchorId && document.getElementById(anchorId)) restoreReadingPosition({ view: "outline", nodeId: anchorId });
+      else resetReadingPositionAfterRender();
     }
   }
 

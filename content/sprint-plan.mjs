@@ -41,40 +41,60 @@ export const sprintPlan = {
       id: "tonight-2",
       date: "2026-09-18",
       start: "19:00",
-      minutes: 80,
+      minutes: 35,
       focus: "law",
-      title: "法规 · 第一章 证券市场基本法律法规",
-      detail: "431 道题、21 个多年考点，是这一科最大也最常考的一块。先做题，把解析当讲义读，目标 120 题。",
-      tasks: [{ kind: "practice", subjectId: "law", chapterId: "law-1", count: 120, types: ["single", "multiple", "judgment"], label: "刷第一章 120 题" }]
+      title: "法规 · 第一章 高频知识点速览",
+      detail: "先搭骨架再刷题：64 个多年考点知识点，只看主体、权限和期限，不背细节，看不懂就跳过。",
+      tasks: [{ kind: "outline", subjectId: "law", chapterId: "law-1", multiYearOnly: true, label: "看第一章知识点" }]
     },
     {
       id: "tonight-3",
       date: "2026-09-18",
-      start: "20:20",
+      start: "19:35",
       minutes: 70,
       focus: "law",
-      title: "法规 · 第二章 证券经营机构管理规范",
-      detail: "197 道题、8 个多年考点。目标 60 题，做不完按多年考点 → 多选 → 判断的顺序取舍。",
-      tasks: [{ kind: "practice", subjectId: "law", chapterId: "law-2", count: 60, types: ["single", "multiple", "judgment"], label: "刷第二章 60 题" }]
+      title: "法规 · 第一章 刷题",
+      detail: "目标 100 题。每错一题就点解析里的笔记页码回看原文，这一步等于第二遍讲义。",
+      tasks: [{ kind: "practice", subjectId: "law", chapterId: "law-1", count: 100, types: ["single", "multiple", "judgment"], label: "刷第一章 100 题" }]
     },
     {
       id: "tonight-4",
       date: "2026-09-18",
-      start: "21:30",
-      minutes: 60,
+      start: "20:45",
+      minutes: 25,
       focus: "law",
-      title: "法规 · 第三章 证券公司业务规范",
-      detail: "245 道题。目标 60 题，至少把多年考点和多选题过完。",
-      tasks: [{ kind: "practice", subjectId: "law", chapterId: "law-3", count: 60, types: ["single", "multiple", "judgment"], label: "刷第三章 60 题" }]
+      title: "法规 · 第二章 高频知识点速览",
+      detail: "28 个多年考点知识点，同样只看骨架，能记住一章的框架就够了。",
+      tasks: [{ kind: "outline", subjectId: "law", chapterId: "law-2", multiYearOnly: true, label: "看第二章知识点" }]
     },
     {
       id: "tonight-5",
       date: "2026-09-18",
-      start: "22:30",
-      minutes: 30,
+      start: "21:10",
+      minutes: 60,
+      focus: "law",
+      title: "法规 · 第二章 刷题",
+      detail: "目标 60 题。做不完按多年考点 → 多选 → 判断的顺序取舍。",
+      tasks: [{ kind: "practice", subjectId: "law", chapterId: "law-2", count: 60, types: ["single", "multiple", "judgment"], label: "刷第二章 60 题" }]
+    },
+    {
+      id: "tonight-6",
+      date: "2026-09-18",
+      start: "22:10",
+      minutes: 25,
+      focus: "law",
+      title: "法规 · 第三章 高频知识点速览",
+      detail: "38 个多年考点知识点。时间不够就跳过这一段，明天间隙再补。",
+      tasks: [{ kind: "outline", subjectId: "law", chapterId: "law-3", multiYearOnly: true, label: "看第三章知识点" }]
+    },
+    {
+      id: "tonight-7",
+      date: "2026-09-18",
+      start: "22:35",
+      minutes: 25,
       focus: "law",
       title: "法规 · 错题与数字纸",
-      detail: "重做今晚的错题，把遇到的期限、比例、人数、金额、处罚幅度抄成一页纸，明天只翻这页。做完就睡。",
+      detail: "重做今晚的错题，把遇到的期限、比例、人数、金额、处罚幅度抄成一页纸。做完就睡。",
       tasks: [
         { kind: "wrong", subjectId: "law", label: "重做今晚法规错题" },
         { kind: "memory", subjectId: "law", label: "法规背诵卡" }
@@ -161,20 +181,20 @@ export const sprintPlan = {
   ],
   notes: [
     {
-      title: "今晚的时间怎么用",
+      title: "为什么先看知识点再刷题",
       items: [
-        "基础今天已经过完，今晚一整段都给法规，不再回头做基础的题。",
-        "四个小时不可能刷完 995 道，目标是第一、二、三章和多年考点，第四、五章留到明天间隙。",
-        "每题控制在 40 秒内，选错直接看解析，不纠结；做得慢就继续往下走。",
-        "23:00 收工睡觉，明天上午还有一场考试，熬夜换来的记忆不划算。"
+        "法规是纯记忆型科目，零基础直接刷题等于每道题都是第一次见，多选尤其做不动。先用半小时搭骨架，同样的题量能多记一截。",
+        "但只过骨架：看主体、权限、期限和禁止行为，不背细节、不抄条文，看不懂就跳过，细节交给题目和解析。",
+        "顺序是「一章知识点 → 一章题 → 下一章」，不要先把四章知识点全看完，那样今晚就没有刷题时间了。",
+        "知识点速览只看「多年考点」那一层：第一章 64 个、第二章 28 个、第三章 38 个，比整章少一半以上。"
       ]
     },
     {
       title: "时间不够时的取舍顺序",
       items: [
-        "先砍第三章的常规题，只做它的多年考点和多选题。",
+        "先跳过第三章的知识点速览，直接做它的多年考点题。",
         "再砍第二章剩余的题，只保留多年考点。",
-        "不能砍：第一章、两科的多年考点、那页数字纸。",
+        "不能砍：第一章的知识点速览和刷题、两科的多年考点、那页数字纸。",
         "明天间隙若只剩一小时，按「数字纸 → 第一、二章多年考点 → 出门」执行。"
       ]
     },

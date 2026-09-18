@@ -201,6 +201,46 @@ if (sprintTaskSession.mode !== "practice" || sprintTaskSession.total !== expecte
 }
 await page.click('[data-action="exit-session"]');
 await page.waitForSelector('[data-nav="plan"]');
+// 知识点速览任务：进入讲义页、自动打开「只看多年考点」，并定位到对应章节。
+await page.click('[data-nav="plan"]');
+await page.waitForSelector(".plan-block");
+const lawChapterOneMultiYear = (() => {
+  const years = new Map();
+  for (const question of questionPayload.questions) {
+    if (question.subjectId !== "law" || question.examEligible === false || question.verificationStatus !== "source_transcribed") continue;
+    const knowledgeId = question.knowledgeLinks?.[0]?.knowledgeId;
+    if (!knowledgeId) continue;
+    const set = years.get(knowledgeId) || new Set();
+    for (const year of question.repeatYears || []) set.add(Number(year));
+    years.set(knowledgeId, set);
+  }
+  return questionPayload.knowledgePoints.filter((point) => point.chapterId === "law-1" && (years.get(point.id)?.size || 0) >= 2).length;
+})();
+await page.evaluate(() => {
+  [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes("看第一章知识点")).click();
+});
+await page.waitForSelector("#knowledge-chapter-law-1");
+const knowledgeTaskState = await page.evaluate(() => ({
+  view: document.querySelector(".page-title h2")?.textContent,
+  subject: document.querySelector("#knowledge-subject")?.value,
+  multiYearOnly: [...document.querySelectorAll('[data-action="toggle-multi-year"]')].some((button) => button.textContent.includes("显示全部知识点")),
+  heading: document.querySelector("#knowledge-chapter-law-1 h2")?.textContent || "",
+  cards: document.querySelectorAll("#knowledge-chapter-law-1 .knowledge-card").length
+}));
+if (knowledgeTaskState.view !== "知识讲义与官方大纲" || knowledgeTaskState.subject !== "law" || !knowledgeTaskState.multiYearOnly || !knowledgeTaskState.heading.includes("证券市场基本法律法规")) {
+  throw new Error(`知识点速览任务没有落到正确章节: ${JSON.stringify(knowledgeTaskState)}`);
+}
+if (knowledgeTaskState.cards !== lawChapterOneMultiYear) {
+  throw new Error(`「只看多年考点」没有生效: ${knowledgeTaskState.cards} / ${lawChapterOneMultiYear}`);
+}
+// 还原讲义页默认状态（金融基础、显示全部知识点），后面的断言按默认状态写。
+await page.select("#knowledge-subject", "finance");
+if (knowledgeTaskState.multiYearOnly) await page.click('[data-action="toggle-multi-year"]');
+await page.click('[data-nav="plan"]');
+await page.waitForSelector(".plan-block");
+// 清掉刚才留下的阅读位置：后面「知识讲义」首次进入仍按默认从头开始，
+// 滚动位置由专门的还原用例覆盖。
+await page.evaluate(() => localStorage.removeItem("securities-exam-reading-position-v1"));
 // 勾选完成要写进档案，切走再回来仍然勾着。
 await page.click('[data-nav="plan"]');
 await page.waitForSelector("[data-sprint-block]");
