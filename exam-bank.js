@@ -61,31 +61,55 @@
     }
     return [...groups.values()].map((g) => g.sort((a,b) => (a.caseOrder || 0)-(b.caseOrder || 0)));
   }
-  // rankOf 可选：返回每题优先级（越小越优先），同一段材料取组内最高优先级，用于练习时先出没做过的材料。
+  // 从给定材料组里挑一组：题量尽量正好等于 count，其次让优先级高（没做过、最久没做）
+  // 的材料优先。材料组只有 9~11 组，直接枚举所有子集，顺带保证「能不用刚做过的就不用」。
+  function pickCaseGroups(groups, count, rankOfGroup) {
+    let best = null;
+    for (let mask = 1; mask < (1 << groups.length); mask += 1) {
+      let size = 0;
+      let cost = 0;
+      for (let index = 0; index < groups.length; index += 1) {
+        if (!(mask & (1 << index))) continue;
+        size += groups[index].length;
+        cost += rankOfGroup(groups[index]);
+      }
+      if (size > count) continue;
+      const exact = size === count;
+      // 先看题量是否正好，再比优先级总和；同分时保留先遍历到的（也就是随机顺序里的那组）。
+      if (!best || (exact && !best.exact) || (exact === best.exact && cost < best.cost)) best = { exact, cost, mask };
+    }
+    if (!best) return [];
+    return groups.filter((group, index) => best.mask & (1 << index));
+  }
+
+  const groupKey = (group) => group[0].caseGroupId || group[0].id;
+  // rankOf 可选：返回每题优先级（越小越优先），同一段材料取组内最高优先级。
   function selectCases(pool, count, rankOf = null) {
     const groups = grouped(pool.filter((q) => q.type === "case" && q.caseMaterial));
     const complete = groups.filter((g) => g.length === g[0].caseGroupSize);
-    const rank = typeof rankOf === "function" ? (group) => Math.min(...group.map(rankOf)) : () => 0;
+    const rankOfGroup = typeof rankOf === "function" ? (group) => Math.min(...group.map(rankOf)) : () => 0;
+    const stemsOf = new Map(complete.map((group) => [group, new Set(group.map((question) => normalizedStem(question)))]));
+    // 历年资料里存在两段材料考同一道小问的情况：整段出题时按题干去重，
+    // 同一张卷子或同一组练习里只留其中一段。淘汰顺序按材料编号走，
+    // 保证「哪一段被留下」可复现，档内再打乱，所以不会固定轮转。
     const buckets = new Map();
-    for (const group of complete) {
-      const key = rank(group);
+    const keptStems = new Set();
+    for (const group of [...complete].sort((left, right) => groupKey(left).localeCompare(groupKey(right)))) {
+      const stems = stemsOf.get(group);
+      if ([...stems].some((stem) => keptStems.has(stem))) continue;
+      for (const stem of stems) keptStems.add(stem);
+      const key = rankOfGroup(group);
       if (!buckets.has(key)) buckets.set(key, []);
       buckets.get(key).push(group);
     }
+    // 优先出没做过的材料；同一档里先出历年并入的题，其余顺序随机。
     const preferred = [...buckets.keys()].sort((left, right) => left - right).flatMap((key) => {
       const bucket = buckets.get(key);
       return [...shuffled(bucket.filter((g) => imported(g[0]))), ...shuffled(bucket.filter((g) => !imported(g[0])))];
     });
-    const choices = new Map([[0, []]]);
-    for (const group of preferred) {
-      for (const [size, units] of [...choices].reverse()) {
-        const next = size + group.length;
-        if (next <= count && !choices.has(next)) choices.set(next, [...units, group]);
-      }
-      if (choices.has(count)) return choices.get(count).flat();
-    }
-    return choices.get(Math.max(...choices.keys())).flat();
+    return pickCaseGroups(preferred, count, rankOfGroup).flat();
   }
+
   // rankOf 可选，口径与 selectCases 一致：模考也按「没做过 → 做错过 → 做对了」
   // 叠加最近一次作答时间挑材料，避免连续两次模考大面积重题。
   function selectExam(questions, subjectId, rankOf = null) {
@@ -103,8 +127,12 @@
       // 先补还没出现过的材料，实在凑不满再回头用已经用过的。
       const fresh = ordered.filter((q) => !usedGroups.has(q.caseGroupId || q.id));
       const spent = ordered.filter((q) => usedGroups.has(q.caseGroupId || q.id));
+      const usedStems = new Set(cases.map((question) => normalizedStem(question)));
       for (const q of [...fresh, ...spent]) {
         if (cases.length === 10) break;
+        const key = normalizedStem(q);
+        if (usedStems.has(key)) continue;
+        usedStems.add(key);
         cases.push(q);
       }
     }
