@@ -1,5 +1,7 @@
 // 考前冲刺的日程数据。时间按北京时间（UTC+8）写死，方便「现在该做哪一段」自动定位。
 // 块里的 tasks 是深链接：点一下就带着对应条件进入练习/模考/背诵，不用手动再选一遍筛选条件。
+// id 是「完成」勾选的存储键：改计划时不能把旧 id 挪给别的段落，否则上一版的勾选会串到新段落上。
+// 所以这里用带含义的 id，而不是 sat-1、sat-2 这种序号。
 
 export const sprintPlan = {
   title: "最后一天冲刺",
@@ -68,7 +70,7 @@ export const sprintPlan = {
       tasks: [{ kind: "practice", subjectId: "law", chapterId: "law-3", count: 60, types: ["single", "multiple", "judgment"], label: "刷第三章 60 题" }]
     },
     {
-      id: "sat-1",
+      id: "sat-morning-leave",
       date: "2026-09-19",
       start: "06:30",
       minutes: 20,
@@ -78,7 +80,7 @@ export const sprintPlan = {
       tasks: [{ kind: "wrong", subjectId: "finance", label: "过一遍基础错题" }]
     },
     {
-      id: "sat-2",
+      id: "sat-morning-taxi",
       date: "2026-09-19",
       start: "06:50",
       minutes: 30,
@@ -88,7 +90,7 @@ export const sprintPlan = {
       tasks: [{ kind: "wrong", subjectId: "finance", label: "车上过基础错题" }]
     },
     {
-      id: "sat-3",
+      id: "sat-morning-venue",
       date: "2026-09-19",
       start: "07:20",
       minutes: 40,
@@ -98,7 +100,7 @@ export const sprintPlan = {
       tasks: [{ kind: "wrong", subjectId: "finance", label: "继续基础错题" }]
     },
     {
-      id: "sat-4",
+      id: "sat-morning-stop",
       date: "2026-09-19",
       start: "08:00",
       minutes: 15,
@@ -108,7 +110,7 @@ export const sprintPlan = {
       detail: "08:00 之后不再开新题，只翻自己的结论；上个厕所、喝口水，别和别人对答案。"
     },
     {
-      id: "sat-5",
+      id: "sat-morning-entry",
       date: "2026-09-19",
       start: "08:15",
       minutes: 15,
@@ -129,7 +131,7 @@ export const sprintPlan = {
       detail: "120 题 120 分钟。单选 40 题控制在 25 分钟内，多数时间留给多选和材料题；判断题不留空。"
     },
     {
-      id: "sat-6",
+      id: "sat-lunch",
       date: "2026-09-19",
       start: "10:30",
       minutes: 30,
@@ -139,7 +141,7 @@ export const sprintPlan = {
       detail: "不复盘上午的题、不对答案。吃点清淡的，别吃太饱，下午还有两小时。"
     },
     {
-      id: "sat-7",
+      id: "sat-gap-wrong",
       date: "2026-09-19",
       start: "11:00",
       minutes: 30,
@@ -149,7 +151,7 @@ export const sprintPlan = {
       tasks: [{ kind: "wrong", subjectId: "law", label: "收尾法规错题" }]
     },
     {
-      id: "sat-8",
+      id: "sat-gap-multiyear",
       date: "2026-09-19",
       start: "11:30",
       minutes: 25,
@@ -159,7 +161,7 @@ export const sprintPlan = {
       tasks: [{ kind: "multiYear", subjectId: "law", label: "刷法规多年考点" }]
     },
     {
-      id: "sat-9",
+      id: "sat-gap-review",
       date: "2026-09-19",
       start: "11:55",
       minutes: 20,
@@ -169,7 +171,7 @@ export const sprintPlan = {
       tasks: [{ kind: "memory", subjectId: "law", label: "最后过一遍法规卡" }]
     },
     {
-      id: "sat-10",
+      id: "sat-gap-leave",
       date: "2026-09-19",
       start: "12:15",
       minutes: 15,
