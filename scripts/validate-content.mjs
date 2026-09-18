@@ -114,12 +114,15 @@ if (caseGroups.size) {
 }
 
 // 题干、选项、解析必须是清洗后的文本：不能残留水印、页码、混入的后续题目或重复标点。
+// 解析也不该停在「监事会的职权有：」这种引导语上：那说明来源里的分条内容被切掉了。
+const danglingExplanation = /[，、；：]?\s*(?:有|包括|如下|如下所示|以下|分别是|情形有|条件有|职责有|内容有|特点有|特征有|需要|应当)\s*[：:]\s*$/;
 let textIssueCount = 0;
 for (const question of payload.questions) {
   for (const issue of questionTextIssues(question)) {
     errors.push(`${question.id}: ${issue}`);
     textIssueCount += 1;
   }
+  if (danglingExplanation.test(String(question.explanation || "").trim())) errors.push(`${question.id}: 解析停在引导语上，分条内容疑似被截断`);
   if (question.examEligible === false && !question.issues?.length) errors.push(`${question.id}: 不可练习的题目必须写明原因`);
 }
 console.log(`Text cleanup issues: ${textIssueCount}`);

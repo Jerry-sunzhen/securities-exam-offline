@@ -43,6 +43,31 @@ def option_key(value):
     return re.sub(r'[\s\u3000]+', '', value).replace('，', ',').replace('。', '.').replace('．', '.').lower()
 
 
+# 有些来源的解析会把下一题整段吞进来（「8.…【参考答案】B」），合并时要挑真正的解析，
+# 否则「最长优先」会把脏解析选上来，清洗后反而变成占位说明。
+NEXT_Q = re.compile(r'(?:^|\n)[ \t]*\d{1,3}[ \t]*[、.．][ \t]*(?=[^\s\d])')
+DIRTY_ANS = re.compile(r'参考答案|【\s*(?:参考|正确)?答案|【\s*解析\s*】|慧考解析|刷题软件|命中率')
+
+
+PLACEHOLDER_ANS = '原资料未提供可用解析'
+
+
+def explanation_score(value):
+    text = value or ''
+    if not text:
+        return -1
+    # 占位说明不算解析：只要别处有一句真解析，哪怕很短也用真的。
+    if text.startswith(PLACEHOLDER_ANS):
+        return 1
+    if DIRTY_ANS.search(text) or (NEXT_Q.search(text) and '解析' in text):
+        return -1000000 - len(text)
+    return len(text)
+
+
+def better_explanation(candidate, current):
+    return explanation_score(candidate) > explanation_score(current)
+
+
 def compact(value):
     # Keep paragraph/statement boundaries, join only PDF wrapping lines.
     value = re.sub(r'\n[ \t]*\n+', '\n', value.replace('\f', '\n')).strip()
@@ -95,6 +120,17 @@ def options_in(text):
     return compact(text), []
 
 
+# 「（1）检查公司财务；」这类正文列举也长得像（n）题号，只有材料题区段里的（n）才当小问。
+CASE_SECTIONS = ['共享题干题', '综合题', '材料题', '不定项选择题']
+
+
+def is_question_start(marker, sections):
+    if not marker.group('sub'):
+        return True
+    enclosing = [s for s in sections if s.start() < marker.start()]
+    return bool(enclosing) and enclosing[-1][1] in CASE_SECTIONS
+
+
 def parse_source(source, text):
     starts = list(START.finditer(text))
     answers = list(ANS.finditer(text))
@@ -109,10 +145,8 @@ def parse_source(source, text):
         for candidate in reversed(candidates):
             if candidate.group('plain') and source['year'] != 2026:
                 continue
-            if candidate.group('sub'):
-                current_sections = [s for s in sections if s.start() < candidate.start()]
-                if not current_sections or current_sections[-1][1] not in ['共享题干题','综合题','材料题','不定项选择题']:
-                    continue
+            if not is_question_start(candidate, sections):
+                continue
             pre = text[candidate.end():answer.start()]
             stem, options = options_in(pre)
             # A parsed question must have options; bare judgment handled below.
@@ -142,10 +176,26 @@ def parse_source(source, text):
         # Stop explanations at the next actual question (requires an A option).
         end = len(text)
         for s in starts:
-            if s.start() <= answer.end():
+            if s.start() <= answer.end() or not is_question_start(s, sections):
                 continue
             next_answer = next((a for a in answers if a.start() > s.end()), None)
-            if next_answer and options_in(text[s.end():next_answer.start()])[1]:
+            if not next_answer:
+                continue
+            segment = text[s.end():next_answer.start()]
+            # 解析里的「1.…；2.…；3.…」列举也长得像题号。真正的下一题，从题号到它自己的答案
+            # 之间不会再冒出一个能解析出选项的题号；材料题里的（n）小问属于当前这道题，不算。
+            # 材料题的小问用「（1）」标注，解析里也常这么列举；只有当这个候选本身不是小问时，
+            # 才把后面的（n）当成它内部的小问，否则解析就会在列举的第一条被截断。
+            nested = [t for t in starts
+                      if s.end() <= t.start() < next_answer.start() and (s.group('sub') or not t.group('sub'))
+                      and is_question_start(t, sections) and options_in(text[t.end():next_answer.start()])[1]]
+            if nested:
+                continue
+            if options_in(segment)[1]:
+                end = s.start()
+                break
+            # 有些来源把选项排成了图，文字层里只剩题干；这时下一题很短，也要止住解析。
+            if len(compact(segment)) <= 160 and not ANS.search(segment):
                 end = s.start()
                 break
         for sec in sections:
@@ -244,7 +294,7 @@ def main():
             if sorted(remap[a] for a in q['correctOptionIds'] if a in remap)!=target['correctOptionIds']:
                 target['issues'].append('不同来源答案冲突')
             target['origins'].extend(q['origins'])
-            if len(q['explanation'])>len(target['explanation']):target['explanation']=q['explanation']
+            if better_explanation(q['explanation'],target['explanation']):target['explanation']=q['explanation']
             target['year']=max(q['year'],target['year'])
             if q['sourceKind']=='recalled':target['sourceKind']='recalled'
         else:
@@ -265,7 +315,7 @@ def main():
             continue
         prior['origins'].extend(q.get('origins', []))
         prior['issues'] = sorted(set(prior.get('issues', []) + q.get('issues', [])))
-        if len(q.get('explanation','')) > len(prior.get('explanation','')): prior['explanation'] = q['explanation']
+        if better_explanation(q.get('explanation',''), prior.get('explanation','')): prior['explanation'] = q['explanation']
         prior['year'] = max(prior.get('year', 0), q.get('year', 0))
         if q.get('sourceKind') == 'recalled': prior['sourceKind'] = 'recalled'
     questions = deduped
