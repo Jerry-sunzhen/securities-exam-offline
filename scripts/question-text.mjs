@@ -493,6 +493,73 @@ function repairStemOptions(question) {
   return true;
 }
 
+// 现行考试只有单选题和多选题，没有「组合型选择题」那种把 Ⅰ/Ⅱ/Ⅲ 排成选项的单选。
+// 历年资料里这类题有七百多道，构建时统一改写成真正的多选题：题干的 Ⅰ~Ⅳ 每条变成
+// A~D 四个选项，原答案选项包含的条目就是正确项。否定题干（「错误的有」）同理，
+// 题干原样保留，答案仍是让题干成立的那几条，所以不需要额外的翻转逻辑。
+const ROMAN_ORDER = ["Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ", "Ⅵ"];
+const COMBINATION_OPTION_TEXT = /^[\sⅠⅡⅢⅣⅤⅥ、，,．.。]+$/;
+
+function isCombinationOptionText(text) {
+  const value = String(text || "");
+  return /[ⅠⅡⅢⅣⅤⅥ]/.test(value) && COMBINATION_OPTION_TEXT.test(value);
+}
+
+function combinationMembers(text) {
+  return [...new Set(String(text || "").match(/[ⅠⅡⅢⅣⅤⅥ]/g) || [])];
+}
+
+// 把题干拆成引导句 + 四条陈述。编号按出现顺序重新记为 Ⅰ~Ⅳ：原资料偶尔把 Ⅲ 识别成
+// 第二个 Ⅱ，而正文里的《巴塞尔Ⅲ》这类词会混进编号，所以先只认行首的编号。
+function splitCombinationStatements(stem) {
+  const text = String(stem || "");
+  const markers = [];
+  const pattern = /[ⅠⅡⅢⅣⅤⅥ]/g;
+  let match;
+  while ((match = pattern.exec(text))) {
+    const at = match.index;
+    const previous = at ? text[at - 1] : "\n";
+    markers.push({ at, lineStart: at === 0 || /[\n。；：、，,）)]/.test(previous) });
+  }
+  const lineStarts = markers.filter((marker) => marker.lineStart);
+  const picked = lineStarts.length === 4 ? lineStarts : markers;
+  if (picked.length !== 4) return null;
+  for (let index = 1; index < picked.length; index += 1) {
+    if (ROMAN_ORDER.indexOf(text[picked[index].at]) < ROMAN_ORDER.indexOf(text[picked[index - 1].at])) return null;
+  }
+  const lead = text.slice(0, picked[0].at).trim();
+  const statements = picked.map((marker, index) => {
+    const end = index + 1 < picked.length ? picked[index + 1].at : text.length;
+    return text.slice(marker.at + 1, end).replace(/^[\s.、．,，:：]+/, "").trim();
+  });
+  return { lead, statements };
+}
+
+function convertCombinationChoice(question) {
+  if (question.type !== "single" || question.caseMaterial) return false;
+  const options = question.options || [];
+  if (options.length !== 4 || !options.every((option) => isCombinationOptionText(option.text))) return false;
+  const parsed = splitCombinationStatements(question.stem);
+  if (!parsed || !parsed.lead) return false;
+  const statements = parsed.statements.map((text) => cleanOptionText(text));
+  if (statements.some((text) => !text || text.length > 600) || new Set(statements).size !== statements.length) return false;
+  const answer = options.find((option) => (question.correctOptionIds || []).includes(option.id));
+  if (!answer) return false;
+  const truth = new Set(combinationMembers(answer.text));
+  if (!truth.size) return false;
+  const ids = ["A", "B", "C", "D"];
+  question.stem = parsed.lead;
+  question.options = statements.map((text, index) => ({ id: ids[index], text }));
+  question.correctOptionIds = statements.map((text, index) => (truth.has(ROMAN_ORDER[index]) ? ids[index] : null)).filter(Boolean);
+  // 只有一条成立时仍按单选题出，多选题至少要两条正确项。
+  question.type = question.correctOptionIds.length > 1 ? "multiple" : "single";
+  question.selectionMode = question.type === "multiple" ? "multiple" : "single";
+  // 原解析收尾常写「故本题选择 B 选项」，改成多选题后字母已经换了含义，这类结论句统一删掉。
+  question.explanation = String(question.explanation || "").replace(/(?:[，,；;。]?\s*(?:故|所以|因此)?\s*(?:本题|此题)?\s*(?:应)?\s*(?:选|选择)\s*[A-D]\s*(?:选项|项)?\s*[。.．]?\s*)$/, "").trim();
+  question.combinationConverted = true;
+  return true;
+}
+
 // 多个来源答案一致时，「不同来源答案冲突」是合并过程留下的假标记。
 function reconcileOriginConflicts(question) {
   if (!question.issues?.includes("不同来源答案冲突")) return;
@@ -518,12 +585,14 @@ function recomputeIssues(question) {
   const ids = new Set(options.map((option) => option.id));
   if (!question.correctOptionIds?.length || question.correctOptionIds.some((id) => !ids.has(id))) issues.push("答案与选项不匹配");
   if (question.type === "single" && question.correctOptionIds.length !== 1 && question.correctOptionIds.length) issues.push("单选题答案数量异常");
+  if (question.type === "multiple" && question.correctOptionIds?.length === 1) issues.push("多选题答案数量异常");
+  if (question.type === "single" && options.length === 4 && options.every((option) => isCombinationOptionText(option.text))) issues.push("组合型选项待拆分");
   if (question.stem.length > 1800) issues.push("题干疑似混入其他内容");
   if (question.type === "case" && !question.caseMaterial) issues.push("综合题材料待恢复");
   return issues;
 }
 
-const RECOMPUTABLE_ISSUES = new Set(["选项文字重复", "答案与选项不匹配", "选项数量异常", "选项缺失或疑似跨题", "题干疑似混入其他内容", "综合题材料待恢复", "判断题选项异常", "单选题答案数量异常"]);
+const RECOMPUTABLE_ISSUES = new Set(["选项文字重复", "答案与选项不匹配", "选项数量异常", "选项缺失或疑似跨题", "题干疑似混入其他内容", "综合题材料待恢复", "判断题选项异常", "单选题答案数量异常", "多选题答案数量异常", "组合型选项待拆分"]);
 
 export function applyCorrection(question, correction) {
   if (!correction) return false;
@@ -567,6 +636,7 @@ export function cleanQuestion(question, { corrections = new Map() } = {}) {
   for (const option of question.options || []) option.text = cleanOptionText(option.text);
   normalizeJudgmentOptions(question);
   repairStemOptions(question);
+  convertCombinationChoice(question);
   repairBlankBracket(question);
   repairDanglingCloseParen(question);
   repairMissingBlank(question);
