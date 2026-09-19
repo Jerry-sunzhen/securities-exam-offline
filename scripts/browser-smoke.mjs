@@ -203,19 +203,28 @@ if (desktopTailwindStyles.bodyBackground !== "rgb(244, 247, 251)" || desktopTail
 }
 
 // 冲刺计划：倒计时、当前段落高亮、任务深链接和完成态都要工作。
-await page.click('[data-nav="plan"]');
-await page.waitForSelector(".plan-block");
-// 计划里的练习任务要能带着科目、题量和题型直接开练。取考试间隙里第一个纯题型的 practice 任务（当前是法规多选专练）。
+// 计划只保留还没到的段落，所以按当前时间先算出该剩哪些段，过期以后这段检查会跟着收缩。
+const sprintStudyBlocks = sprintPlan.blocks.filter((block) => block.kind !== "exam");
+const sprintZone = sprintPlan.timezone || "+08:00";
+const sprintStartMs = (block) => new Date(`${block.date}T${block.start}:00${sprintZone}`).getTime();
+const sprintEndMs = (block) => sprintStartMs(block) + (block.minutes || 0) * 60000;
+const sprintNow = Date.now();
+const expectedCurrentBlock = sprintStudyBlocks.find((block) => sprintNow >= sprintStartMs(block) && sprintNow < sprintEndMs(block))
+  || sprintStudyBlocks.find((block) => sprintNow < sprintStartMs(block))
+  || sprintStudyBlocks[sprintStudyBlocks.length - 1]
+  || null;
+// 计划里的练习任务要能带着科目、题量和题型直接开练。取考试间隙里第一个纯题型的 practice 任务（当前是法规多选）。
 const sprintPractice = sprintPlan.blocks
   .filter((block) => /^sat-gap-/.test(block.id))
   .flatMap((block) => (block.tasks || []).filter((task) => task.kind === "practice" && Array.isArray(task.types) && task.types.length === 1).map((task) => ({ ...task, blockId: block.id })))
   .shift();
-if (!sprintPractice) throw new Error("冲刺计划里没有带题型的练习任务");
 const typeLabels = { single: "单选", multiple: "多选", judgment: "判断", case: "综合" };
-const sprintExpectedComposition = Object.fromEntries(sprintPractice.types.map((type) => [typeLabels[type], sprintPractice.count]));
+
+await page.click('[data-nav="plan"]');
+if (sprintStudyBlocks.length) await page.waitForSelector(".plan-block");
 const sprintPlanSnapshot = await page.evaluate((label) => {
   const countdown = document.querySelector("[data-sprint-clock]")?.textContent.trim() || "";
-  const taskButton = [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes(label));
+  const taskButton = label ? [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes(label)) : null;
   return {
     view: document.querySelector(".page-title h2")?.textContent,
     countdown,
@@ -227,7 +236,7 @@ const sprintPlanSnapshot = await page.evaluate((label) => {
     taskLabel: taskButton?.textContent.trim() || "",
     taskCount: document.querySelectorAll('[data-action="sprint-task"]').length
   };
-}, sprintPractice.label);
+}, sprintPractice ? sprintPractice.label : "");
 const expectedPlanBlocks = sprintPlan.blocks.length;
 const expectedPlanExams = sprintPlan.blocks.filter((block) => block.kind === "exam").length;
 if (sprintPlanSnapshot.view !== "冲刺计划" || sprintPlanSnapshot.blocks !== expectedPlanBlocks || sprintPlanSnapshot.checkboxes !== expectedPlanBlocks - expectedPlanExams || sprintPlanSnapshot.examBlocks !== expectedPlanExams) {
@@ -236,43 +245,51 @@ if (sprintPlanSnapshot.view !== "冲刺计划" || sprintPlanSnapshot.blocks !== 
 if (!/^(?:\d+ 天 )?\d{2}:\d{2}:\d{2}$/.test(sprintPlanSnapshot.countdown)) {
   throw new Error(`冲刺计划倒计时格式不对: ${sprintPlanSnapshot.countdown}`);
 }
-if (!sprintPlanSnapshot.hasCurrentMarker || !sprintPlanSnapshot.taskLabel.includes(sprintPractice.label)) {
-  throw new Error(`冲刺计划缺少当前段落或任务按钮: ${JSON.stringify(sprintPlanSnapshot)}`);
+if (sprintPlanSnapshot.hasCurrentMarker !== Boolean(expectedCurrentBlock) || (expectedCurrentBlock && sprintPlanSnapshot.current !== expectedCurrentBlock.id)) {
+  throw new Error(`冲刺计划当前段落不对: ${JSON.stringify({ sprintPlanSnapshot, expectedCurrentBlock: expectedCurrentBlock?.id || null })}`);
 }
-// 点任务按钮应当带着条件直接进练习。
-await page.evaluate((label) => {
-  [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes(label)).click();
-}, sprintPractice.label);
-await page.waitForSelector(".question-card");
-const sprintTaskSession = await page.evaluate(() => {
-  const context = window.ExamApp.getChatContext();
-  return { mode: context.mode, total: context.total, subject: context.question?.subject, composition: context.composition };
-});
-const compositionMatches = JSON.stringify(Object.entries(sprintTaskSession.composition).sort()) === JSON.stringify(Object.entries(sprintExpectedComposition).sort());
-if (sprintTaskSession.mode !== "practice" || sprintTaskSession.total !== sprintPractice.count || sprintTaskSession.subject !== "证券市场基本法律法规" || !compositionMatches) {
-  throw new Error(`冲刺计划任务没有带对条件: ${JSON.stringify({ sprintTaskSession, sprintExpectedComposition, sprintPractice })}`);
+if (sprintPractice) {
+  const sprintExpectedComposition = Object.fromEntries(sprintPractice.types.map((type) => [typeLabels[type], sprintPractice.count]));
+  if (!sprintPlanSnapshot.taskLabel.includes(sprintPractice.label)) {
+    throw new Error(`冲刺计划缺少任务按钮: ${JSON.stringify({ sprintPlanSnapshot, sprintPractice })}`);
+  }
+  // 点任务按钮应当带着条件直接进练习。
+  await page.evaluate((label) => {
+    [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes(label)).click();
+  }, sprintPractice.label);
+  await page.waitForSelector(".question-card");
+  const sprintTaskSession = await page.evaluate(() => {
+    const context = window.ExamApp.getChatContext();
+    return { mode: context.mode, total: context.total, subject: context.question?.subject, composition: context.composition };
+  });
+  const compositionMatches = JSON.stringify(Object.entries(sprintTaskSession.composition).sort()) === JSON.stringify(Object.entries(sprintExpectedComposition).sort());
+  if (sprintTaskSession.mode !== "practice" || sprintTaskSession.total !== sprintPractice.count || sprintTaskSession.subject !== "证券市场基本法律法规" || !compositionMatches) {
+    throw new Error(`冲刺计划任务没有带对条件: ${JSON.stringify({ sprintTaskSession, sprintExpectedComposition, sprintPractice })}`);
+  }
+  await page.click('[data-action="exit-session"]');
+  await page.waitForSelector('[data-nav="plan"]');
 }
-await page.click('[data-action="exit-session"]');
-await page.waitForSelector('[data-nav="plan"]');
-// 勾选完成要写进档案，切走再回来仍然勾着。
-await page.click('[data-nav="plan"]');
-await page.waitForSelector("[data-sprint-block]");
-const sprintBlockId = await page.evaluate(() => {
-  const box = document.querySelector("[data-sprint-block]");
-  box.click();
-  return box.dataset.sprintBlock;
-});
-await page.evaluate(() => window.StudyDb.flush());
-await page.click('[data-nav="dashboard"]');
-await page.click('[data-nav="plan"]');
-await page.waitForSelector("[data-sprint-block]");
-const sprintProgress = await page.evaluate((id) => ({
-  checked: document.querySelector(`[data-sprint-block="${id}"]`)?.checked || false,
-  stored: JSON.parse(window.StudyDb.getSetting("sprint:done") || "[]"),
-  label: document.querySelector(".sprint-progress")?.textContent || ""
-}), sprintBlockId);
-if (!sprintProgress.checked || !sprintProgress.stored.includes(sprintBlockId) || sprintProgress.label !== `已完成 1 / ${expectedPlanBlocks - expectedPlanExams} 段`) {
-  throw new Error(`冲刺计划完成态没有持久化: ${JSON.stringify(sprintProgress)}`);
+if (sprintStudyBlocks.length) {
+  // 勾选完成要写进档案，切走再回来仍然勾着。
+  await page.click('[data-nav="plan"]');
+  await page.waitForSelector("[data-sprint-block]");
+  const sprintBlockId = await page.evaluate(() => {
+    const box = document.querySelector("[data-sprint-block]");
+    box.click();
+    return box.dataset.sprintBlock;
+  });
+  await page.evaluate(() => window.StudyDb.flush());
+  await page.click('[data-nav="dashboard"]');
+  await page.click('[data-nav="plan"]');
+  await page.waitForSelector("[data-sprint-block]");
+  const sprintProgress = await page.evaluate((id) => ({
+    checked: document.querySelector(`[data-sprint-block="${id}"]`)?.checked || false,
+    stored: JSON.parse(window.StudyDb.getSetting("sprint:done") || "[]"),
+    label: document.querySelector(".sprint-progress")?.textContent || ""
+  }), sprintBlockId);
+  if (!sprintProgress.checked || !sprintProgress.stored.includes(sprintBlockId) || sprintProgress.label !== `已完成 1 / ${sprintStudyBlocks.length} 段`) {
+    throw new Error(`冲刺计划完成态没有持久化: ${JSON.stringify(sprintProgress)}`);
+  }
 }
 await page.screenshot({ path: resolve(screenshotDir, "smoke-sprint-plan.png"), fullPage: true });
 await page.click('[data-nav="outline"]');

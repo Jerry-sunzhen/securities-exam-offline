@@ -1002,9 +1002,10 @@
     const blocks = sprintData.blocks || [];
     const studyBlocks = sprintStudyBlocks();
     const finished = studyBlocks.filter((block) => done.has(block.id)).length;
-    const days = sprintData.days?.length
+    const days = (sprintData.days?.length
       ? sprintData.days
-      : [...new Set(blocks.map((block) => block.date))].map((date) => ({ date, label: date }));
+      : [...new Set(blocks.map((block) => block.date))].map((date) => ({ date, label: date })))
+      .filter((day) => blocks.some((block) => block.date === day.date));
     const subjectStats = (subjectId) => {
       const pool = (questionData.questions || []).filter((question) => question.subjectId === subjectId && question.examEligible !== false);
       const attempted = new Set(StudyDb.getAttemptRows().map((row) => row.question_id));
