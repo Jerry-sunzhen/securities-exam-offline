@@ -106,6 +106,16 @@ npm run build:styles
 
 大纲提取脚本使用 macOS 的 PDFKit/Swift 和 `textutil`；已经生成的发布版不受此限制。
 
+### 读取学习档案
+
+学习档案是 SQLite 数据库，默认存在浏览器的 IndexedDB 里，磁盘上通常没有文件。要先在应用里点「导出档案」下载 `securities-study-profile.sqlite`，然后：
+
+```bash
+node scripts/study-progress.mjs ~/Downloads/securities-study-profile.sqlite
+```
+
+脚本会按科目、章节、题型打印覆盖率与正确率，列出当前错题分布、多年考点缺口，以及没做过最多的章节。口径与 App 一致：错题指最近一次作答仍为错的题。第二个参数可传入别的题库 JSON，缺省用 `data/questions.json`。
+
 ## GitHub 上传
 
 - 仓库内所有文件名和目录名均使用英文，中文仅保留在学习内容和界面中。

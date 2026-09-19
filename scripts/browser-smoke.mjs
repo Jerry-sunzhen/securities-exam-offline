@@ -205,10 +205,17 @@ if (desktopTailwindStyles.bodyBackground !== "rgb(244, 247, 251)" || desktopTail
 // 冲刺计划：倒计时、当前段落高亮、任务深链接和完成态都要工作。
 await page.click('[data-nav="plan"]');
 await page.waitForSelector(".plan-block");
-const expectedLawMultiYear = questionPayload.questions.filter((question) => question.subjectId === "law" && question.examEligible !== false && /多年考点/.test(question.repeatLabel || "")).length;
-const sprintPlanSnapshot = await page.evaluate(() => {
+// 计划里的练习任务要能带着科目、题量和题型直接开练。取考试间隙里第一个纯题型的 practice 任务（当前是法规多选专练）。
+const sprintPractice = sprintPlan.blocks
+  .filter((block) => /^sat-gap-/.test(block.id))
+  .flatMap((block) => (block.tasks || []).filter((task) => task.kind === "practice" && Array.isArray(task.types) && task.types.length === 1).map((task) => ({ ...task, blockId: block.id })))
+  .shift();
+if (!sprintPractice) throw new Error("冲刺计划里没有带题型的练习任务");
+const typeLabels = { single: "单选", multiple: "多选", judgment: "判断", case: "综合" };
+const sprintExpectedComposition = Object.fromEntries(sprintPractice.types.map((type) => [typeLabels[type], sprintPractice.count]));
+const sprintPlanSnapshot = await page.evaluate((label) => {
   const countdown = document.querySelector("[data-sprint-clock]")?.textContent.trim() || "";
-  const multiYearButton = [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes("刷法规多年考点"));
+  const taskButton = [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes(label));
   return {
     view: document.querySelector(".page-title h2")?.textContent,
     countdown,
@@ -217,10 +224,10 @@ const sprintPlanSnapshot = await page.evaluate(() => {
     examBlocks: document.querySelectorAll(".plan-block.exam").length,
     current: document.querySelector(".plan-block.current")?.dataset.blockId || null,
     hasCurrentMarker: Boolean(document.querySelector(".plan-now")),
-    multiYearLabel: multiYearButton?.textContent.trim() || "",
+    taskLabel: taskButton?.textContent.trim() || "",
     taskCount: document.querySelectorAll('[data-action="sprint-task"]').length
   };
-});
+}, sprintPractice.label);
 const expectedPlanBlocks = sprintPlan.blocks.length;
 const expectedPlanExams = sprintPlan.blocks.filter((block) => block.kind === "exam").length;
 if (sprintPlanSnapshot.view !== "冲刺计划" || sprintPlanSnapshot.blocks !== expectedPlanBlocks || sprintPlanSnapshot.checkboxes !== expectedPlanBlocks - expectedPlanExams || sprintPlanSnapshot.examBlocks !== expectedPlanExams) {
@@ -229,20 +236,21 @@ if (sprintPlanSnapshot.view !== "冲刺计划" || sprintPlanSnapshot.blocks !== 
 if (!/^(?:\d+ 天 )?\d{2}:\d{2}:\d{2}$/.test(sprintPlanSnapshot.countdown)) {
   throw new Error(`冲刺计划倒计时格式不对: ${sprintPlanSnapshot.countdown}`);
 }
-if (!sprintPlanSnapshot.hasCurrentMarker || !sprintPlanSnapshot.multiYearLabel.includes(`${expectedLawMultiYear} 题`)) {
-  throw new Error(`冲刺计划缺少当前段落或多年考点题量: ${JSON.stringify(sprintPlanSnapshot)}`);
+if (!sprintPlanSnapshot.hasCurrentMarker || !sprintPlanSnapshot.taskLabel.includes(sprintPractice.label)) {
+  throw new Error(`冲刺计划缺少当前段落或任务按钮: ${JSON.stringify(sprintPlanSnapshot)}`);
 }
-// 点任务按钮应当带着条件直接进练习：法规多年考点一共 36 题。
-await page.evaluate(() => {
-  [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes("刷法规多年考点")).click();
-});
+// 点任务按钮应当带着条件直接进练习。
+await page.evaluate((label) => {
+  [...document.querySelectorAll('[data-action="sprint-task"]')].find((button) => button.textContent.includes(label)).click();
+}, sprintPractice.label);
 await page.waitForSelector(".question-card");
 const sprintTaskSession = await page.evaluate(() => {
   const context = window.ExamApp.getChatContext();
-  return { mode: context.mode, total: context.total, subject: context.question?.subject };
+  return { mode: context.mode, total: context.total, subject: context.question?.subject, composition: context.composition };
 });
-if (sprintTaskSession.mode !== "practice" || sprintTaskSession.total !== expectedLawMultiYear || sprintTaskSession.subject !== "证券市场基本法律法规") {
-  throw new Error(`冲刺计划任务没有带对条件: ${JSON.stringify({ sprintTaskSession, expectedLawMultiYear })}`);
+const compositionMatches = JSON.stringify(Object.entries(sprintTaskSession.composition).sort()) === JSON.stringify(Object.entries(sprintExpectedComposition).sort());
+if (sprintTaskSession.mode !== "practice" || sprintTaskSession.total !== sprintPractice.count || sprintTaskSession.subject !== "证券市场基本法律法规" || !compositionMatches) {
+  throw new Error(`冲刺计划任务没有带对条件: ${JSON.stringify({ sprintTaskSession, sprintExpectedComposition, sprintPractice })}`);
 }
 await page.click('[data-action="exit-session"]');
 await page.waitForSelector('[data-nav="plan"]');
