@@ -24,7 +24,11 @@
   }
   // 同一题干在一张卷子/一组练习里只出现一次：模考与练习共用这套判断。
   // 综合材料按整段出题，不参与去重，避免把材料组拆散。
-  const normalizedStem = (q) => q.subjectId + ":" + q.stem.replace(/[\s，。、“”：（）()【】.．]/g, "");
+  // 组合型改写来的多选题题干只剩引导句（「下列…正确的有」），光看题干会把不同题
+  // 当成同一道，所以这类题连选项一起参与比较。
+  const normalizedStem = (q) => q.subjectId + ":" + (q.combinationConverted
+    ? `${q.stem}\n${(q.options || []).map((option) => option.text).join("\n")}`
+    : q.stem).replace(/[\s，。、“”：（）()【】.．]/g, "");
   function uniqByStem(ordered, count) {
     const picked = [];
     const seen = new Set();
